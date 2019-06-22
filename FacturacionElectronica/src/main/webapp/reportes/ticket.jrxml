@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ticket" pageWidth="223" pageHeight="510" columnWidth="213" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.1435888100000056"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="144"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="TOTAL" class="java.lang.Double" isForPrompting="false">
+		<defaultValueExpression><![CDATA[4500.00]]></defaultValueExpression>
+	</parameter>
+	<parameter name="maquina" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0000001"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nTicket" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["T1-00000001 "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUCURSAL" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[" Av. Universitaria /Calle Germán Amézaga 375. Edificio Jorge Basadre"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SERIE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["SD154SD454"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COD_ESTAB" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0015485625694"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_EMISION" class="java.util.Date" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FORMA_PAGO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["VOUCHER BANCO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SIMBOLO" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[S/.]]></parameterDescription>
+	</parameter>
+	<parameter name="TICKETOLOGA" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["PAMELITA"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DESCRIPCION" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["EMPANADA DE CARNE RICOLINA BIEN SABROSONA DISFRUTALO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CANTIDAD" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[3]]></defaultValueExpression>
+	</parameter>
+	<parameter name="puni" class="java.lang.Double" isForPrompting="false">
+		<defaultValueExpression><![CDATA[1.50]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBTOTAL" class="java.lang.Double" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[4.50]]></defaultValueExpression>
+	</parameter>
+	<parameter name="establecimiento" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="correlativo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     dct.CANTIDAD*TO_NUMBER(dct."PRECIO_U"+dct."IGV_U") AS PSUBTOTAL,
+     ct."DIRECCION" AS DIRECCION,
+     ct."SERIE_FAB_MAQ" AS SERIEFAB,
+     ct."CORRELATIVO" AS NUMTICKET,
+     ct."FECHA_EMISION" AS FECHAEMISION,
+     dct."DESCRIPCION" AS DESCITEM,
+     dct."CANTIDAD" AS CANTIDAD,
+     TO_NUMBER(dct."PRECIO_U"+dct."IGV_U") AS PUNITARIO,
+     ct."FORMA_PAGO" AS FORMAPAGO,
+     ct."TOTAL" AS TOTAL,
+     ct."USUARIO" AS USUARIO,
+     ct."NOMB_CORTO_LOCAL" as NOMCORTO,
+     ct.NRO_AUTORIZACION_MAQ AS NUMAUTORIZACION
+FROM
+     WEBQPROTESORERIA.COMP_TICKET ct,WEBQPROTESORERIA.DET_COMP_TICKET dct
+WHERE
+     ct."CORRELATIVO"=dct.CORRELATIVO and
+     dct.CORRELATIVO = $P{correlativo}and
+     dct.COD_ESTAB_ANEXO = $P{establecimiento}]]>
+	</queryString>
+	<field name="PSUBTOTAL" class="java.math.BigDecimal"/>
+	<field name="DIRECCION" class="java.lang.String"/>
+	<field name="SERIEFAB" class="java.lang.String"/>
+	<field name="NUMTICKET" class="java.lang.String"/>
+	<field name="FECHAEMISION" class="java.sql.Timestamp"/>
+	<field name="DESCITEM" class="java.lang.String"/>
+	<field name="CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="PUNITARIO" class="java.math.BigDecimal"/>
+	<field name="FORMAPAGO" class="java.lang.String"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="NOMCORTO" class="java.lang.String"/>
+	<field name="NUMAUTORIZACION" class="java.lang.String"/>
+	<group name="grupo">
+		<groupExpression><![CDATA[$P{TOTAL}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="43" splitType="Stretch">
+				<staticText>
+					<reportElement key="staticText-19" x="138" y="9" width="30" height="17"/>
+					<box topPadding="2" leftPadding="5" rightPadding="5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Microsoft Tai Le" size="7"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement key="textField" x="168" y="9" width="45" height="17"/>
+					<box topPadding="2" bottomPadding="2">
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Microsoft Tai Le" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="4" width="213" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="0" y="9" width="59" height="17"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Microsoft Tai Le" size="7"/>
+					</textElement>
+					<text><![CDATA[Forma de Pago :   ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="59" y="9" width="79" height="17"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Microsoft Tai Le" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FORMAPAGO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="26" width="98" height="17"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Microsoft Tai Le" size="7"/>
+					</textElement>
+					<text><![CDATA[Atendido por :   ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="98" y="26" width="115" height="17"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{USUARIO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="137" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-1" x="0" y="0" width="213" height="24"/>
+				<box topPadding="2" leftPadding="2" rightPadding="5">
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[U.N.M.S.M]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="59" y="46" width="154" height="17"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[20148092282 ]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h.mm a" isBlankWhenNull="false">
+				<reportElement key="textField" x="59" y="114" width="154" height="17"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHAEMISION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-20" x="0" y="114" width="59" height="17"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<text><![CDATA[Fecha y Hora :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-22" x="0" y="80" width="59" height="17"/>
+				<box topPadding="2" bottomPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<text><![CDATA[Ticket N° :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-23" x="0" y="97" width="59" height="17"/>
+				<box topPadding="2" bottomPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<text><![CDATA[N° Autorizacion :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-4" x="59" y="97" width="154" height="17"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUMAUTORIZACION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement key="textField" x="59" y="29" width="154" height="17"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIRECCION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="29" width="59" height="17"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<text><![CDATA[Direccion :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="46" width="59" height="17"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<text><![CDATA[R.U.C :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-22" x="0" y="63" width="59" height="17"/>
+				<box topPadding="2" bottomPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<text><![CDATA[Serie # :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-3" x="59" y="63" width="154" height="17"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SERIEFAB}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-3" x="59" y="80" width="154" height="17"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMCORTO}+'-'+$F{NUMTICKET}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="9" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-9" x="0" y="0" width="119" height="15"/>
+				<box topPadding="1">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[DESC.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-11" x="119" y="0" width="19" height="15"/>
+				<box topPadding="1">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANT.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="138" y="0" width="30" height="15"/>
+				<box topPadding="1">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[P.U.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="168" y="0" width="45" height="15"/>
+				<box topPadding="1">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUBTOTAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" x="119" y="0" width="19" height="15"/>
+				<box topPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" x="0" y="0" width="119" height="15"/>
+				<box topPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCITEM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" x="138" y="0" width="30" height="15"/>
+				<box topPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUNITARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" x="168" y="0" width="45" height="15"/>
+				<box topPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Microsoft Tai Le" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PSUBTOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="18" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="19" splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="10" splitType="Stretch"/>
+	</lastPageFooter>
+	<summary>
+		<band height="12" splitType="Stretch"/>
+	</summary>
+</jasperReport>

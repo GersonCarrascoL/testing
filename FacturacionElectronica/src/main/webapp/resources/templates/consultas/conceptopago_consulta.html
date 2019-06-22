@@ -1,0 +1,284 @@
+<meta charset="utf-8" />
+<style>
+	.anuladoColor {
+    	color: red;
+	}
+	.has-errorColor {
+    	color: red;
+	}
+	/****************** hidden scroll body *************/
+	.scrollHidden {
+	    overflow: hidden;
+	}
+	/***************************************************/  
+</style>
+
+<!-- Panel Header -->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h3 class="panel-title" style="font-size:15px;">CONSULTA DE CONCEPTOS DE PAGO</h3>
+    </div>
+
+    <div class="panel-body">
+      
+       <div class="row">       
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div style="margin: 0; background-color: transparent; text-align: center;">
+					<button id="btnModalDependencias" type="button" class="btn btn-success" ng-click="openModalUnidad()"><span class="glyphicon glyphicon-th-list"></span> Elegir Dependencia</button>
+				</div>
+			</div>		
+       </div>
+ 		
+	</div>
+</div>
+<!-- Fin Panel Header -->
+
+<!-- Panel Table Result -->
+<div class="panel panel-inverse" id="panelResult" style="display:none">
+    <div class="panel-heading">
+        <h3 class="panel-title" style="font-size:15px;">{{view.nombrePadre}}</h3>
+    </div>
+
+    <div class="panel-body">
+    	<!-- ENCABEZADO DEPENDENCIA ELEGIDA -->
+		<div>
+			<div  id="boxEncabezado" class="note note-info"  style="display:none" >
+				<span style="color:blue;  font-size: 15px">DEPENDENCIA:</span>
+				<span id="txtNombreDependencia"  style="font-size: 15px"  ></span>
+			</div>
+		</div>
+		<!-- FIN ENCABEZADO DEPENDENCIA ELEGIDA -->
+		
+		
+    	<div class="tablecontainer table-responsive" ng-show="VisibleResultTable">  
+				   <table ng-table="tableParams" class="table table-condensed table-bordered table-hover" show-filter="true" show-group="false">
+				   		<colgroup>
+							  <col width="6%" />
+							  <col width="75%" />
+							  <col width="11%" />
+							  <col width="8%" />
+						</colgroup>
+				        <tr class="ng-table-group" ng-repeat-start="group in $groups">
+				          <td colspan="6">
+				            <a href="" ng-click="group.$hideRows = !group.$hideRows">
+				              <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span><strong>{{group.value}} - {{group.data[0].codigoUnidad}}</strong>
+				            </a>
+				          </td>
+				        </tr>  
+				        <tr ng-hide="group.$hideRows" ng-repeat="c in group.data" ng-repeat-end>
+				            <td data-title="'UNIDAD'" groupable="'udDesc'" ng-if="false" style="text-align: left;"><span ng-class="{anuladoColor: c.estado==0}">{{c.udDesc}}</span></td>
+							<!-- <td data-title="'CÓDIGO UNIDAD'" style="width: 6%;text-align: center;" filter="{codigoUnidad: 'text'}"><span ng-class="{anuladoColor: c.estado==0}">{{c.codigoUnidad}}</span></td> -->
+							<td data-title="'CÓDIGO CONCEPTO'"  style="width: 6%;text-align: center;" filter="{codigoConcepto6digitos: 'text'}"><span ng-class="{anuladoColor: c.estado==0}">{{c.codigoConcepto6digitos}}</span></td>
+							<td data-title="'DESCRIPCIÓN'"  style="text-align: left" filter="{descr: 'text'}" sortable="'descr'"><span ng-class="{anuladoColor: c.estado==0}">{{c.descr}}</span></td>
+							<td data-title="'IMPORTE'"  style="width: 10%; text-align: right;"><span ng-class="{anuladoColor: c.estado==0}">{{c.monedaSimb}} {{c.monto | number:2}}</span></td>	
+							<td data-title="'DETALLE'"  style="width: 6%; text-align: center;"><button title="Detalle" ng-click="openModalDetalleConcepto(c)" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i></button></td>
+				        </tr>
+				    </table>
+    	</div>
+    	
+    	<div class="row" id="noMatches" ng-show="!VisibleResultTable">
+		    <div class="col-md-12">
+				<p class="hidden-sm text-center" style="font-size:16px;">No se encontraron conceptos de pago en ésta dependencia</p>
+		    </div>
+		</div>
+		
+    </div>
+</div>
+<!-- Fin Panel Table Result -->
+
+
+	<!-- Modal Arbol -->
+	<div  id="modalDependencia" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel"><span style="color:#0431B4">DEPENDENCIAS</span>  </h4>
+	      </div>
+	      <div class="modal-body"  style="max-height: 520px;overflow-y: auto;">
+	      
+	
+	            <div class="tree"  ng-show="dependencia != null">
+						<ul>
+							<li ng-show="true">
+								<a ng-click="expandirContraer($event,dependencia.descripcion)"   >{{dependencia.descripcion}}</a>
+								<ul>
+									<li ng-show="primerNivel" ng-repeat="aux1 in dependencia.unidades" >
+										<a ng-click="expandirContraer($event, aux1.descripcion)"   >{{aux1.codUnidad}}-{{aux1.descripcion}}</a>
+										<ul>
+											<li ng-show="{{aux1.codUnidad}}" ng-repeat="aux2 in aux1.unidades"  >
+												<a ng-click="expandirContraer($event, aux2.descripcion)"    >{{aux2.codUnidad}}-{{aux2.descripcion}}</a>
+												<ul>
+													<li ng-show="{{aux2.codUnidad}}" ng-repeat="aux3 in aux2.unidades"  >
+														<a ng-click="expandirContraer($event, aux3.descripcion)">{{aux3.codUnidad}}-{{aux3.descripcion}}</a>
+														<ul>
+															<li ng-show="{{aux3.codUnidad}}" ng-repeat="aux4 in aux3.unidades"  >
+																<a ng-click="expandirContraer($event, aux4.descripcion)">{{aux4.codUnidad}}-{{aux4.descripcion}}</a>
+																<ul>
+																	<li ng-show="{{aux4.codUnidad}}" ng-repeat="aux5 in aux4.unidades"  >
+																		<a ng-click="expandirContraer($event, aux5.descripcion)">{{aux5.codUnidad}}-{{aux5.descripcion}}</a>
+																		<ul>
+																			<li ng-show="{{aux5.codUnidad}}" ng-repeat="aux6 in aux5.unidades"  >
+																				<a ng-click="expandirContraer($event, aux6.descripcion)">{{aux6.codUnidad}}-{{aux6.descripcion}}</a>
+																				<ul>
+																					<li ng-show="{{aux6.codUnidad}}" ng-repeat="aux7 in aux6.unidades"  >
+																						<a ng-click="expandirContraer($event, aux7.descripcion)">{{aux7.codUnidad}}-{{aux7.descripcion}}</a>
+																					</li>
+																				</ul>
+																			</li>
+																		</ul>
+																	</li>
+																</ul>
+															</li>
+														</ul>
+													</li>
+												</ul>
+										   </li>
+	
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+	      </div>
+	      <div class="modal-footer">	        
+	        <button  ng-click="aceptarDependencia()"  type="button" class="btn btn-primary">Aceptar</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>  
+	<!-- Fin Modal Arbol -->
+	
+
+
+
+<div class="modal fade" id="modalMensaje" role="dialog">
+	    <div class="modal-dialog modal-sm">	       
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title text-center">{{modalMensajeTitle}}</h4>
+	        </div>
+	        <div class="modal-body">
+	          <p class="text-center semi-bold">{{modalMensajeText}}</p>
+	        </div>
+	         <div class="modal-footer text-center">
+	         	<button type="button" class="btn btn-sm btn-info" data-dismiss="modal">Aceptar</button>
+	        </div>	       
+	      </div>	      
+	    </div>
+</div>
+
+<input id="viewMode" type="hidden" value="2"> <!-- modo consulta -->
+
+<div class="modal fade" id="detalleConceptoPago" >
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+						<h4 class="modal-title">DETALLE DE CONCEPTO DE PAGO</h4>
+						
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" name="formDetalleCP" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">UNIDAD : </label>
+                                    <div class="col-md-8">								    	
+								    	<input type="text" class="input-sm form-control" name="detCP_unidad" ng-model="cpDetalle.udDesc" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">TIPO DE CONCEPTO : </label>
+                                    <div class="col-md-8">
+                                        <!-- <select class="default-select input-sm form-control" name="detCP_tipo" ng-options="tipc.idTipoCpago as tipc.nombre for tipc in listaTipoConcepto" ng-model="cpDetalle.idTipoCpago" disabled style="font-weight: bold; padding-left:5px;">
+								    		<option value="">Tipo de Concepto</option>
+								    	</select> -->
+								    	<input type="text" class="input-sm form-control" ng-value="cpDetalle.tcpDescr" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">CÓDIGO DEL CONCEPTO : </label>
+                                    <div class="col-md-2">
+                                        <input type="text" class="input-sm form-control" id="detCP_codigoCP" name="detCP_codigoCP" ng-value="cpDetalle.codigoUnidad+'-'+cpDetalle.codCPago" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">CONCEPTO : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="input-sm form-control" name="detCP_nombre" ng-model="cpDetalle.concepto" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">DESCRIPCIÓN : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="input-sm form-control" name="detCP_desc" ng-model="cpDetalle.descr" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">BANCO : </label>
+                                    <div class="col-md-5">
+                                        <!-- <select class="default-select input-sm form-control" name="detCP_banco" ng-options="banco.codigo as banco.nombre for banco in listaBancos" ng-model="cpDetalle.codBanco" readonly style="font-weight: bold; padding-left:5px;">
+								    		<option value="">Nombre del banco</option>
+								    	</select> -->
+								    	<input type="text" class="input-sm form-control" ng-value="cpDetalle.nombreBanco" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+								    <label class="col-md-3 control-label">IMPORTE : </label>
+								    <div class="col-md-4">
+									      <input type="text" class="input-sm form-control" name="detCP_monto" ng-value="cpDetalle.monedaSimb + ' ' + cpDetalle.monto" readonly style="font-weight: bold;"/>
+								    </div>
+								</div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">FACTURABLE :</label>
+                                    <div class="col-md-2">                                        
+                                        <!-- <label class="radio-inline"><input type="radio" name="detOpFacturable" value="0" ng-model="cpDetalle.facturable" disabled/>Opcional</label>
+                                        <label class="radio-inline"><input type="radio" name="detOpFacturable" value="1" ng-model="cpDetalle.facturable" disabled/>Obligatorio</label> -->
+                                        <input type="text" class="input-sm form-control" value="{{cpDetalle.facturable==0 ? 'Opcional' : 'Obligatorio'}}" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">I.G.V. :</label>
+                                    <div class="col-md-2">
+                                        <!-- <label class="radio-inline"><input type="radio" name="detOpIgv" value="0" ng-model="cpDetalle.igv" disabled/>No</label>
+                                        <label class="radio-inline"><input type="radio" name="detOpIgv" value="1" ng-model="cpDetalle.igv" disabled/>Si</label> -->
+                                        <input type="text" class="input-sm form-control" value="{{cpDetalle.igv==0 ? 'No' : 'Si'}}" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                
+                                <!-- <div class="form-group">
+                                    <label class="col-md-3 control-label">DETRACCIÓN :</label>
+                                    <div class="col-md-3">
+                                    	<input type="text" class="input-sm form-control" name="detCP_opDetraccion" value="{{(cpDetalle.poseeDetraccion==1)?'Si':'No'}}" readonly style="font-weight: bold;"/>                                 
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="cpDetalle.poseeDetraccion==1">
+                                    <label class="col-md-3 control-label">Porcentaje Detraccíon :</label>
+                                    <div class="col-md-3">
+                                    	<input type="text" class="input-sm form-control" name="detCP_porcentDetrac" value="{{viewConcepto.valorDetraccion}} %" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="cpDetalle.poseeDetraccion==1">
+                                    <label class="col-md-3 control-label">Categoría de la Detracción : </label>                                    
+                                    <div class="col-md-6">
+                                    	<input type="text" class="input-sm form-control" name="detCP_cataCodDetrac" ng-value="cpDetalle.descrDetraccion" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div> -->
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">RESOLUCIÓN RECTORAL : </label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="input-sm form-control" name="detCP_rr" ng-model="cpDetalle.resolRectoral" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                    </form>
+			</div>
+			<div class="modal-footer text-center">
+				<a href="javascript:;" class="btn btn-default" data-dismiss="modal">Cerrar</a>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,1442 @@
+<meta charset="utf-8" />
+<style>
+	.negrita{
+		font-weight: bold;
+	}
+	.marginLabelGlosario{
+    margin-bottom: 0px;
+    }
+	.anuladoColor {
+    	/* color: #f79609; */
+	}
+	.has-error span {
+		color: #ff5b57;
+	}
+	.tags {
+	   margin-bottom: 5px;
+	} 
+	
+	.tags .tag {
+	   display: inline-block;
+	   margin-right: 5px;
+	   font-size: 13px;
+	}
+	  
+	.tag .close {
+	   font-size: 14px;
+	   margin-left: 5px;
+	}
+	.anuladoColor {
+    	color: red;
+	}
+	.highlight {
+  		background-color: #e8ecf1;
+	}
+	/* tab color */
+	.nav-tabs>li>a {
+	  /* border-color: #777777; */
+	  background-color: #242a30;
+	  color: #aaacb3;
+	  border: none!important;
+	  border-top-left-radius: 3px;
+	  border-top-right-radius: 3px;
+	}
+
+	/* active tab color */
+	.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+	  background-color: #fff;
+	  color: #242a30;
+	  border: none!important;
+	}
+	
+	/* hover tab color */
+	.nav-tabs>li>a:hover {
+	  background-color: #fafafa;
+	  border-color: #000000;
+	  /* color:#6e7179; */
+	  color:#242a30;
+	}
+	.nav-tabs>li{
+	  background-color: transparent;
+	}
+	.nav-tabs{
+	  background-color: #242a30;
+	  border-top-left-radius: 3px;
+	  border-top-right-radius: 3px;
+	}
+	.has-errorColor {
+    	color: red;
+	}
+	.modal-dialog.modal-wide {
+      width: 65%;
+    }
+    .ui-datepicker { position: relative; z-index: 10000 !important; }
+	.InputDate[disabled]{
+		/* background: #e5e9ed; */
+		background: #fff;
+    	opacity: 1;
+	}
+	/************************ centrar asterisco **************************/
+	.asterisk-required{
+	  /*color:red;*/
+	}	
+	.asterisk-required span{
+	  vertical-align:sub;
+	}
+	
+	.form-control.field-success{
+        color: #3c763d;
+        background-color: #dff0d8;
+    }
+    .form-control.field-danger{
+        color: #a94442;
+        background-color: #f2dede;
+    }
+    p.field-success{
+        color: #3c763d;
+        background-color: #dff0d8;
+    }
+    p.field-danger{
+        color: #a94442;
+        background-color: #f2dede;
+    }    
+	
+	.modal-body .form-control[disabled], .modal-body .form-control[readonly]{
+    	opacity: .9;
+    }
+
+    
+    /************************ CENTRAR MODAL VERTICALMENTE **************************/
+    .modal-mid {
+      text-align: center;
+      padding: 0!important;
+    }
+    
+    .modal-mid:before {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+      margin-right: -4px;
+    }
+    
+    .modal-mid-diag {
+      display: inline-block;
+      text-align: left;
+      vertical-align: middle;
+    }
+    /********************************************************************************/ 
+</style>
+<div ng-show="!previsualizacion">
+	<div class="panel panel-inverse">
+	    <div class="panel-heading">
+	        <h4 class="panel-title" style="font-size:15px;">DATOS DE LA BOLETA</h4>
+	    </div>
+	    <div class="panel-body">
+			<formulario-facturacion></formulario-facturacion>
+	    	<form name="formularioDocumento">
+		    	<div class="col-xs-12 col-sm-6 col-md-4" ng-class="{ 'has-error' : formularioDocumento.documento.$error.required && !formularioDocumento.documento.$pristine}">
+		    		<label>Num. Documento del cliente:</label>
+		    		<div class="input-group">
+		    			<input name="documento" type="text" class="form-control" placeholder="DNI de cliente" ng-model="numDocCliente" disabled="true" required>
+		    			<div class="input-group-btn">
+		    				<button class="btn btn-info" ng-click="abrirModal('#clienteBuscar')"><span class="fa fa-search"></span> Buscar</button>
+		    			</div>
+		    		</div>
+		    		<div class="has-errorColor" ng-show="formularioDocumento.documento.$dirty">
+	                    <span ng-show="formularioDocumento.documento.$error.required">Ingrese un número de documento</span>
+	                </div>
+		    		<br/>
+		    	</div>
+		    	<div ng-show="visibilidadClientes" ng-class="{ 'has-error' : formularioDocumento.tipoDocumCliente.$error.required && !formularioDocumento.tipoDocumCliente.$pristine}">
+			    	<div class="col-xs-12 col-sm-6 col-md-4">
+			    		<label>Tipo de Documento:</label>
+				    	<input name="tipoDocumCliente" type="text" class="form-control" placeholder="Tipo de documento" disabled="false" ng-model="tipoDocumCliente" required>
+			    		<div class="has-errorColor" ng-show="formularioDocumento.tipoDocumCliente.$dirty">
+		                    <span ng-show="formularioDocumento.tipoDocumCliente.$error.required">Tipo de cliente no valido</span>
+		                </div>
+			    		<br/>
+			    	</div>
+			    	<div class="col-xs-12 col-sm-6 col-md-4" ng-class="{ 'has-error' : formularioDocumento.razonCliente.$error.required && !formularioDocumento.razonCliente.$pristine}">
+			    		<label>Nombre:</label>
+				    	<input name="razonCliente" type="text" class="form-control" placeholder="Nombre" disabled="false" ng-model="razonCliente" required>
+			    		<div class="has-errorColor" ng-show="formularioDocumento.razonCliente.$dirty">
+		                    <span ng-show="formularioDocumento.razonCliente.$error.required">Tipo de cliente no valido</span>
+		                </div>
+			    		<br/>
+			    	</div>
+			    	<div class="col-xs-12 col-sm-6 col-md-4" ng-class="{ 'has-error' : formularioDocumento.direccionCliente.$error.required && !formularioDocumento.direccionCliente.$pristine}">
+			    		<label>Dirección</label>
+				    	<input name="direccionCliente" type="text" class="form-control" placeholder="Dirección" disabled="false" ng-model="direccionCliente" required>
+			    		<div class="has-errorColor" ng-show="formularioDocumento.direccionCliente.$dirty">
+		                    <span ng-show="formularioDocumento.direccionCliente.$error.required">Dirección del cliente no valido</span>
+		                </div>
+			    		<br/>
+			    	</div>
+		    	</div>
+	    	</form>
+	    </div>
+	</div>
+	<div class="panel panel-inverse" ng-show="numDocCliente!=null">
+	    <div class="panel-heading">
+	        <h4 class="panel-title" style="font-size:15px;">DETALLE DEL COMPROBANTE</h4>
+	    </div>
+	    <div class="panel-body">
+	    	<br/>
+	    	<div  class="row">
+		    	<form name="formularioAniadir">
+			    	<div class="col-xs-12 col-sm-7">
+			    		<div class="input-group">
+			    			<input name="producto" type="text" class="form-control" placeholder="Producto" ng-model="descripcion" disabled="true" required>
+			    			<div class="input-group-btn">
+			    				<a class="btn btn-info" ng-click="abrirModalPrecios()"><span class="fa fa-search"></span> Buscar</a>
+			    			</div>
+			    		</div>
+			    		<br/>
+			    	</div>
+			    	<div class="col-xs-12 col-sm-2" ng-class="{ 'has-error' : formularioAniadir.cantidad.$invalid && !formularioAniadir.cantidad.$pristine}">
+				    	<input name="cantidad" id="cantidadBiSe" type="text" class="cantidad form-control" placeholder="Cantidad" ng-model="cantidad" ng-pattern="patronNoZeros" required>
+		                    <span ng-show="formularioAniadir.cantidad.$error.required && !formularioAniadir.cantidad.$pristine">Ingrese una cantidad</span>
+		                    <span ng-show="formularioAniadir.cantidad.$error.pattern && !formularioAniadir.cantidad.$pristine">Ingrese una cantidad valida</span>
+		                <br/>
+			    	</div>		    	
+		    	<div class="col-xs-12 col-sm-2 text-center">
+       	            <button class="btn btn-primary" ng-click="aniadir()" ng-disabled="formularioAniadir.$invalid"><span class="fa fa-plus"></span> Añadir</button>		        
+		    	</div>
+		    	</form>
+	    	</div>
+			<br/>
+			<br/>
+			<div class="row" ng-show="pagoflag">
+			  <div class="tablecontainer table-responsive">
+				<table id="data-table" class="table table-striped table-bordered nowrap" width="100%">
+	                 <thead>
+	                     <tr>
+	                         <th style="text-align: center">CANTIDAD</th>
+	                         <!-- <th>Código</th> -->
+	                         <th style="text-align: center">TIPO</th>
+	                         <th style="text-align: center">DESCRIPCIÓN</th>
+	                         <th style="text-align: center">PRECIO UNITARIO</th>
+	                         <th style="text-align: center">PRECIO TOTAL SIN IGV</th>
+	                         <th style="text-align: center">PRECIO TOTAL CON IGV</th>
+	                         <th style="text-align: center">OPCIONES</th>
+	                     </tr>
+	                 </thead>
+	                 <tbody>
+	                     <tr class="odd gradeX" ng-repeat="p in contenido">
+	                         <td align="right"><div ng-show="band[$index]" ng-bind="p.cantidad"></div>
+	                         	<input numerico-decimal="true" type="text" ng-change="actualizarItem($index)" ng-show="!band[$index]" ng-model="p.cantidad" style="width: 70px;" required>                                     	
+	                         </td>
+	                         <!-- <td>{{p.codigo}}</td> -->
+	                         <td align="right">{{p.codTipoIgv|tipoComprobante}}</td>
+	                         <td>{{p.descripcion}}</td>
+	<!-- 	                                     <td align="right"><div ng-show="band[$index]">{{p.moneda}} {{p.precioU.toFixed(2)}}</div><div ng-show="!band[$index]">{{p.moneda}} <input type="number" ng-change="actualizarItem($index)" ng-show="!band[$index]" ng-model="p.precioU" style="width: 200;"></input></div></td> -->
+	                         <td align="right">{{p.moneda}} {{p.precioU.toFixed(2)}}</td>
+	                         <td align="right">{{p.moneda}} {{p.precioT.toFixed(2)}}</td>
+	                         <td align="right">{{p.moneda}} {{(p.precioT+p.igvT).toFixed(2)}}</td>
+	                         <td align="center" width="130px"><button title="Editar cantidad" ng-show="band[$index]" class="btn btn-success" ng-click="funcion($index,p)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+	                         <button title="Modificar" ng-show="!band[$index]" class="btn btn-default" ng-click="funcion($index,p)" id="cocacola"><i class="fa fa-check" aria-hidden="true"></i></button><button title="Borrar" class="btn btn-danger" ng-click="borrar($index)"><i class="fa fa-trash-o" aria-hidden="true"></i></button></td>
+	                     </tr>
+	                 </tbody>
+             		</table>
+			  </div>
+			</div>
+	        <div class="col-md-12" ng-show="pagoflag">
+	          <div class="col-md-9 text-left">
+	          	  <br/>
+	          	  <div style="margin-left: 40px;">
+	          	      <observacion></observacion>
+	          	  </div>
+	
+	        	 </div>
+	       	  <div class="col-md-3 text-right">
+	                 <br/>
+	                <label>Op. Gravada: </label> <input type="text" class="text-right" style="margin-bottom:8px;" placeholder="Op. Gravada" disabled="true" ng-model="gravadam">      	  		
+	                <br/>
+	                <label>Op. Exonerada: </label> <input type="text" class="text-right" style="margin-bottom:8px;" placeholder="Op. Exonerada" disabled="true" ng-model="exoneradam">
+	                <br/>
+	                <label>Op.Inafecta: </label> <input type="text" class="text-right" style="margin-bottom:8px;" placeholder="Op.Inafecta" disabled="true" ng-model="inafectam">
+	                <br/>
+	                <label>I.G.V: </label> <input type="text" class="text-right" style="margin-bottom:8px;" placeholder="IGV" disabled="true" ng-model="igvm">
+	                <br/>
+	                <label>Total: </label> <input type="text" class="text-right" style="margin-bottom:8px;" placeholder="Total" disabled="true" ng-model="totalm">
+	                <br/>         	
+	         </div>           
+	        </div>  
+			<div class="modal fade" data-backdrop="static" id="editar">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+									<h4 class="modal-title">Producto</h4>
+						</div>
+						<div class="modal-body">
+				    		<label>Cantidad: </label>
+					    	<input type="text" class="form-control" ng-model="edit.cantidad">
+				    		<br/>
+				    		<label>Codigo: </label>
+					    	<input type="text" class="form-control" ng-model="edit.codigo">
+				    		<br/>
+						</div>
+						<div class="modal-footer">
+							<a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Cancelar</a>
+							<a href="javascript:;" class="btn btn-sm btn-primary" data-dismiss="modal" ng-click="actualizarContenido()">Aceptar</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!-- CODIGO LECKY
+			<div class="modal fade" data-backdrop="static" id="cliente">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+									<h4 class="modal-title">BUSCAR CLIENTE</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="form-group">
+	                                   <label class="col-xs-12 col-sm-3 control-label">Buscar por:</label>
+	                                   <div class="col-xs-4 col-sm-2">
+	                                       <label class="radio-inline">
+	                                           <input type="radio" name="optionsRadios" value="option1" ng-click="r1()" checked/>
+	                                           R.U.C. 
+	                                       </label>
+	                                   </div>
+	                                   <div class="col-xs-4 col-sm-3">
+	                                       <label class="radio-inline">
+	                                           <input type="radio" name="optionsRadios" value="option2" ng-click="r2()"/>
+	                                           Razón social
+	                                       </label>
+	                                   </div>
+	                            </div>
+								<br/>
+							</div>
+							<div class="row">
+	                               <div class="form-group">
+								<div class="col-sm-12">
+	                                <label>{{tipo}}:</label>
+	                                <input type="text" class="form-control" placeholder="{{tipo}}" ng-model="nombreTemp"/>
+	                               </div>
+								</div>
+							</div>
+							<br/>
+							<div class="row">
+								<div class="form-group">
+									<div class="col-sm-12">
+										<table id="data-table" class="table table-striped table-bordered nowrap" width="100%" ng-show="visibilidadCliente">
+				                                <thead>
+				                                    <tr>
+				                                        <th>R.U.C.</th>
+				                                        <th>RAZÓN SOCIAL</th>
+				                                        <th>DIRECCIÓN</th>
+				                                        <th>OPCIONES</th>
+				                                    </tr>
+				                                </thead>
+				                                <tbody>
+				                                    <tr class="odd gradeX" ng-repeat="cli in tablaCliente">
+				                                        <td>{{cli.ruc}}</td>
+				                                        <td>{{cli.razonSocial}}</td>
+				                                        <td>{{cli.direccion}}</td>
+				                                        <td><a href="javascript:;" class="btn btn-sm btn-primary" data-dismiss="modal" ng-click="selCliente(cli.posicion)">Seleccionar</a></td>
+				                                    </tr>
+				                                </tbody>
+				                		</table>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="pull-left">
+								<a href="javascript:;" class="btn btn-sm btn-warning" ng-click="buscarCliente()">Consultar</a>
+							</div>
+							<a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Cerrar</a>
+						</div>
+					</div>
+				</div>
+			</div> -->
+			
+			
+			<div class="modal fade" data-backdrop="static" id="buscar">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+									<h4 class="modal-title">BUSCAR BIEN O SERVICIO</h4>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal" name="dialog">
+							
+								<div class="form-group">
+                                    <label class="col-md-2 control-label">Elegir :</label>
+                                    <div class="col-md-6"> 
+                                    	<label class="radio-inline"><input type="radio" name="radioBusquedaItem" value="SV" ng-model="optionBusquedaItem" ng-change="cambiarBusquedaXBienOServicio('SV')"/>Servicios</label>
+                                    	<label class="radio-inline"><input type="radio" name="radioBusquedaItem" value="BN" ng-model="optionBusquedaItem" ng-change="cambiarBusquedaXBienOServicio('BN')"/>Bienes</label>                                       
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Buscar por :</label>
+                                    <div class="col-md-3">
+								    	<select class="default-select input-sm form-control" name="combo_nombre_codigo" ng-model="optionBuscarPor" >
+			                                <option value="01">Nombre del {{(optionBusquedaItem=='SV')?'Servicio':'Bien'}}</option>
+			                                <option value="02">Código del {{(optionBusquedaItem=='SV')?'Servicio':'Bien'}}</option>
+										</select>
+                                    </div>
+                                </div>								
+
+								<div ng-class="{ 'has-error' : dialog.productoDialog.$error.required && !dialog.productoDialog.$pristine}">
+									<input name="productoDialog" id="demo3" type="text" class="col-md-12 form-control" placeholder="Buscar productos..." autocomplete="off" ng-model="buscado" style="margin-top: 8px;" capitalize required/>
+									<div class="has-errorColor" ng-show="dialog.productoDialog.$dirty">
+					                    <span ng-show="dialog.productoDialog.$error.required">Ingrese un producto</span>
+					                </div>
+								</div>
+								<br/><br/><br/>
+	                		</form>
+	                		 <div class="tablecontainer table-responsive">	
+									<table id="data-table" class="table table-striped table-bordered nowrap" width="100%" ng-show="visibilidad">
+			                                <thead>
+			                                    <tr>
+			                                        <th style="text-align: center">CÓDIGO</th>
+			                                        <th style="text-align: center">DESCRIPCIÓN</th>
+			                                        <th style="text-align: center">MONEDA</th>
+			                                        <th style="text-align: center">PRECIO UNITARIO</th>
+			                                        <th style="text-align: center">IGV</th>
+			                                        <th style="text-align: center">PRECIO CON IGV</th>
+			                                        <th style="text-align: center" ng-show="banderaDescuento=='1' && !((formularioDescuento.descuento.$error.required || formularioDescuento.descuento.$error.pattern) && !formularioDescuento.descuento.$pristine)">DESCUENTO</th>
+			                                    </tr>
+			                                </thead>
+			                                <tbody>
+			                                    <tr class="odd gradeX">
+			                                        <td>{{tabla.codigo}}</td>
+			                                        <td>{{tabla.descripcion}}</td>
+			                                        <td align="center">{{tabla.monedaSimb}}</td>
+			                                        <td align="right">{{tabla.precio.toFixed(2)}}</td>
+			                                        <td align="right">{{tabla.igv.toFixed(2)}}</td>
+		 	                                        <td style="padding-left: 8px;padding-right: 8px;">
+		 	                                        	<div class="text-right" ng-show="tabla.tipo==0">{{tabla.conIgv.toFixed(2)}}</div>		
+		 	                                        	<form name="formularioProducto">
+		 											    	<div ng-class="{ 'has-error' : (formularioProducto.importeTotal.$error.required || formularioProducto.importeTotal.$error.pattern) && !formularioProducto.importeTotal.$pristine}">
+																<input name="importeTotal" id="importeTotal" type="text" maxlength="11" class="input-sm form-control" placeholder="ImporteTotal" ng-model="importeTotalTemporal" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" ng-show="tabla.tipo==1" ng-change="cambiarImporteTotal()" required>
+																<div class="has-errorColor" ng-show="tabla.tipo==1">
+		 										                    <span ng-show="formularioProducto.importeTotal.$error.required">Ingrese un monto</span>
+		 										                    <span ng-show="formularioProducto.importeTotal.$error.pattern">Ingrese un monto valido</span>
+		 										                </div>
+		 										                <br/>
+		 											    	</div>
+		 	                                        	</form>
+		 	                                        </td>
+		 	                                        <td ng-show="banderaDescuento=='1' && !((formularioDescuento.descuento.$error.required || formularioDescuento.descuento.$error.pattern) && !formularioDescuento.descuento.$pristine)" align="right">{{importeDescuento}}</td>	 	                                        	 											
+			                                    </tr>
+			                                </tbody>
+			                		</table>
+	                		</div>
+	                		<form class="form-inline" name="formularioDescuento" ng-show="visibilidad">
+	                            <div class="form-group">
+	                                <label for="banderaDesc">Descuento:</label>
+								    	<select class="default-select input-sm form-control" id="banderaDesc" ng-model="banderaDescuento">
+				                               <option value="1">Si</option>
+				                               <option value="0">No</option>
+										</select>
+	                            </div>	
+	                            <div class="form-group" ng-show="banderaDescuento=='1'">
+							    	<div ng-class="{ 'has-error' : (formularioDescuento.descuento.$error.required || formularioDescuento.descuento.$error.pattern) && !formularioDescuento.descuento.$pristine}">
+										<input name="descuento" type="text" maxlength="2" class="input-sm form-control" placeholder="Descuento" ng-model="descuento" ng-pattern="/^[1-9][0-9]{0,1}$/" required/>
+<!-- 										<div class="has-errorColor" ng-show="tabla.tipo==1">
+							                    <span ng-show="formularioDescuento.descuento.$error.required">Ingrese un porcentaje</span>
+							                    <span ng-show="formularioDescuento.descuento.$error.pattern">Ingrese un porcentaje valido</span>
+						                </div> -->
+							    	</div>
+						    	</div>	
+						    	<div class="form-group" ng-show="banderaDescuento=='1' && !((formularioDescuento.descuento.$error.required || formularioDescuento.descuento.$error.pattern) && !formularioDescuento.descuento.$pristine)">
+								  <button type="button" class="btn btn-info" ng-click="cambiarDescuento()">
+								    <span class="fa fa-calculator"></span> %
+								  </button>						    	
+						    	</div>                                           		
+	                		</form>	                			
+						</div>
+						<div class="modal-footer">
+							<a href="javascript:;" class="btn btn-primary" ng-click="seleccionar()" ng-disabled="!visibilidad || formularioProducto.$invalid || estBtnSel">Seleccionar</a>
+							<a href="javascript:;" class="btn btn-white" data-dismiss="modal" ng-click="limpiarform()">Cerrar</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<br>
+			<br>
+			<div class="col-md-12 text-center" ng-show="pagoflag">
+				<button class="btn btn-primary" ng-click="previsualizar()">Siguiente <span class="fa fa-chevron-right"></span></button>
+				<br>
+	    	</div>
+			  <!-- Modal Mensajes -->
+			<div class="modal fade" data-backdrop="static" id="mensaje" role="dialog">
+				    <div class="modal-dialog modal-sm">	       
+				      <div class="modal-content">
+				        <div class="modal-header">
+				          <button type="button" class="close" data-dismiss="modal">&times;</button>
+				          <h4 class="modal-title text-center">Error</h4>
+				        </div>
+				        <div class="modal-body">
+				          <h5 class="text-center">{{mensaje}}</h5>
+				        </div>
+				         <div class="modal-footer text-center">
+				         	<button type="button" class="btn btn-sm btn-info" data-dismiss="modal">Aceptar</button>
+				        </div>	       
+				      </div>	      
+				    </div>
+			</div>
+	             </div>
+	</div>
+
+	<div ng-controller="maestro_clientes_controller">
+	
+	  <!-- Modal Buscar Cliente -->
+	  <div class="modal fade" data-backdrop="static" id="clienteBuscar" role="dialog">
+	    <div class="modal-dialog modal-wide modal-lg">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" ng-disabled="loading" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">BUSCAR CLIENTE</h4>
+	        </div>
+	        
+		        <div class="modal-body">
+					<div class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-widget-9">
+					    <div class="panel-heading">
+					        <ul id="myTab" class="nav nav-tabs pull-right">			        	
+					            <!-- <li ng-class="{active:tab===1}"><a href="" ng-click="clickTab(1)" data-toggle="tab"><i class="icon ccarrot-sunat"></i> <span class="hidden-xs">Clientes Con RUC</span></a></li> -->
+					            <li ng-class="{active:tab===2}"><a href="" ng-click="clickTab(2)" data-toggle="tab"><i class="fa fa-user"></i> <span class="hidden-xs">Clientes Sin RUC</span></a></li>
+					            <li ng-class="{active:tab===3}"><a href="" ng-click="clickTab(3)" data-toggle="tab"><i class="fa fa-graduation-cap"></i> <span class="hidden-xs">Alumnos UNMSM</span></a></li>
+					            <li ng-class="{active:tab===4}"><a href="" ng-click="clickTab(4)" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> <span class="hidden-xs">Servidores UNMSM</span></a></li>
+					        </ul>
+					        <h4 class="panel-title">CONSULTA DE CLIENTES</h4>
+					    </div>
+					    <div id="myTabContent" class="tab-content" style="margin-bottom: 5px;padding-bottom: 10px;">
+					    	
+					    	<!-- RUC EN LA BOLETA
+					    	<div ng-show="tab === 1" id="home">
+                                <div class="row"> 
+                                     <div class="form-group">
+                                            <label class="col-xs-12 col-md-2 control-label">Buscar por:</label>
+                                            <div class="col-md-2">
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="conruc_criterio" value="{{criterioBusqueda[0].id}}" ng-model="userCriterio.criterioIdxRUC" ng-click="conRUC_optionChange()" ng-value="true"/>
+                                                    {{criterioBusqueda[0].name}}
+                                                </label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="conruc_criterio" value="{{criterioBusqueda[3].id}}" ng-model="userCriterio.criterioIdxRUC" ng-click="conRUC_optionChange()"/>
+                                                    {{criterioBusqueda[3].name}}
+                                                </label>
+                                            </div>
+                                      </div>  
+                                 </div>
+                    
+                                 <br/>
+                                 <div class="row">
+                                   <form name="formBuscar1" >
+                                     <div class="form-group">
+                                         <div class="col-md-4 col-xs-6">
+                                             <label>{{criterioBusquedaElegida1}}</label>
+                                             <input type="text" class="input-sm form-control" placeholder="{{criterioPlaceHolder1}}" id="datoConRuc" ng-model="datoBuscar1" capitalize required/>
+                                         </div>
+                                         <div class="col-md-6 col-xs-6" id="divRegClieRUC" style="display:none;">
+                                            <label></br></label>
+                                            <div class="input-group" >                                              
+                                                <button id="btnVerificaRUC" ng-disabled="!estadoBtnValidarRUC || loading" type="button" class="btn btn-sm btn-primary" ng-click="consultaRUC_FAC()" style="font-size:13px;"><span class="fa fa-check-square-o"></span> Validar RUC <loading></loading></button>
+                                                <span id="mensajeVerifica" style="padding-left:10px; color:#e20808; display:none;"> RUC no encontrado</span>
+                                            </div>  
+                                         </div>                                      
+                                      </div>
+                                    </form>
+                                 </div>
+                            </div> -->
+                            			        
+					        <div ng-show="tab === 2" id="profile">
+					            <!-- Begin SIN RUC content -->
+					            <div class="row"> 
+						             <div class="form-group">
+											<label class="col-xs-12 col-md-2 control-label">Buscar por:</label>
+											<div class="col-md-4">
+											    <label class="radio-inline">
+											        <input type="radio" name="sinruc_criterio" value="{{criterioBusqueda[1].id}}" ng-model="userCriterio.criterioIdxNoRUC" ng-click="sinRUC_optionChange()" ng-value="true"/>
+											        {{criterioBusqueda[1].name}}
+											    </label>
+											    <div class="col-md-8" style="padding-left:20px;">					        
+											        <select class="m-l-8 input-xs form-control" style="font-size:11px; padding: 0px 6px;" id="sinruc_tipDoc" name="sinruc_tipDoc" ng-disabled="selectDisabled1" ng-options="doc.idDoc as doc.name for doc in listaDocIDentidad" ng-model="userTipoDoc1"></select>
+											    </div>
+											</div>
+											<div class="col-md-3">
+											    <label class="radio-inline">
+											        <input type="radio" name="sinruc_criterio" value="{{criterioBusqueda[4].id}}" ng-model="userCriterio.criterioIdxNoRUC" ng-click="sinRUC_optionChange()"/>
+											        {{criterioBusqueda[4].name}}
+											    </label>
+											</div>
+									  </div>  
+						         </div>
+						         
+						         <!-- <br/> -->
+								 <div class="row">
+								   <form name="formBuscar2" >
+								     <div class="form-group">
+								         <div class="col-md-4 col-xs-6">
+								             <label>{{criterioBusquedaElegida2}}</label>
+								             <input type="text" class="input-sm form-control" placeholder="{{criterioPlaceHolder2}}" id="datoSinRuc" ng-model="datoBuscar2" capitalize required/>
+								         </div>							         
+								         <div class="col-md-6 col-xs-6" id="divRegClieSinRUC" style="display:none;">
+									         	<label></br></label>
+									         	<div class="input-group" >								            	
+									            	<button id="btnVerificaDNI" ng-disabled="!estadoBtnValidarDNI || loading" type="button" class="btn btn-sm btn-primary" ng-click="consultaDNI_BOL()" style="font-size:13px;"><span class="fa fa-check-square-o"></span> Validar DNI <loading></loading></button>
+									            	<span id="mensajeVerificaDNI" style="padding-left:10px; color:#e20808; display:none;"> {{viewReniec.mensajeVerDNI}}</span>
+									            </div>	
+									     </div>
+									     <div class="col-md-6 col-xs-6" id="divRegClieOtroDOC" style="display:none;">
+									         	<label></br></label>
+									         	<div class="input-group" >								            	
+									            	<button id="btnRegistrarOtroDoc" type="button" class="btn btn-sm btn-primary" ng-click="openModalNewSinRUC_BOL()" style="font-size:13px;"><span class="fa fa-plus"></span> Registrar Nuevo </button>									            	
+									            </div>	
+									     </div>
+								      </div>
+								    </form>
+								 </div>
+								 <!-- End SIN RUC content -->
+					        </div>
+					        <div ng-show="tab === 3" id="profile2">
+					            <!-- Begin ALUMNO SUM content -->
+					            <div class="row"> 
+						             <div class="form-group">
+											<label class="col-xs-12 col-md-2 control-label">Buscar por:</label>
+											<div class="col-md-3">
+											    <label class="radio-inline">
+											        <input type="radio" name="sum_criterio" value="{{criterioBusqueda[2].id}}" ng-model="userCriterio.criterioIdxSUM" ng-click="aluSUM_optionChange()" ng-value="true"/>
+											        {{criterioBusqueda[2].name}}
+											    </label>
+											</div>
+											<div class="col-md-3">
+											    <label class="radio-inline">
+											        <input type="radio" name="sum_criterio" value="{{criterioBusqueda[4].id}}" ng-model="userCriterio.criterioIdxSUM" ng-click="aluSUM_optionChange()"/>
+											        {{criterioBusqueda[4].name}}
+											    </label>
+											</div>
+											<div class="col-md-4">
+											    <label class="radio-inline">
+											        <input type="radio" name="sum_criterio" value="{{criterioBusqueda[1].id}}" ng-model="userCriterio.criterioIdxSUM" ng-click="aluSUM_optionChange()"/>
+											        {{criterioBusqueda[1].name}}
+											    </label>
+											    <div class="col-md-8" style="padding-left:20px;">
+											        <!-- <select class="m-l-8 default-select input-sm form-control" name="sum_tipDoc" ng-disabled="selectDisabled" ng-options="tipoDI as tipoDI.tipo for tipoDI in tiposDocIdent" ng-model="tipoDocIdentElegida"/> -->
+											        <select class="m-l-8 input-xs form-control" style="font-size:11px; padding: 0px 6px;" id="sum_tipDoc" name="sum_tipDoc" ng-disabled="selectDisabled2" ng-options="doc.idDoc as doc.name for doc in listaDocIDentidad" ng-model="userTipoDoc2"></select>
+											    </div>  
+											</div>
+									  </div>  
+						         </div>
+						         
+						         <!-- <br/> -->
+								 <div class="row">
+								   <form name="formBuscar3" >
+								     <div class="form-group">
+								         <div class="col-md-4 col-xs-6">
+								             <label>{{criterioBusquedaElegida3}}</label>
+								             <input type="text" class="input-sm form-control" placeholder="{{criterioPlaceHolder3}}" id="datoAlumno" ng-model="datoBuscar3" capitalize required/>
+								         </div>
+								      </div>
+								    </form>
+								 </div>
+								 <!-- End ALUMNO SUM content -->
+					        </div>
+					        <div ng-show="tab === 4" id="profile3">
+					            <!-- Begin SERVIDOR UNMSM content -->
+					            <div class="row"> 
+						             <div class="form-group">
+											<label class="col-xs-12 col-md-2 control-label">Buscar por:</label>
+											<div class="col-md-3">
+											    <label class="radio-inline">
+											        <input type="radio" name="serv_criterio" value="{{criterioBusqueda[4].id}}" ng-model="userCriterio.criterioIdxSERV" ng-click="serv_optionChange()" ng-value="true"/>
+											        {{criterioBusqueda[4].name}}
+											    </label>
+											</div>
+											<div class="col-md-3">
+											    <label class="radio-inline">
+											        <input type="radio" name="serv_criterio" value="{{criterioBusqueda[1].id}}" ng-model="userCriterio.criterioIdxSERV" ng-click="serv_optionChange()"/>
+											        Documento de Identidad<!-- {{criterioBusqueda[1].name}} -->
+											    </label> 
+											</div>
+									  </div>  
+						         </div>
+						         
+						         <!-- <br/> -->
+								 <div class="row">
+								   <form name="formBuscar4" >
+								     <div class="form-group">
+								         <div class="col-md-4 col-xs-6">
+								             <label>{{criterioBusquedaElegida4}}</label>
+								             <input type="text" class="input-sm form-control" placeholder="{{criterioBusquedaElegida4}}" id="datoServidor" ng-model="datoBuscar4" capitalize required/>
+								         </div>
+								      </div>
+								    </form>
+								 </div>
+								 <!-- End SERVIDOR UNMSM content -->
+					        </div>
+					    </div>
+					</div>
+					<!-- end panel -->
+					
+					
+					<!-- BEGIN RUC RESULTS  -->
+					<!-- RUC EN LA BOLETA
+                    <div ng-show="tab==1">
+                        <div class="row" id="results1" style="display:none;">
+                            <div class="col-md-12">
+                                <div class="tab-content">
+                                     <div id="tableCRUCContainer" class="tablecontainer table-responsive">
+                                            <table ng-table="tableClienteRuc" class="table table-bordered table-condensed" style=" cursor: pointer;">                   
+                                                <tr ng-repeat="c in $data" ng-click="selectRowCliente($index,c)" ng-class="{'highlight': $index == selectedRow}" ng-dblclick="dobleClickCliente($index,c)">
+                                                    <td data-title="'RUC'"  style="width:8%; text-align: center;" ><span ng-class="{anuladoColor: c.estado==0}">{{c.ruc}}</span></td>
+                                                    <td data-title="'RAZON SOCIAL'" style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.razonSocial}}</span></td>
+                                                    <td  data-title="'DIRECCION'"  style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.direccion}}</span></td>
+                                                    <td  data-title="'TELEFONO'"  style="text-align: center"><span ng-class="{anuladoColor: c.estado==0}">{{c.telf}}</span></td>
+                                                    <td  data-title="'EMAIL'"  style="width:10%; text-align: left;"><span ng-class="{anuladoColor: c.estado==0}">{{c.email}}</span></td>
+                                                </tr>   
+                                            </table>
+                                     </div>
+                                 </div>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- END RUC RESULTS  -->
+                    
+					<!-- BEGIN SIN RUC RESULTS  -->
+					<div ng-show="tab==2" >
+						<div class="row" id="results2" style="display:none;">
+						    <div class="col-md-12">
+						        <div class="tab-content">
+									 <div id="tableSRUCContainer" class="tablecontainer table-responsive">
+										    <table ng-table="tableClienteSinRuc" class="table table-bordered table-condensed" >					
+												<tr ng-repeat="c in $data" ng-click="selectRowCliente($index,c)" ng-class="{'highlight': $index == selectedRow}" style=" cursor: pointer;" ng-dblclick="dobleClickCliente($index,c)">
+													<td data-title="'TIPO DOCUMENTO'"  style="width:8%; text-align: center;" ><span ng-class="{anuladoColor: c.estado==0}">{{c.abrev}}</span></td>
+													<td data-title="'NUMERO DOCUMENTO'"  style="width:8%; text-align: center;" ><span ng-class="{anuladoColor: c.estado==0}">{{c.numDoc}}</span></td>
+													<td data-title="'NOMBRE COMPLETO'" style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.nomCompleto}}</span></td>
+													<td  data-title="'DIRECCION'"  style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.direccion}}</span></td>
+													<td  data-title="'CORREO ELECTRONICO'"  style="width:15%;text-align: left;"><span ng-class="{anuladoColor: c.estado==0}">{{c.email}}</span></td>
+												</tr>	
+											</table>
+								     </div>
+							     </div>
+						    </div>
+						</div>
+					</div>
+					<!-- END SIN RUC RESULTS  -->
+					
+					<!-- BEGIN ALUMNO RESULTS  -->
+					<div ng-show="tab==3">
+						<!-- begin row -->
+						<div class="row" id="results3" style="display:none;">
+						    <div class="col-md-12">
+						        <div class="tab-content">
+									 <div id="tableALUContainer" class="tablecontainer table-responsive">					    
+										   <table ng-table="tableAlumno" class="table table-bordered table-condensed" >					
+												<tr ng-repeat="c in $data" ng-click="selectRowCliente($index,c)" ng-class="{'highlight': $index == selectedRow}" style=" cursor: pointer;" ng-dblclick="dobleClickCliente($index,c)">
+													<td data-title="'TIPO DOCUMENTO'"  style="width:8%; text-align: center;" ><span>{{c.abrev}}</span></td>
+													<td data-title="'NUMERO DOCUMENTO'"  style="width:8%; text-align: center;" ><span>{{c.numDoc}}</span></td>
+													<td data-title="'CODIGO MATRICULA'"  style="width:8%; text-align: center;" ><span>{{c.codigoMatricula}}</span></td>
+													<td data-title="'NOMBRE COMPLETO'" style="text-align: left"><span>{{c.nomCompleto}}</span></td>
+													<td  data-title="'FACULTAD'"  style="text-align: left"><span>{{c.nombFacultad}}</span></td>
+													<td  data-title="'CORREO ELECTRONICO'"  style="width:15%;text-align: left;"><span>{{c.email}}</span></td>
+												</tr>	
+											</table>
+								     </div>
+							     </div>
+						    </div>
+						</div>
+					</div>
+					<!-- END ALUMNO RESULTS  -->
+					
+					<!-- BEGIN SERVIDORES RESULTS  -->
+					<div ng-show="tab==4">
+						<!-- begin row -->
+						<div class="row" id="results4" style="display:none;">
+						    <div class="col-md-12">
+						        <div class="tab-content">
+									 <div id="tableSERVContainer" class="tablecontainer table-responsive">					    
+										   <table ng-table="tableServidor" class="table table-bordered table-condensed">					
+												<tr ng-repeat="c in $data" ng-click="selectRowCliente($index,c)" ng-class="{'highlight': $index == selectedRow}" style=" cursor: pointer;" ng-dblclick="dobleClickCliente($index,c)">
+													<td data-title="'NUMERO DOCUMENTO'"  style="width:8%; text-align: center;" ><span>{{c.numDoc}}</span></td>
+													<!-- <td data-title="'NUMERO DOCUMENTO'"  style="width:8%; text-align: center;" ><span>{{c.numDoc}}</span></td>
+													<td data-title="'CODIGO MATRICULA'"  style="width:8%; text-align: center;" ><span>{{c.codigoMatricula}}</span></td> -->
+													<td data-title="'NOMBRE COMPLETO'" style="text-align: left"><span>{{c.paterno}} {{c.materno}} {{c.nombre}}</span></td>
+													<td  data-title="'TIPO DE SERVIDOR'"  style="text-align: left"><span>{{c.tipoServicio}}</span></td>
+													<td  data-title="'ESTADO'"  style="text-align: left"><span>{{c.estado}}</span></td>
+													<td  data-title="'DEPENDENCIA'"  style="text-align: left"><span>{{c.cesantia}}</span></td>
+													<td  data-title="'DOMICILIO'"  style="text-align: left"><span>{{c.domicilio}}</span></td>
+												</tr>	
+											</table>
+								     </div>
+							     </div>
+						    </div>
+						</div>
+					</div>
+					<!-- NO MATCHES RESULTS  -->
+					<div class="row" id="noMatches" style="display:none;">
+					    <div class="col-md-12">
+						    <div class="tab-content">
+								<p class="hidden-sm text-center" style="font-size:16px;">No se encontraron coincidencias </p>
+							</div>
+					    </div>
+					</div>
+					<!-- END NO MATCHES RESULTS  -->	
+		
+		        </div>
+		        <div class="modal-footer">
+		          <button type="button" id="buttonAceptarCliente" data-dismiss="modal" class="btn btn-primary" ng-click="selCliente()" ng-disabled="!estadoBotonAceptar">Aceptar</button>
+		          <button type="button" class="btn btn-white" data-dismiss="modal" ng-click="estadoBotonAceptar=false" ng-disabled="loading">Cerrar</button>		          
+		        </div>        
+	      </div>
+	    </div>
+	  </div>
+	
+	  <!-- #modal-Nuevo Cliente RUC -->
+	  <!--
+      <div class="modal fade" id="NuevoRUC">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                        <h4 class="modal-title text-center">REGISTRAR CLIENTE</h4>
+                    </div>
+                    <div class="modal-body"> 
+                        <div class="m-b-10 row" ng-show="viewSunat.regRucManual">
+                              <span class="col-md-4 text-right asterisk-required"><em>(<span>*</span>) : campos obligatorios</em></span>
+                            </div>                       
+                            <form class="form-horizontal" id="formNuevoRuc" name="formNuevoRuc">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">RUC <span class="asterisk-required" ng-show="viewSunat.regRucManual">(<span>*</span>) </span>: </label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formNuevoRuc.newCRuc_ruc.$invalid && !formNuevoRuc.newCRuc_ruc.$pristine }">
+                                        <input type="text" class="input-sm form-control" id="newCRuc_ruc" name="newCRuc_ruc" ng-model="RUC_newClient.ruc" readonly required/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Razón Social <span class="asterisk-required" ng-show="viewSunat.regRucManual">(<span>*</span>) </span>:</label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formNuevoRuc.newCRuc_razonSocial_servCaido.$invalid && !formNuevoRuc.newCRuc_razonSocial_servCaido.$pristine }">                                        
+                                        <input type="text" class="input-sm form-control razonSocialServCaido" placeholder="Razón social" name="newCRuc_razonSocial_servCaido" ng-model="RUC_newClient.razonSocial" ng-show="viewSunat.regRucManual" maxlength="150" ng-required="viewSunat.regRucManual" capitalize/>
+                                        <textarea name="newCRuc_razonSocial" class="input-sm form-control" ng-model="RUC_newClient.razonSocial" rows="2" style="resize:none" ng-show="!viewSunat.regRucManual" readonly ng-required="!viewSunat.regRucManual"></textarea>
+                                        <span ng-show="formNuevoRuc.newCRuc_razonSocial_servCaido.$error.required && !formNuevoRuc.newCRuc_razonSocial_servCaido.$pristine">Ingrese la razón social del cliente</span>
+                                    </div>                                    
+                                </div>
+                                <div class="form-group" ng-show="!viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Estado :</label>
+                                    <div class="col-md-8">                                        
+                                        <input type="text" class="input-sm form-control" name="newCRuc_estado_clie" ng-model="RUC_newClient.estadoSunatDescr" ng-class="{ 'field-success' : RUC_newClient.estadoSunat=='00' , 'field-danger' : RUC_newClient.estadoSunat!='00' }" readonly ng-required="!viewSunat.regRucManual"/>
+                                    </div>                                    
+                                </div>
+                                <div class="form-group" ng-show="!viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Condición :</label>
+                                    <div class="col-md-8" >                                        
+                                        <input type="text" class="input-sm form-control" name="newCRuc_condicion_clie" ng-model="RUC_newClient.condicionSunatDescr" ng-class="{ 'field-success' : RUC_newClient.condicionSunat=='00' , 'field-danger' : RUC_newClient.condicionSunat!='00' }" readonly ng-required="!viewSunat.regRucManual"/>
+                                    </div>                                    
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Tipo Contribuyente :</label>
+                                    <div class="col-md-8" ng-show="!viewSunat.regRucManual">
+                                        <input type="text" class="input-sm form-control" name="newTipoPersonaRuc" ng-model="RUC_newClient.tipoPersonaDesc" readonly ng-required="!viewSunat.regRucManual"/>
+                                    </div>
+                                    <div class="col-md-8" ng-show="viewSunat.regRucManual">
+                                        <label class="radio-inline"><input type="radio" name="ruc_tipoCliente" value="01" ng-model="RUC_newClient.tipoPersona" />Persona Natural</label>
+                                        <label class="radio-inline"><input type="radio" name="ruc_tipoCliente" value="02" ng-model="RUC_newClient.tipoPersona" />Persona Jurídica</label>              
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" ng-show="RUC_newClient.tipoPersona=='01' && viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Sexo :</label>
+                                    <div class="col-md-8">
+                                        <select class="default-select2 input-sm form-control" name="newTipoSexoRuc" ng-options="sex.id as sex.name for sex in dataView.sexo" ng-model="RUC_newClient.sexo">
+                                          <option value="">Elija un sexo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" ng-show="RUC_newClient.tipoPersona=='01' && viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Fecha de Nacimiento :</label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formEditarRuc.editCRuc_fechaNac2.$invalid && !formEditarRuc.editCRuc_fechaNac2.$pristine }">
+                                      <div class="input-group">
+			                              <input type="text" class="input-sm form-control InputDate" name="newCRuc_fechaNac" id="newCRuc_fechaNac2" ng-model="RUC_newClient.fechaNacimiento" placeholder="Fecha de nacimiento" disabled />
+			                              <label class="input-group-addon btn btn-inverse" id="btnFechaNacRuc2"><span class="glyphicon glyphicon-calendar"></span></label>
+			                          </div>
+					                    <script>
+					                      $(function() {
+					                        $.datepicker.regional['es'] = {
+					                                  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+					                                  monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+					                                  dayNames: ['Domingo', 'Lunes', 'Martes', 'Mi&eacute;rcoles', 'Jueves', 'Viernes', 'S&aacute;bado'],
+					                                  dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','S&aacute;b'],
+					                                  dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','S&aacute;']
+					                                };
+					
+					                        $.datepicker.setDefaults($.datepicker.regional['es']);
+					                                
+					                            $( "#newCRuc_fechaNac2" ).datepicker({
+					                                dateFormat : 'dd/mm/yy',
+					                                changeMonth : true,
+					                                changeYear : true,
+					                                yearRange: '-100y:c+nn',
+					                                maxDate: '-1d'
+					                            });
+					                            
+					                            $("#btnFechaNacRuc2").click(function() { 
+					                          $("#newCRuc_fechaNac2").datepicker("show");
+					                        });
+					
+					                        });
+					                    </script>
+					               </div>
+                                </div>
+                                 
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-8 col-md-offset-4" style="color: #406c98">Domicilio Fiscal</label>
+                                        </div>
+                                </div>
+
+                				<div class="form-group" ng-show="viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Departamento :</label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formNuevoRuc.conruc_depRuc.$invalid && !formNuevoRuc.conruc_distRuc.$pristine }">
+                                        <select class="default-select input-sm form-control" name="conruc_depRuc" ng-options="ub.codUbigeo as ub.nombre for ub in listaUbigeo | filter:{ nivel : 1 }:strict" ng-model="filterUbigeo.cod_dep" >
+					                        <option value="">Elija un departamento</option>
+					                    </select>
+                                    </div>
+                                </div>                                
+                                <div class="form-group" ng-show="filterUbigeo.cod_dep!=null && viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Provincia :</label>
+                                    <div class="col-md-8"  ng-class="{ 'has-error' :formNuevoRuc.conruc_provRuc.$invalid && !formNuevoRuc.conruc_distRuc.$pristine }">
+                                        <select class="default-select input-sm form-control" name="conruc_provRuc" ng-options="ub.codUbigeo as ub.nombre for ub in listaUbigeo | filter:{ codNivel1 : filterUbigeo.cod_dep, nivel : 2 }:strict" ng-model="filterUbigeo.cod_prov" >
+				                        	<option value="">Elija una provincia</option>
+				                      	</select>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="filterUbigeo.cod_prov!=null && viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Distrito :</label>
+                                    <div class="col-md-8"  ng-class="{ 'has-error' :formNuevoRuc.conruc_distRuc.$invalid && !formNuevoRuc.conruc_distRuc.$pristine }">
+                                        <select class="default-select input-sm form-control" name="conruc_distRuc" ng-options="ub.codUbigeo as ub.nombre for ub in listaUbigeo | filter:{ codNivel2 : filterUbigeo.cod_prov, nivel : 3 }:strict" ng-model="RUC_newClient.codUbigeo" >
+					                        <option value="">Elija un distrito</option>
+					                    </select>
+                                    </div>
+                                </div>                                 
+                                                                
+                                <div class="form-group" ng-show="!viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Departamento :</label>
+                                    <div class="col-md-8" >
+                                        <input type="text" class="input-sm form-control" name="newDepRuc" ng-model="RUC_newClient.nombDepartamento" readonly ng-required="!viewSunat.regRucManual"/>
+                                    </div>
+                                </div>                                
+                                <div class="form-group" ng-show="!viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Provincia :</label>
+                                    <div class="col-md-8" >
+                                        <input type="text" class="input-sm form-control" name="newProvRuc" ng-model="RUC_newClient.nombProvincia" readonly ng-required="!viewSunat.regRucManual"/>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="!viewSunat.regRucManual">
+                                    <label class="col-md-4 control-label">Distrito :</label>
+                                    <div class="col-md-8" >
+                                        <input type="text" class="input-sm form-control" name="newDistRuc" ng-model="RUC_newClient.nombreUbigeo" readonly ng-required="!viewSunat.regRucManual"/>
+                                    </div>
+                                </div>                                                           
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Dirección <span class="asterisk-required" ng-show="viewSunat.regRucManual">(<span>*</span>) </span>: </label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formNuevoRuc.newCRuc_direccion2.$invalid && !formNuevoRuc.newCRuc_direccion2.$pristine }">
+                                        <input type="text" class="input-sm form-control" placeholder="Dirección del cliente"  maxlength="290" name="newCRuc_direccion2" ng-model="RUC_newClient.direccion" ng-show="viewSunat.regRucManual" ng-required="viewSunat.regRucManual" capitalize/>
+                                        <textarea name="newCRuc_direccion" class="input-sm form-control" ng-model="RUC_newClient.direccion" rows="3" style="resize:none" ng-show="!viewSunat.regRucManual" readonly></textarea>
+                                        <span ng-show="formNuevoRuc.newCRuc_direccion2.$error.required && !formNuevoRuc.newCRuc_direccion2.$pristine">Ingrese la dirección del cliente</span>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0">
+                                    <div class="col-md-12">
+                                        <label class="col-md-8 col-md-offset-4" style="color: #406c98">Información Extra</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Teléfono : </label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formNuevoRuc.newCRuc_telf.$invalid && !formNuevoRuc.newCRuc_telf.$pristine }">
+                                        <input type="text" class="input-sm form-control" id="newCRuc_telf" name="newCRuc_telf" ng-model="RUC_newClient.telf" placeholder="Teléfono" ng-pattern="/^([1-9]\d{6}|[1-9]\d{8})+$/" />                                        
+                                        <span ng-show="formNuevoRuc.newCRuc_telf.$error.pattern && !formNuevoRuc.newCRuc_telf.$pristine">El teléfono debe ser de 7 o 9 dígitos y no empezar en cero</span>
+                                    </div>
+                                    <script type="text/javascript">
+                                        $("#newCRuc_telf").mask('000000000');
+                                    </script>
+                                </div> 
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Correo electrónico : </label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formNuevoRuc.newCRuc_email.$invalid && !formNuevoRuc.newCRuc_email.$pristine }">
+                                        <input type="text" class="input-sm form-control" maxlength="90" name="newCRuc_email" ng-model="RUC_newClient.email" placeholder="Correo electrónico principal" ng-pattern="/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/" />                                        
+                                        <span ng-show="formNuevoRuc.newCRuc_email.$error.pattern && !formNuevoRuc.newCRuc_email.$pristine">Ingrese un email válido</span>
+                                    </div>
+                                </div>
+                            </form>
+                    </div>
+                    <div class="modal-footer">                        
+                        <input type="submit" class="btn btn-primary" ng-click="abrirModalConfirm_crearClienteRUC_extra()" ng-disabled="formNuevoRuc.$invalid || (RUC_newClient.estadoSunat!='00' || RUC_newClient.condicionSunat!='00')" value="Registrar" />
+                        <a href="javascript:;" class="btn btn-white" data-dismiss="modal">Cancelar</a>                  
+                    </div>                                                  
+                </div>
+            </div>
+      </div>
+      -->
+	  
+	  <!-- #modal-Nuevo Cliente Sin RUC-->
+		<div class="modal fade" id="ModalSINRUC">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+							<h4 class="modal-title text-center">REGISTRAR CLIENTE</h4>
+						</div>
+						<div class="modal-body">
+								<div class="m-b-10 row">
+	                            	<span class="col-md-4 text-right asterisk-required"><em>(<span>*</span>) : campos obligatorios</em></span>
+	                            </div>
+								<form class="form-horizontal" name="formSinRUC" >
+	                                
+	                                <div class="form-group" >
+	                                    <label class="col-md-4 control-label">Tipo Documento :</label>
+	                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_tDocu.$invalid && !formSinRUC.sinruc_tDocu.$pristine }">
+	                                        <input type="text" class="input-sm form-control" id="sinruc_tDocu" name="sinruc_tDocu" value="{{(SINRUC_client.tipoDoc==1)?'DNI': (SINRUC_client.tipoDoc==4?'CARNET DE EXTRANJERIA': (SINRUC_client.tipoDoc==7?'PASAPORTE': 'OTROS'))}}" readonly required/>
+	                                    </div>
+	                                </div>
+	                                <div class="form-group" >
+	                                    <label class="col-md-4 control-label">Número Documento <span ng-show="SINRUC_client.tipoDoc!=1" class="asterisk-required">(<span>*</span>) </span> :</label>
+	                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_numDoc.$invalid && !formSinRUC.sinruc_numDoc.$pristine }">
+	                                        <input type="text" class="input-sm form-control" id="sinruc_numDoc" name="sinruc_numDoc" ng-model="SINRUC_client.numDoc" ng-readonly="SINRUC_client.tipoDoc==1 && dataReniec.status==1" ng-minlength="{{SINRUC_client.tipoDoc==1?8: 1}}" ng-maxlength="{{SINRUC_client.tipoDoc==1?8: (SINRUC_client.tipoDoc==9?15:12)}}" placeholder="N° {{SINRUC_client.tipoDoc==1?' DNI':(SINRUC_client.tipoDoc==4?' Carnet Extranjería':(SINRUC_client.tipoDoc==7?' Pasaporte':' del documento'))}}" capitalize required/>
+	                                        
+	                                        <span ng-show="formSinRUC.sinruc_numDoc.$error.required && !formSinRUC.sinruc_numDoc.$pristine">{{SINRUC_client.tipoDoc==1?'Escriba el DNI (8 digitos)': (SINRUC_client.tipoDoc==9?'Escriba el número del documento (sólo numeros y letras, máximo 15 caracteres)':'Escriba el número del documento (sólo numeros y letras, máximo 12 caracteres)')}}</span>
+	                                        <span ng-show="formSinRUC.sinruc_numDoc.$error.maxlength && !formSinRUC.sinruc_numDoc.$pristine">{{SINRUC_client.tipoDoc==1?'Complete el DNI (8 digitos)': (SINRUC_client.tipoDoc==9?'Escriba un número de documento válido (sólo numeros y letras, máximo 15 caracteres)':'Escriba un número de documento válido (sólo numeros y letras, máximo 12 caracteres)')}}</span>
+	                                        <span ng-show="formSinRUC.sinruc_numDoc.$error.minlength && !formSinRUC.sinruc_numDoc.$pristine">{{SINRUC_client.tipoDoc==1?'Complete el DNI (8 digitos)': (SINRUC_client.tipoDoc==9?'Escriba un número de documento válido (sólo numeros y letras, máximo 15 caracteres)':'Escriba un número de documento válido (sólo numeros y letras, máximo 12 caracteres)')}}</span>
+	                                    </div>
+	                                </div>
+	                                <div class="form-group" >
+	                                    <label class="col-md-4 control-label">Nombre Completo <span ng-show="SINRUC_client.tipoDoc!=1" class="asterisk-required">(<span>*</span>) </span> :</label>
+	                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_nombres.$invalid && !formSinRUC.sinruc_nombres.$pristine }">
+	                                        <input type="text" class="input-sm form-control input_sinruc_nombres" name="sinruc_nombres" placeholder="Nombre completo" ng-model="SINRUC_client.nomCompleto" ng-readonly="SINRUC_client.tipoDoc==1 && dataReniec.status==1" capitalize required/>
+	                                        <span ng-show="formSinRUC.sinruc_nombres.$error.required && !formSinRUC.sinruc_nombres.$pristine">Escriba el nombre del cliente</span>
+	                                    </div>
+	                                </div>
+	                                <div class="form-group" style="margin-bottom: 0">
+								    		<div class="col-md-12">
+								    			<label class="col-md-8 col-md-offset-4" style="color: #406c98">Domicilio Fiscal</label>
+								    		</div>
+									</div>
+									<div class="form-group">
+	                                    <label class="col-md-4 control-label">Departamento :</label>
+	                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_depRuc.$invalid && !formSinRUC.sinruc_depRuc.$pristine }">
+	                                        <select class="default-select input-sm form-control" name="sinruc_depRuc" ng-options="ub.codUbigeo as ub.nombre for ub in listaUbigeo | filter:{ nivel : 1 }:strict" ng-model="filterUbigeo.cod_dep" >
+									    		<option value="">Elija un departamento</option>
+									    	</select>
+	                                    </div>
+	                                </div>                                
+	                                <div class="form-group" ng-show="filterUbigeo.cod_dep!=null">
+	                                    <label class="col-md-4 control-label">Provincia :</label>
+	                                    <div class="col-md-8"  ng-class="{ 'has-error' :formSinRUC.sinruc_provRuc.$invalid && !formSinRUC.sinruc_provRuc.$pristine }">
+	                                        <select class="default-select input-sm form-control" name="sinruc_provRuc" ng-options="ub.codUbigeo as ub.nombre for ub in listaUbigeo | filter:{ codNivel1 : filterUbigeo.cod_dep, nivel : 2 }:strict" ng-model="filterUbigeo.cod_prov" >
+									    		<option value="">Elija una provincia</option>
+									    	</select>
+	                                    </div>
+	                                </div>
+	                                <div class="form-group" ng-show="filterUbigeo.cod_prov!=null">
+	                                    <label class="col-md-4 control-label">Distrito :</label>
+	                                    <div class="col-md-8"  ng-class="{ 'has-error' :formSinRUC.sinruc_distRuc.$invalid && !formSinRUC.sinruc_distRuc.$pristine }">
+	                                        <select class="default-select input-sm form-control" name="sinruc_distRuc" ng-options="ub.codUbigeo as ub.nombre for ub in listaUbigeo | filter:{ codNivel2 : filterUbigeo.cod_prov, nivel : 3 }:strict" ng-model="SINRUC_client.codUbigeo" >
+									    		<option value="">Elija un distrito</option>
+									    	</select>
+	                                    </div>
+	                                </div>                               
+	                                <div class="form-group">
+	                                    <label class="col-md-4 control-label">Dirección :</label>
+	                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_direccion.$invalid && !formSinRUC.sinruc_direccion.$pristine }">
+	                                        <input type="text" class="input-sm form-control" maxlength="100" name="sinruc_direccion" ng-model="SINRUC_client.direccion" placeholder="Direcci&oacute;n" capitalize />
+	                                    </div>
+	                                </div>
+	                                <div class="form-group" style="margin-bottom: 0">
+								    		<div class="col-md-12">
+								    			<label class="col-md-8 col-md-offset-4" style="color: #406c98">Información Extra</label>
+								    		</div>
+									</div>
+	                                <div class="form-group">
+	                                    <label class="col-md-4 control-label">Teléfono :</label>
+	                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_telf.$invalid && !formSinRUC.sinruc_telf.$pristine }">
+	                                        <input type="text" class="input-sm form-control" id="sinruc_telf" name="sinruc_telf" ng-model="SINRUC_client.telefono" placeholder="Teléfono" ng-pattern="/^([1-9]\d{6}|[1-9]\d{8})+$/" />
+	                                        <span ng-show="formSinRUC.sinruc_telf.$error.pattern && !formSinRUC.sinruc_telf.$pristine">El teléfono debe ser de 7 o 9 dígitos y no empezar en cero</span>
+	                                    </div>
+	                                    <script type="text/javascript">
+										 	$("#sinruc_telf").mask('000000000');
+										</script>
+	                                </div> 
+	                                <div class="form-group">
+	                                    <label class="col-md-4 control-label">Correo electrónico : </label>
+	                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_email.$invalid && !formSinRUC.sinruc_email.$pristine }">
+	                                        <input type="text" class="input-sm form-control" maxlength="90" name="sinruc_email" ng-model="SINRUC_client.email" placeholder="Correo electrónico principal" ng-pattern="/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/"/>
+	                                        <!-- <span ng-show="formSinRUC.sinruc_email.$error.required && !formSinRUC.sinruc_email.$pristine">Ingrese un email</span> -->
+	                                        <span ng-show="formSinRUC.sinruc_email.$error.pattern && !formSinRUC.sinruc_email.$pristine">Ingrese un email valido</span>
+	                                    </div>
+	                                </div>
+	                            </form>
+						</div>
+						<div class="modal-footer">						
+							<input type="submit" id="btnRegistrarClieSinRuc" class="btn btn-primary" ng-click="submitSinRUC_extra()" ng-disabled="formSinRUC.$invalid" value="Registrar" />
+							<a href="" class="btn btn-white" data-dismiss="modal" ng-click="limpiar2()">Cancelar</a>
+						</div>
+
+					</div>
+				</div>
+		</div>
+		
+		
+		 <!-- MODAL VALIDANDO DNI -->
+		    <div class="modal modal-mid fade" id="mensajeDNI" data-backdrop="static">
+		       <div class="modal-dialog modal-mid-diag modal-sm">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                  <div style="background-color:#428bca" class="text-center">
+		                      <h3 style="color:white;" class="modal-title"> Atención </h3>
+		                  </div>
+		                </div>
+		                <div class="modal-body">
+		                     <!-- <div class="text-center" ng-show="dataReniec.status==-1">
+		                        <div class="alert alert-warning" style="margin-bottom:0px;">
+		                           <i class="fa fa-bullhorn" aria-hidden="true"></i> 
+		                           <strong>¡Ups!</strong> DNI no encontrado. Favor de registrar manualmente como 
+                                   <a href="" ng-click="cambiarBOL_DNI()"><strong>DNI</strong></a>, solo si el importe total del comprobante ha generar supere los S/ 700, 
+                                   caso contrario puede registrarlo como <a href="" ng-click="cambiarBOL_OTROS()"><strong>OTROS</strong></a>.
+		                        </div>
+		                     </div> -->
+		                     <div class="text-center" ng-show="dataReniec.status==-1 || dataReniec.status==-3">
+		                         <div class="alert alert-warning" style="margin-bottom:0px;">
+		                           <i class="fa fa-bullhorn" aria-hidden="true"></i> 
+		                           <strong>¡Ups!</strong> Servicio no disponible. Favor de registrar manualmente como 
+                                   <a href="" ng-click="cambiarBOL_DNI()"><strong>DNI</strong></a>, solo si el importe total del comprobante ha generar supere los S/ 700, 
+                                   caso contrario puede registrarlo como <a href="" ng-click="cambiarBOL_OTROS()"><strong>OTROS</strong></a>.
+		                         </div>
+		                     </div>                 
+		                </div>
+		                <div class="modal-footer text-center" ng-show="dataReniec.status==-1 || dataReniec.status==-3">
+		                     <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="resetSinRUC()">Cerrar</button>
+		                </div>
+		            </div>
+		            
+		        </div>
+		    </div>
+		 <!-- FIN MODAL VALIDANDO DNI --> 
+		 
+		 <!-- MODAL CONFIRM -->
+	     <div class="modal fade" id="modalConfirm" data-backdrop="static">
+	       <div class="modal-dialog modal-sm">
+	            <div class="modal-content">
+	                <div class="modal-header text-center">
+	                     <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+	                      style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+	                </div>
+	                <div class="modal-body">
+	                     <p>{{modalOptions.bodyText}}</p>
+	                </div>
+	                <div class="modal-footer text-center">
+	                     <button type="button" class="btn btn-primary" ng-click="modalOptions.action()" data-dismiss="modal">{{modalOptions.actionButtonText}}</button>
+	                     <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>
+	                </div>
+	            </div>
+	        </div>
+	     </div>
+	     <!-- FIN MODAL CONFIRM -->
+		 
+		 <!-- MODAL SERVICIO CONSULTA RUC CAIDO  -->
+	     <div class="modal modal-mid fade" id="modalServicioConsultaRUCcaido" data-backdrop="static">
+	       <div class="modal-dialog modal-mid-diag modal-sm" style="width:400px;">
+	            <div class="modal-content">
+	                <div class="modal-body">                  
+	                     <div class="text-center">
+	                       <p style="font-weight:bold;">RUC</p>
+	                         <p style="font-weight:bold;">{{viewSunat.numRuc}}</p>
+	                         <div class="alert alert-warning" align="left" style="margin-bottom:5px;"><i class="fa fa-bullhorn" aria-hidden="true"></i> <strong>¡Ups!</strong> El servicio no está disponible por el momento. <strong>¿Desea registrarlo manualmente?</strong></div>
+	                     </div>                               
+	                </div>
+	                <div class="modal-footer text-center">
+	                     <button type="button" class="btn btn-primary" ng-click="regRucManualmente_contingencia()" ng-disabled="loading" >Si</button>
+	                     <button type="button" class="btn btn-default" data-dismiss="modal" >No</button> 
+	                </div>
+	            </div>            
+	       </div>
+	     </div>
+	     <!-- FIN MODAL SERVICIO CONSULTA RUC CAIDO -->  
+	
+	</div> <!-- FIN CONTROLLER CLIENTE -->
+	
+	
+	<!-- MODAL VALIDANDO RUC -->
+    <div class="modal modal-mid fade" id="modalValidandoRuc" data-backdrop="static">
+       <div class="modal-dialog modal-mid-diag modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                     <load-validando-ruc></load-validando-ruc>
+                     <div class="text-center" ng-show="!loadValidandoRuc && (dataSunat.status==1 || dataSunat.status==2)">
+                         <p style="font-weight:bold;">{{dataSunat.ruc}}</p>
+                         <p style="font-weight:bold;">{{dataSunat.razonSocial}}</p>
+                         <p ng-class="{ 'field-success' : dataSunat.estadoSunat=='00' , 'field-danger' : dataSunat.estadoSunat!='00' }">{{dataSunat.estadoSunatDescr}}</p>
+                         <p ng-class="{ 'field-success' : dataSunat.condicionSunat=='00' , 'field-danger' : dataSunat.condicionSunat!='00' }">{{dataSunat.condicionSunatDescr}}</p>
+                         <p ng-show="dataSunat.status==2" style="font-weight: bold;">Cliente no habilitado. Elija otro.</p>
+                     </div>
+                     <div class="text-center" ng-show="!loadValidandoRuc && dataSunat.status==-1">
+                         <p style="font-weight:bold;">{{selectedRowCliente.ruc}}</p>
+                         <p style="font-weight:bold;">{{selectedRowCliente.razonSocial}}</p>
+                         <div class="alert alert-warning" align="left" style="margin-bottom:5px;"><i class="fa fa-bullhorn" aria-hidden="true"></i> <strong>¡Ups!</strong> El servicio no está disponible por el momento. <strong>¿Desea usar este cliente?</strong></div>
+                     </div>
+                     <div class="text-center" ng-show="!loadValidandoRuc && dataSunat.status==0">
+                         <p style="font-weight:bold;">{{selectedRowCliente.ruc}}</p>
+                         <p style="font-weight:bold;">El NUMERO DE RUC NO EXISTE</p>
+                     </div>                  
+                </div>
+                <div class="modal-footer text-center" ng-show="!loadValidandoRuc">
+                     <button type="button" class="btn btn-primary" ng-click="aceptarClienteValidadoRUC()" ng-show="dataSunat.status==1" ng-disabled="loading">Aceptar <loading></loading></button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal" ng-show="dataSunat.status==2 || dataSunat.status==0">Cerrar</button>
+                     <button type="button" class="btn btn-primary" ng-click="aceptarClienteValidadoRUC()" ng-disabled="loading" ng-show="dataSunat.status==-1">Si</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal" ng-show="dataSunat.status==-1">No</button> 
+                </div>
+            </div>
+            
+        </div>
+    </div>
+   <!-- FIN MODAL VALIDANDO RUC -->
+
+
+	<!-- Modal Mensaje Servicio no disponible -->
+	  <!-- Modal Mensajes -->
+		<div class="modal fade" data-backdrop="static" id="modalMensaje" role="dialog">
+			    <div class="modal-dialog modal-sm">	       
+			      <div class="modal-content">
+			        <div class="modal-header">
+			          <button type="button" class="close" data-dismiss="modal">&times;</button>
+			          <h4 class="modal-title text-center">Aviso</h4>
+			        </div>
+			        <div class="modal-body">
+			          <p class="text-center">{{modalMensajeText}}</p>
+			        </div>
+			         <div class="modal-footer text-center">
+			         	<button type="button" class="btn btn-sm btn-info" data-dismiss="modal">Aceptar</button>
+			        </div>	       
+			      </div>	      
+			    </div>
+		</div>
+		
+	  <input id="viewMode" type="hidden" value="2"> <!-- modo consulta -->
+	  <input id="templ_boleta" type="hidden" value="1"> <!-- template boleta -->
+	  <input id="viewDataUbigeo" type="hidden" value="1"> <!-- usar ubigeo de la bd -->
+	    
+</div>
+<div ng-show="previsualizacion">
+	<div class="panel panel-inverse">
+		<div class="panel-heading">
+			<h4 class="panel-title" style="font-size:15px;">PREVISUALIZACIÓN</h4>
+		</div>
+		<div class="panel-body">
+	    	<div class="row">
+		    	<div class="col-xs-12 col-sm-6 col-md-4">
+		    		<label>Documento de identidad: </label>
+			    	<input type="text" class="form-control negrita" placeholder="Documento de identidad" disabled="true" ng-model="numDocCliente">  
+		    		<br/>
+		    	</div>
+		    	<div class="col-xs-12 col-sm-6 col-md-4">
+		    		<label>Cliente: </label>
+			    	<input type="text" class="form-control negrita" placeholder="Cliente" disabled="true" ng-model="razonCliente">  
+		    		<br/>
+		    	</div>
+		    	<div class="col-xs-12 col-sm-6 col-md-4">
+		    		<label>Fecha: </label>
+			    	<input type="text" class="form-control negrita" placeholder="Fecha" disabled="true" ng-model="fecha" >
+		    		<br/>
+		    	</div>
+		    	<div class="col-xs-12 col-sm-6 col-md-4">
+		    		<label>Dirección: </label>
+			    	<input type="text" class="form-control negrita" placeholder="Dirección" disabled="true" ng-model="direccionCliente">  
+		    		<br/>
+		    	</div>
+		    	<div class="col-xs-12 col-sm-6 col-md-4">
+		    		<label>Moneda: </label>
+			    	<input type="text" class="form-control negrita" placeholder="Moneda" disabled="true" ng-model="moneda">  
+		    		<br/>
+		    	</div>
+	    	</div>
+			<div class="tablecontainer table-responsive">
+				<table id="data-table" class="table table-striped table-bordered nowrap" width="100%">
+                   <thead>
+                       <tr>
+                           <th style="text-align: center">Tipo Afect.</th>
+                           <th style="text-align: center">Cant.</th>
+                           <th style="text-align: center">Descripción</th>
+                           <th style="text-align: center">Val. Unit.</th>
+                           <th style="text-align: center">Val. Vent.(*)</th>
+                           <th style="text-align: center">IGV({{igvGlobal*100}}%)</th>
+                           <th style="text-align: center">Imp. Vent.(**)</th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                       <tr class="odd gradeX" ng-repeat="p in contenido">
+                           <td class="negrita" align="center">{{p.codTipoIgv|tipoComprobante}}</td>
+                           <td class="negrita" align="right"><div ng-bind="p.cantidad"></div></td>
+                           <td class="negrita">{{p.descripcion}}</td>
+                           <td class="negrita" align="right">{{p.precioU.toFixed(2)}}</td>
+                           <td class="negrita" align="right">{{p.precioT.toFixed(2)}}</td>
+                           <td class="negrita" align="right">{{p.igvT.toFixed(2)}}</td>
+                           <td class="negrita" align="right">{{(p.precioT+p.igvT).toFixed(2)}}</td>
+                       </tr>
+                   </tbody>
+	            </table>
+			</div>
+			<br>
+	        <div class="col-md-12">
+	          <div class="col-md-9 text-left">
+					<label>(*) Sin impuesto.</label>
+					<br/>
+					<label>(**) Incluye impuesto, de ser Op. Gravada.</label>	
+        	 </div>
+	       	  <div class="col-md-3 text-right">
+	                 <br/>
+	                <label>Op. Gravada: </label> <input type="text" class="text-right negrita" style="margin-bottom:8px;" placeholder="Op. Gravada" disabled="true" ng-model="gravadam">      	  		
+	                <br/>
+	                <label>Op. Exonerada: </label> <input type="text" class="text-right negrita" style="margin-bottom:8px;" placeholder="Op. Exonerada" disabled="true" ng-model="exoneradam">
+	                <br/>
+	                <label>Op.Inafecta: </label> <input type="text" class="text-right negrita" style="margin-bottom:8px;" placeholder="Op.Inafecta" disabled="true" ng-model="inafectam">
+	                <br/>
+	                <label>I.G.V: </label> <input type="text" class="text-right negrita" style="margin-bottom:8px;" placeholder="IGV" disabled="true" ng-model="igvm">
+	                <br/>
+	                <label>Total: </label> <input type="text" class="text-right negrita" style="margin-bottom:8px;" placeholder="Total" disabled="true" ng-model="totalm">
+	                <br/>         	
+	         </div>           
+	        </div> 			
+	              <br/>
+	              <observacion></observacion>
+			<div class="text-center">
+				<button class="btn btn-primary" ng-click="retroceder()"><span class="fa fa-chevron-left"></span> Retroceder</button>
+	    		<button class="btn  btn-primary" ng-click="registrar()">Registrar <span class="fa fa-chevron-right"></span></button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="modalRegistrar" class="modal fade bs-example-modal-sm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+			<div class="modal-dialog modal-sm" role="document">
+  			<div class="modal-content">
+			<div class="modal-header">
+				<div style="background-color:#428bca" class="text-center">
+					<h3 style="color:white;" class="modal-title">Registrar</h3>
+				</div>
+			</div>
+			<div class="modal-body">
+				<center><label>¿Desea registrar la boleta?</label></center>
+			</div>
+			<div class="modal-footer text-center">
+	     	 	<button class="btn btn-primary" ng-click="procesar()" data-dismiss="modal">Si</button>
+				<a href="javascript:;" class="btn btn-default" data-dismiss="modal">No</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="descargarPDF" class="modal fade bs-example-modal-lg" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+			<div class="modal-dialog modal-lg" role="document">
+  			<div class="modal-content">
+			<div class="modal-header">
+				<div style="background-color:#428bca" class="text-center">
+					<h3 style="color:white;" class="modal-title">Boleta</h3>
+				</div>
+			</div>
+			<div class="modal-body">
+				<loading></loading>
+				<object id="comprobantePdf" type="application/pdf" data="{{url}}" width="875" height="700">
+				</object>
+			</div>
+				<div class="modal-footer text-center">
+		     	 	<button class="btn  btn-primary" ng-click="cerrar()" type="submit">Cerrar</button>
+				</div>
+		</div>
+	</div>
+</div>
+<spinner-modal show="{{cargando.valor}}"></spinner-modal>
+
+ <!-- Modal Arbol -->
+	<div  id="modalDependencia" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel"><span style="color:#0431B4">DEPENDENCIAS</span>  </h4>
+	      </div>
+	      <div class="modal-body"  style="max-height: 520px;overflow-y: auto;">	     	
+	            <div class="tree"  ng-show="dependencia != null">
+						<ul>
+							<li ng-show="true">
+								<a ng-click="expandirContraer($event,dependencia.descripcion)"   >{{dependencia.descripcion}}</a>
+								<ul>
+									<li ng-show="primerNivel" ng-repeat="aux1 in dependencia.unidades" >
+										<a ng-click="expandirContraer($event, aux1.descripcion)"   >{{aux1.codUnidad}}-{{aux1.descripcion}}</a>
+										<ul>
+											<li ng-show="{{aux1.codUnidad}}" ng-repeat="aux2 in aux1.unidades"  >
+												<a ng-click="expandirContraer($event, aux2.descripcion)"    >{{aux2.codUnidad}}-{{aux2.descripcion}}</a>
+												<ul>
+													<li ng-show="{{aux2.codUnidad}}" ng-repeat="aux3 in aux2.unidades"  >
+														<a ng-click="expandirContraer($event, aux3.descripcion)">{{aux3.codUnidad}}-{{aux3.descripcion}}</a>
+														<ul>
+															<li ng-show="{{aux3.codUnidad}}" ng-repeat="aux4 in aux3.unidades"  >
+																<a ng-click="expandirContraer($event, aux4.descripcion)">{{aux4.codUnidad}}-{{aux4.descripcion}}</a>
+																<ul>
+																	<li ng-show="{{aux4.codUnidad}}" ng-repeat="aux5 in aux4.unidades"  >
+																		<a ng-click="expandirContraer($event, aux5.descripcion)">{{aux5.codUnidad}}-{{aux5.descripcion}}</a>
+																		<ul>
+																			<li ng-show="{{aux5.codUnidad}}" ng-repeat="aux6 in aux5.unidades"  >
+																				<a ng-click="expandirContraer($event, aux6.descripcion)">{{aux6.codUnidad}}-{{aux6.descripcion}}</a>
+																				<ul>
+																					<li ng-show="{{aux6.codUnidad}}" ng-repeat="aux7 in aux6.unidades"  >
+																						<a ng-click="expandirContraer($event, aux7.descripcion)">{{aux7.codUnidad}}-{{aux7.descripcion}}</a>
+																					</li>
+																				</ul>
+																			</li>
+																		</ul>
+																	</li>
+																</ul>
+															</li>
+														</ul>
+													</li>
+												</ul>
+										   </li>
+	
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+	      </div>
+	      <div class="modal-footer">	        
+	        <button  ng-click="aceptarDependencia()"  type="button" class="btn btn-primary">Aceptar</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>  
+	<!-- Fin Modal Arbol -->
+
+	
+<script type="text/javascript">
+    $(document).on('show.bs.modal', '.modal', function (event) {
+        //var zIndex = 1040 + (10 * $('.modal:visible').length);
+        var zIndex = Math.max.apply(null, Array.prototype.map.call(document.querySelectorAll('*'), function(el) {
+                        return +el.style.zIndex;
+                      })) + 10;
+        var zIndex = (zIndex<1040)?1040:zIndex;
+
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+    
+    $(document).on('hidden.bs.modal', '.modal', function () {
+    	$(this).css("z-index", '');
+        $('.modal:visible').length && $(document.body).addClass('modal-open');        
+    });
+</script>

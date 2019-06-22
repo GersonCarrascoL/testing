@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="ReporteConceptoPago"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.zoom" value="1.0" />
+	<property name="ireport.x" value="0" />
+	<property name="ireport.y" value="0" />
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="usuario" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Usuario Prueba"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["EscudoUNMSM.png"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="udCodUnidad" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["F0617"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo_quipu" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["logo_quipu.png"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select f.UD_DSC, n.*
+from
+(
+
+
+SELECT
+             CPU.ID_CU AS idCPU,
+             CPAGO.ID_CPAGO AS idCPago,
+             COD.CODIGO_UNIDAD AS codigoUnidad,
+             CPAGO.COD_CPAGO AS codCPago,
+             CPAGO.CONCEPTO AS cpDescrip,
+             CPU.DESCR AS descripcion,
+             CPAGO.ID_TIPO_CPAGO AS idTipoCPago,
+             CPU.MONTO AS monto,
+             CPU.ESTADO AS cpEstado,
+             CPU.UD_ID AS udId,
+             CPU.ID_MONEDA AS idMoneda,
+             CPAGO.FACTURABLE AS cpFacturable,
+             nvl(TO_char(CPU.FECHA_REG, 'DD/MM/YYYY HH24:MI:SS'),null) AS fecha_reg,
+             CPU.EST_SOLICITUD AS estado_solicitud,
+             DEP.UD_COD AS udCod,
+             DEP.UD_DSC AS udDesc,
+             MON.SIMB AS monSimb,
+             MON.MONEDA AS monDesc,
+             CPAGO.IGV AS igv,
+             CPAGO.COD_BANCO AS cod_banco,
+             CPU.RESOL_RECTORAL AS resol_rectoral,
+             CPU.OBSERVACIONES AS observaciones,
+             CPU.MOTIVO_RECHAZO AS motivo_rechazo,
+             cod.COD_FAC
+             FROM
+             WEBQPROTESORERIA.CONCEPTO_PAGO_UNIDAD CPU
+             INNER JOIN WEBQPROTESORERIA.MONEDA MON ON CPU.ID_MONEDA = MON.ID_MONEDA
+             INNER JOIN WEBQPROTESORERIA.CONCEPTO_PAGO CPAGO ON CPU.ID_CP = CPAGO.ID_CPAGO
+             INNER JOIN QPRODATAQUIPU.UNI_DEP DEP ON CPU.UD_ID = DEP.UD_ID
+             INNER JOIN WEBQPROTESORERIA.UNIDAD_CODIGO COD ON CPU.UD_ID = COD.UD_ID
+             WHERE
+             DEP.UD_FEC_CAD IS NULL AND
+             DEP.UD_COD LIKE $P{udCodUnidad}||'%' AND
+             MON.EST = 1
+            
+ 
+ ) n right join           
+             (select uf.CODIGO , uf.UD_DSC from uni_dep u , facultad uf where u.ud_id= uf.UD_ID and u.ud_cod like $P{udCodUnidad} ) f
+             on
+             n.COD_FAC = f.CODIGO 
+             
+ORDER BY UDDeSC, idCPago ASC]]></queryString>
+
+	<field name="UD_DSC" class="java.lang.String"/>
+	<field name="IDCPU" class="java.math.BigDecimal"/>
+	<field name="IDCPAGO" class="java.math.BigDecimal"/>
+	<field name="CODIGOUNIDAD" class="java.lang.String"/>
+	<field name="CODCPAGO" class="java.lang.String"/>
+	<field name="CPDESCRIP" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="IDTIPOCPAGO" class="java.math.BigDecimal"/>
+	<field name="MONTO" class="java.math.BigDecimal"/>
+	<field name="CPESTADO" class="java.math.BigDecimal"/>
+	<field name="UDID" class="java.math.BigDecimal"/>
+	<field name="IDMONEDA" class="java.math.BigDecimal"/>
+	<field name="CPFACTURABLE" class="java.math.BigDecimal"/>
+	<field name="FECHA_REG" class="java.lang.String"/>
+	<field name="ESTADO_SOLICITUD" class="java.math.BigDecimal"/>
+	<field name="UDCOD" class="java.lang.String"/>
+	<field name="UDDESC" class="java.lang.String"/>
+	<field name="MONSIMB" class="java.lang.String"/>
+	<field name="MONDESC" class="java.lang.String"/>
+	<field name="IGV" class="java.math.BigDecimal"/>
+	<field name="COD_BANCO" class="java.lang.String"/>
+	<field name="RESOL_RECTORAL" class="java.lang.String"/>
+	<field name="OBSERVACIONES" class="java.lang.String"/>
+	<field name="MOTIVO_RECHAZO" class="java.lang.String"/>
+	<field name="COD_FAC" class="java.math.BigDecimal"/>
+
+	<variable name="Contador" class="java.lang.Integer" resetType="Group" resetGroup="UnidadName" calculation="Sum">
+		<variableExpression><![CDATA[new Integer(1)]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(1)]]></initialValueExpression>
+	</variable>
+	<variable name="fecha_sistema" class="java.util.Date" resetType="Report" calculation="Nothing">
+		<initialValueExpression><![CDATA[new Date()]]></initialValueExpression>
+	</variable>
+
+		<group  name="UnidadName" >
+			<groupExpression><![CDATA[$F{UDDESC}]]></groupExpression>
+			<groupHeader>
+			<band height="23"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="###0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="9"
+						y="5"
+						width="209"
+						height="15"
+						forecolor="#0000CC"
+						key="textField-7"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isUnderline="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UDDESC}]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="7"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="131"  isSplitAllowed="true" >
+				<rectangle>
+					<reportElement
+						x="8"
+						y="98"
+						width="512"
+						height="31"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="rectangle-1"/>
+					<graphicElement stretchType="NoStretch">
+					<pen lineWidth="2.0"/>
+</graphicElement>
+				</rectangle>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="11"
+						y="8"
+						width="50"
+						height="46"
+						key="image-1"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{logo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="76"
+						y="8"
+						width="264"
+						height="15"
+						key="staticText-7"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="76"
+						y="25"
+						width="264"
+						height="15"
+						key="staticText-8"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Proyecto de Gestión Financiera Quipucamayoc ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="404"
+						y="8"
+						width="41"
+						height="10"
+						key="staticText-10"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+				<text><![CDATA[FECHA:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="452"
+						y="8"
+						width="74"
+						height="10"
+						key="textField-9"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[""+$V{fecha_sistema}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="3"
+						y="60"
+						width="528"
+						height="1"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="126"
+						y="68"
+						width="283"
+						height="18"
+						key="staticText-11"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
+					</textElement>
+				<text><![CDATA[REPORTE DE CONCEPTOS DE PAGO]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="20"
+						y="105"
+						width="493"
+						height="19"
+						forecolor="#000000"
+						key="textField"/>
+					<box></box>
+					<textElement markup="html">
+						<font pdfFontName="Helvetica-Bold" size="12" isBold="true" isPdfEmbedded ="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UD_DSC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="2"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="45"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="9"
+						y="13"
+						width="35"
+						height="26"
+						key="staticText-1"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<text><![CDATA[N°]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="49"
+						y="13"
+						width="66"
+						height="26"
+						key="staticText-2"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<text><![CDATA[CODIGO CONCEPTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="134"
+						y="13"
+						width="245"
+						height="26"
+						key="staticText-4"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<text><![CDATA[DESCRIPCIÓN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="380"
+						y="13"
+						width="69"
+						height="26"
+						key="staticText-5"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="450"
+						y="13"
+						width="80"
+						height="26"
+						key="staticText-6"
+						positionType="Float"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<text><![CDATA[ESTADO]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="9"
+						y="41"
+						width="510"
+						height="1"
+						key="line-2"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="9"
+						y="8"
+						width="510"
+						height="1"
+						key="line-4"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="26"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="###0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="9"
+						y="6"
+						width="34"
+						height="15"
+						key="textField-1"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[""+$V{Contador}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="###0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="49"
+						y="6"
+						width="66"
+						height="15"
+						key="textField-2"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CODIGOUNIDAD} + " - " + $F{CODCPAGO}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="133"
+						y="6"
+						width="245"
+						height="15"
+						key="textField-4"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="###0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="380"
+						y="6"
+						width="69"
+						height="15"
+						key="textField-5"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{MONSIMB} + " " + $F{MONTO}.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="###0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="450"
+						y="6"
+						width="80"
+						height="15"
+						key="textField-6"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ESTADO_SOLICITUD}.equals(new BigDecimal(0))?"Pendiente":( $F{ESTADO_SOLICITUD}.equals(new BigDecimal(1)) ? "Aprobado":"Rechazado")]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="6"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="22"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="478"
+						y="3"
+						width="54"
+						height="16"
+						key="textField-11"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="387"
+						y="3"
+						width="91"
+						height="16"
+						key="textField-12"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="10"
+						y="4"
+						width="189"
+						height="12"
+						key="image-2"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{logo_quipu}]]></imageExpression>
+				</image>
+				<line direction="TopDown">
+					<reportElement
+						x="9"
+						y="2"
+						width="511"
+						height="1"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</pageFooter>
+		<lastPageFooter>
+			<band height="24"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="387"
+						y="4"
+						width="91"
+						height="16"
+						key="textField-13"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="478"
+						y="4"
+						width="54"
+						height="16"
+						key="textField-14"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="11"
+						y="5"
+						width="189"
+						height="12"
+						key="image-3"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{logo_quipu}]]></imageExpression>
+				</image>
+				<line direction="TopDown">
+					<reportElement
+						x="9"
+						y="2"
+						width="511"
+						height="1"
+						key="line-6"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</lastPageFooter>
+		<summary>
+			<band height="3"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

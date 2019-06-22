@@ -1,0 +1,357 @@
+<meta charset="utf-8" />
+<style>
+	.anuladoColor {
+    	color: red;
+	}
+	
+	/* tab color */
+	.nav-tabs>li>a {
+	  /* border-color: #777777; */
+	  background-color: #242a30;
+	  color: #aaacb3;
+	  border: none!important;
+	  border-top-left-radius: 3px;
+	  border-top-right-radius: 3px;
+	}
+
+	/* active tab color */
+	.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+	  background-color: #fff;
+	  color: #242a30;
+	  border: none!important;
+	}
+	
+	/* hover tab color */
+	.nav-tabs>li>a:hover {
+	  background-color: #fafafa;
+	  border-color: #000000;
+	  /* color:#6e7179; */
+	  color:#242a30;
+	}
+	.nav-tabs>li{
+	  background-color: transparent;
+	}
+	.nav-tabs{
+	  background-color: #242a30;
+	  border-top-left-radius: 3px;
+	  border-top-right-radius: 3px;
+	}
+</style>
+<!-- begin panel -->
+<div class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-widget-9">
+    <div class="panel-heading">
+        <ul id="myTab" class="nav nav-tabs pull-right">
+        	<li ng-class="{active:tab===1}"><a href="" ng-click="clickTab(1)" data-toggle="tab"><i class="icon ccarrot-sunat"></i> <span class="hidden-xs">Clientes Con RUC</span></a></li>
+            <li ng-class="{active:tab===2}"><a href="" ng-click="clickTab(2)" data-toggle="tab"><i class="fa fa-user"></i> <span class="hidden-xs">Clientes Sin RUC</span></a></li>
+            <li ng-class="{active:tab===3}"><a href="" ng-click="clickTab(3)" data-toggle="tab"><i class="fa fa-graduation-cap"></i> <span class="hidden-xs">Alumnos UNMSM</span></a></li>
+            <li ng-class="{active:tab===4}"><a href="" ng-click="clickTab(4)" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> <span class="hidden-xs">Servidores UNMSM</span></a></li>
+        </ul>
+        <h4 class="panel-title" style="font-size:15px;">CONSULTA DE CLIENTES</h4>
+    </div>
+    <div id="myTabContent" class="tab-content">
+        <div ng-show="tab === 1" id="home">
+            <!-- Begin CON RUC content -->
+            <div class="row"> 
+	             <div class="form-group">
+						<label class="col-xs-12 col-md-2 control-label">Buscar por:</label>
+						<div class="col-md-2">
+						    <label class="radio-inline">
+						        <input type="radio" name="conruc_criterio" value="{{criterioBusqueda[0].id}}" ng-model="userCriterio.criterioIdxRUC" ng-click="conRUC_optionChange()" ng-value="true"/>
+						        {{criterioBusqueda[0].name}}
+						    </label>
+						</div>
+						<div class="col-md-3">
+						    <label class="radio-inline">
+						        <input type="radio" name="conruc_criterio" value="{{criterioBusqueda[3].id}}" ng-model="userCriterio.criterioIdxRUC" ng-click="conRUC_optionChange()"/>
+						        {{criterioBusqueda[3].name}}
+						    </label>
+						</div>
+				  </div>  
+	         </div>
+
+	         <!-- <br/> -->
+			 <div class="row">
+			   <form name="formBuscar1" >
+			     <div class="form-group">
+			         <div class="col-md-4 col-xs-6">
+			             <label>{{criterioBusquedaElegida1}}</label>
+			             <input type="text" class="input-sm form-control" placeholder="{{criterioPlaceHolder1}}" id="datoConRuc" ng-model="datoBuscar1" capitalize required/>
+			             <!-- <div class="input-group">
+				             <input type="text" class="form-control" placeholder="{{criterioBusquedaElegida1}}" id="datoConRuc" ng-model="datoBuscar1" required/>
+				             <div class="input-group-btn">
+				                 <button type="button" class="btn btn-success" ng-click="buscarClie_ConRUC()" ng-disabled="formBuscar1.$invalid"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+				             </div>
+				         </div> -->
+			         </div>
+			      </div>
+			    </form>
+			 </div>
+			 <!-- End CON RUC content -->
+        </div>
+        <div ng-show="tab === 2" id="profile">
+            <!-- Begin SIN RUC content -->
+            <div class="row"> 
+	             <div class="form-group">
+						<label class="col-xs-12 col-md-2 control-label">Buscar por:</label>
+						<div class="col-md-3">
+						    <label class="radio-inline">
+						        <input type="radio" name="sinruc_criterio" value="{{criterioBusqueda[1].id}}" ng-model="userCriterio.criterioIdxNoRUC" ng-click="sinRUC_optionChange()" ng-value="true"/>
+						        {{criterioBusqueda[1].name}}
+						    </label>
+						    <div class="col-md-8" style="padding-left:20px;">					        
+						        <select class="m-l-8 input-xs form-control" style="font-size:11px; padding: 0px 6px;" id="sinruc_tipDoc" name="sinruc_tipDoc" ng-disabled="selectDisabled1" ng-options="doc.idDoc as doc.name for doc in listaDocIDentidad" ng-model="userTipoDoc1"></select>
+						    </div>
+						</div>
+						<div class="col-md-3">
+						    <label class="radio-inline">
+						        <input type="radio" name="sinruc_criterio" value="{{criterioBusqueda[4].id}}" ng-model="userCriterio.criterioIdxNoRUC" ng-click="sinRUC_optionChange()"/>
+						        {{criterioBusqueda[4].name}}
+						    </label>
+						</div>
+				  </div>  
+	         </div>
+	         
+	         <!-- <br/> -->
+			 <div class="row">
+			   <form name="formBuscar2" >
+			     <div class="form-group">
+			         <div class="col-md-4 col-xs-6">
+			             <label>{{criterioBusquedaElegida2}}</label>
+			             <input type="text" class="input-sm form-control" placeholder="{{criterioPlaceHolder2}}" id="datoSinRuc" ng-model="datoBuscar2" capitalize required/>
+			             <!-- <div class="input-group">
+				             <input type="text" class="form-control" placeholder="{{criterioBusquedaElegida2}}" id="datoSinRuc" ng-model="datoBuscar2" required/>
+				             <div class="input-group-btn">
+				                 <button type="button" class="btn btn-success" ng-click="buscarClie_SinRUC()" ng-disabled="formBuscar2.$invalid"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+				             </div>
+				         </div> -->
+			         </div>
+			      </div>
+			    </form>
+			 </div>
+			 <!-- End SIN RUC content -->
+        </div>
+        <div ng-show="tab === 3" id="profile2">
+            <!-- Begin ALUMNO SUM content -->
+            <div class="row"> 
+	             <div class="form-group">
+						<label class="col-xs-12 col-md-2 control-label">Buscar por:</label>
+						<div class="col-md-2">
+						    <label class="radio-inline">
+						        <input type="radio" name="sum_criterio" value="{{criterioBusqueda[2].id}}" ng-model="userCriterio.criterioIdxSUM" ng-click="aluSUM_optionChange()" ng-value="true"/>
+						        {{criterioBusqueda[2].name}}
+						    </label>
+						</div>
+						<div class="col-md-2">
+						    <label class="radio-inline">
+						        <input type="radio" name="sum_criterio" value="{{criterioBusqueda[4].id}}" ng-model="userCriterio.criterioIdxSUM" ng-click="aluSUM_optionChange()"/>
+						        {{criterioBusqueda[4].name}}
+						    </label>
+						</div>
+						<div class="col-md-3">
+						    <label class="radio-inline">
+						        <input type="radio" name="sum_criterio" value="{{criterioBusqueda[1].id}}" ng-model="userCriterio.criterioIdxSUM" ng-click="aluSUM_optionChange()"/>
+						        {{criterioBusqueda[1].name}}
+						    </label>
+						    <div class="col-md-8" style="padding-left:20px;">
+						        <!-- <select class="m-l-8 default-select input-sm form-control" name="sum_tipDoc" ng-disabled="selectDisabled" ng-options="tipoDI as tipoDI.tipo for tipoDI in tiposDocIdent" ng-model="tipoDocIdentElegida"/> -->
+						        <select class="m-l-8 input-xs form-control" style="font-size:11px; padding: 0px 6px;" id="sum_tipDoc" name="sum_tipDoc" ng-disabled="selectDisabled2" ng-options="doc.idDoc as doc.name for doc in listaDocIDentidad" ng-model="userTipoDoc2"></select>
+						    </div>  
+						</div>
+				  </div>  
+	         </div>
+	         
+	         <!-- <br/> -->
+			 <div class="row">
+			   <form name="formBuscar3" >
+			     <div class="form-group">
+			         <div class="col-md-4 col-xs-6">
+			             <label>{{criterioBusquedaElegida3}}</label>
+			             <input type="text" class="input-sm form-control" placeholder="{{criterioPlaceHolder3}}" id="datoAlumno" ng-model="datoBuscar3" capitalize required/>
+			             <!-- <div class="input-group">
+				             <input type="text" class="form-control" placeholder="{{criterioBusquedaElegida3}}" id="datoAlumno" ng-model="datoBuscar3" required/>
+				             <div class="input-group-btn">
+				                 <button type="button" class="btn btn-success" ng-click="buscarAlumnosSum()" ng-disabled="formBuscar3.$invalid"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+				             </div>
+				         </div> -->
+			         </div>
+			      </div>
+			    </form>
+			 </div>
+			 <!-- End ALUMNO SUM content -->
+        </div>
+        <div ng-show="tab === 4" id="profile3">
+            <!-- Begin SERVIDOR UNMSM content -->
+            <div class="row"> 
+	             <div class="form-group">
+						<label class="col-xs-12 col-md-2 control-label">Buscar por:</label>
+						<div class="col-md-2">
+						    <label class="radio-inline">
+						        <input type="radio" name="serv_criterio" value="{{criterioBusqueda[4].id}}" ng-model="userCriterio.criterioIdxSERV" ng-click="serv_optionChange()" ng-value="true"/>
+						        {{criterioBusqueda[4].name}}
+						    </label>
+						</div>
+						<div class="col-md-3">
+						    <label class="radio-inline">
+						        <input type="radio" name="serv_criterio" value="{{criterioBusqueda[1].id}}" ng-model="userCriterio.criterioIdxSERV" ng-click="serv_optionChange()"/>
+						        Documento de Identidad<!-- {{criterioBusqueda[1].name}} -->
+						    </label>
+						    <!-- <div class="col-md-8" style="padding-left:20px;">						        
+						        <select class="m-l-8 input-xs form-control" style="font-size:11px; padding: 0px 6px;" name="serv_tipDoc" ng-disabled="selectDisabled3" ng-options="doc.idDoc as doc.name for doc in listaDocIDentidad" ng-model="userTipoDoc3"></select>
+						    </div>  --> 
+						</div>
+						<!-- <div class="col-md-3">
+						    <label class="radio-inline">
+						        <input type="radio" name="serv_criterio" value="{{criterioBusqueda[0].id}}" ng-model="userCriterio.criterioIdxSERV" ng-click="serv_optionChange()"/>
+						        {{criterioBusqueda[0].name}}
+						    </label>
+						</div> -->
+				  </div>  
+	         </div>
+	         
+	         <!-- <br/> -->
+			 <div class="row">
+			   <form name="formBuscar4" >
+			     <div class="form-group">
+			         <div class="col-md-4 col-xs-6">
+			             <label>{{criterioBusquedaElegida4}}</label>
+			             <input type="text" class="input-sm form-control" placeholder="{{criterioBusquedaElegida4}}" id="datoServidor" ng-model="datoBuscar4" capitalize required/>
+			         </div>
+			      </div>
+			    </form>
+			 </div>
+			 <!-- End SERVIDOR UNMSM content -->
+        </div>
+    </div>
+</div>
+<!-- end panel -->
+
+<!-- BEGIN RUC RESULTS  -->
+<!-- <div id="results1" ng-show="tab==1 && visibilidadTablaRUC"> -->
+<div ng-show="tab==1">
+	<!-- begin row -->
+	<div class="row" id="results1" style="display:none;">
+	    <div class="col-md-12">
+	        <div class="tab-content">
+				 <div id="tableCRUCContainer" class="tablecontainer table-responsive">
+					    <table ng-table="tableParams1" class="table table-striped table-bordered table-condensed table-hover">					
+							<tr ng-repeat="c in $data">
+								<td data-title="'RUC'"  style="width:8%; text-align: center;" ><span ng-class="{anuladoColor: c.estado==0}">{{c.ruc}}</span></td>
+								<td data-title="'RAZÓN SOCIAL'" style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.razonSocial}}</span></td>
+								<td  data-title="'DIRECCIÓN'"  style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.direccion}}</span></td>
+								<td  data-title="'TELÉFONO'"  style="text-align: center"><span ng-class="{anuladoColor: c.estado==0}">{{c.telf}}</span></td>
+								<td  data-title="'CORREO ELECTRÓNICO'"  style="width:15%; text-align: left;"><span ng-class="{anuladoColor: c.estado==0}">{{c.email}}</span></td>
+							</tr>	
+						</table>
+			     </div>
+		     </div>
+	    </div>
+	</div>
+</div>
+<!-- END RUC RESULTS  -->
+
+<!-- BEGIN SIN RUC RESULTS  -->
+<!-- <div id="results2" ng-show="tab==2 && visibilidadTablaSinRUC"> -->
+<div ng-show="tab==2" >
+	<div class="row" id="results2" style="display:none;">
+	    <div class="col-md-12">
+	        <div class="tab-content">
+				 <div id="tableSRUCContainer" class="tablecontainer table-responsive">
+					    <table ng-table="tableParams2" class="table table-striped table-bordered table-condensed table-hover">					
+							<tr ng-repeat="c in $data">
+								<td data-title="'TIPO DOCUMENTO'"  style="width:6%; text-align: center;" ><span ng-class="{anuladoColor: c.estado==0}">{{c.abrev}}</span></td>
+								<td data-title="'N° DOCUMENTO'"  style="width:8%; text-align: center;" ><span ng-class="{anuladoColor: c.estado==0}">{{c.numDoc}}</span></td>
+								<td data-title="'NOMBRE COMPLETO'" style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.nomCompleto}}</span></td>
+								<td  data-title="'DIRECCIÓN'"  style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.direccion}}</span></td>
+								<td  data-title="'CORREO ELECTRÓNICO'"  style="width:15%;text-align: left;"><span ng-class="{anuladoColor: c.estado==0}">{{c.email}}</span></td>
+							</tr>	
+						</table>
+			     </div>
+		     </div>
+	    </div>
+	</div>
+</div>
+<!-- END SIN RUC RESULTS  -->
+
+<!-- BEGIN ALUMNO RESULTS  -->
+<!-- <div id="results3" ng-show="tab==3 && visibilidadTablaAlumno"> -->
+<div ng-show="tab==3">
+	<!-- begin row -->
+	<div class="row" id="results3" style="display:none;">
+	    <div class="col-md-12">
+	        <div class="tab-content">
+				 <div id="tableALUContainer" class="tablecontainer table-responsive">					    
+					   <table ng-table="tableParams3" class="table table-striped table-bordered table-condensed table-hover">					
+							<tr ng-repeat="c in $data">
+								<td data-title="'TIPO DOCUMENTO'"  style="width:6%; text-align: center;" ><span>{{c.abrev}}</span></td>
+								<td data-title="'N° DOCUMENTO'"  style="width:8%; text-align: center;" ><span>{{c.numDoc}}</span></td>
+								<td data-title="'CÓDIGO MATRÍCULA'"  style="width:8%; text-align: center;" ><span>{{c.codigoMatricula}}</span></td>
+								<td data-title="'NOMBRE COMPLETO'" style="text-align: left"><span>{{c.nomCompleto}}</span></td>
+								<td  data-title="'FACULTAD'"  style="text-align: left"><span>{{c.nombFacultad}}</span></td>
+								<td  data-title="'DIRECCIÓN'"  style="text-align: left"><span>{{c.direccion}}</span></td>
+								<td  data-title="'CORREO ELECTRÓNICO'"  style="width:15%;text-align: left;"><span>{{c.email}}</span></td>
+							</tr>	
+						</table>
+			     </div>
+		     </div>
+	    </div>
+	</div>
+</div>
+<!-- END ALUMNO RESULTS  -->
+
+<!-- BEGIN SERVIDORES RESULTS  -->
+<!-- <div id="results3" ng-show="tab==3 && visibilidadTablaAlumno"> -->
+<div ng-show="tab==4">
+	<!-- begin row -->
+	<div class="row" id="results4" style="display:none;">
+	    <div class="col-md-12">
+	        <div class="tab-content">
+				 <div id="tableSERVContainer" class="tablecontainer table-responsive">					    
+					   <table ng-table="tableParams4" class="table table-striped table-bordered table-condensed table-hover">					
+							<tr ng-repeat="c in $data">
+								<td data-title="'TIPO DOCUMENTO'"  style="width:6%; text-align: center;" ><span>{{c.nombreDoc}}</span></td>
+								<td data-title="'N° DOCUMENTO'"  style="width:8%; text-align: center;" ><span>{{c.numDoc}}</span></td>
+								<!-- <td data-title="'NUMERO DOCUMENTO'"  style="width:8%; text-align: center;" ><span>{{c.numDoc}}</span></td>
+								<td data-title="'CODIGO MATRICULA'"  style="width:8%; text-align: center;" ><span>{{c.codigoMatricula}}</span></td> -->
+								<td data-title="'NOMBRE COMPLETO'" style="text-align: left"><span>{{c.paterno}} {{c.materno}} {{c.nombre}}</span></td>
+								<td  data-title="'TIPO DE SERVIDOR'"  style="text-align: center"><span>{{c.tipoServicio}}</span></td>
+								<td  data-title="'ESTADO'"  style="text-align: center"><span>{{c.estado}}</span></td>
+								<td  data-title="'DEPENDENCIA'"  style="text-align: left"><span>{{c.cesantia}}</span></td>
+								<td  data-title="'DOMICILIO'"  style="text-align: left"><span>{{c.domicilio}}</span></td>
+							</tr>	
+						</table>
+			     </div>
+		     </div>
+	    </div>
+	</div>
+</div>
+<!-- END SERVIDORES RESULTS  -->
+
+<!-- NO MATCHES RESULTS  -->
+<div class="row" id="noMatches" style="display:none;">
+    <div class="col-md-12">
+	    <div class="tab-content">
+			<p class="hidden-sm text-center" style="font-size:16px;">No se encontraron coincidencias </p>
+		</div>
+    </div>
+</div>
+<!-- END NO MATCHES RESULTS  -->
+ 
+  <!-- Modal Mensajes -->
+	<div class="modal fade" id="modalMensaje" role="dialog">
+		    <div class="modal-dialog modal-sm">	       
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		          <h4 class="modal-title text-center">{{modalMensajeTitle}}</h4>
+		        </div>
+		        <div class="modal-body">
+		          <p class="text-center semi-bold">{{modalMensajeText}}</p>
+		        </div>
+		         <div class="modal-footer text-center">
+		         	<button type="button" class="btn btn-sm btn-info" data-dismiss="modal">Aceptar</button>
+		        </div>	       
+		      </div>	      
+		    </div>
+	</div>
+	
+  <input id="viewMode" type="hidden" value="2"> <!-- modo consulta -->

@@ -1,0 +1,201 @@
+<meta charset="utf-8" />
+<style>
+	.anuladoColor {
+    	color: red;
+	}
+	.pendienteColor {
+    	color: #f79609; 
+    	/*background: #fdebd1;
+    	border-color: #fbd7a3;*/
+	}
+	.rechazadoColor {
+    	color: #fb2d28;
+    	/*background: #ffdedd;
+    	border-color: #ffbdbc;*/
+	}
+	.has-errorColor {
+    	color: red;
+	}
+
+</style>
+
+
+<!-- Panel Table Result -->
+<div class="panel panel-inverse" id="panelResult" style="display:none">
+    <div class="panel-heading">
+        <h3 id="txtTituloUnidadPadre" class="panel-title" style="font-size:15px;">SOLICITUDES DE UNIDADES PARA CONCEPTOS DE PAGO</h3>
+    </div>
+
+    <div class="panel-body">
+		
+		<div class="row" style="border-bottom:1px dashed #9ea3a9;">
+			<div class="col-md-12">
+              <form class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Facultad o Dependencia :</label>
+                  <div class="col-md-4">
+                    <select class="form-control" ng-model="tableParams.filter().udIdPadre" ng-options="fac.udId as fac.udDsc for fac in facultadesPadre">
+                    </select>
+                  </div>
+                  
+                  <div class="col-md-5">
+	                  <label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Año :</label>
+	                  <div class="col-md-3">
+	                    <select class="form-control" ng-model="tableParams.filter().regYear" ng-options="yea.id as yea.name for yea in years">
+	                    </select>
+	                  </div>
+	                  
+	                  <label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Mes :</label>
+	                  <div class="col-md-4">
+	                    <select class="form-control" ng-model="tableParams.filter().regMonth" ng-options="mes.idMes as mes.dscMes for mes in meses">
+	                    </select>
+	                  </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+        </div>
+        
+       <!-- <hr style="border:solid;"> -->
+       
+       </br>
+        
+    	<div class="tablecontainer table-responsive" ng-show="VisibleResultTable">
+				  <table ng-table="tableParams" class="table table-condensed table-bordered table-hover" show-filter="true" show-group="false">
+				 		<colgroup>
+				          <col width="6%" />
+				          <col width="58%" />
+				          <col width="10%" />
+				          <col width="5%" />
+				          <col width="13%" />
+				          <col width="8%" />
+				        </colgroup>
+				        <tr class="ng-table-group" ng-repeat-start="group in $groups">
+				          <td colspan="6">
+				            <a href="" ng-click="group.$hideRows = !group.$hideRows">
+				              <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span><strong>{{group.value}}</strong> 
+				            </a>				            
+				          </td>
+				        </tr>
+				        <tr ng-hide="group.$hideRows" ng-repeat="c in group.data" ng-repeat-end>
+				            <td data-title="'UNIDAD MAYOR'" groupable="'udDscFac'" ng-if="false" style="width:text-align: left;"><span>{{c.udDscFac}}</span></td>
+							<td data-title="'CÓDIGO UNIDAD'" style="vertical-align:inherit;width: 6%;text-align: center;" filter="{codigoUnidad: 'text'}"><span>{{c.numUnidad}}</span></td>							
+							<td data-title="'UNIDAD'"  style="vertical-align:inherit;text-align: left" filter="{udDscUnidad: 'text'}" sortable="'udDscUnidad'"><span>{{c.udDscUnidad}}</span></td>							
+							<td data-title="'FECHA'" style="vertical-align:inherit;width: 10%;text-align: center;" filter="{fechaModif: 'text'}" sortable="'fechaModif'"><span>{{c.fechaModif}}</span></td>
+							<td data-title="'DETALLE'"  style="vertical-align:inherit;width:4%;text-align: center;"> <button   class="btn btn-sm btn-info" ng-click="openModalDetalleUnidad(c)"><i class="fa fa-info-circle"></i></button></td>							
+							<td data-title="'SOLICITUD'"  style="vertical-align:inherit;width:12%; text-align: center;"  filter="{ estSolicitudUnidad: 'select' }" filter-data="tipoSolicitud"> <span ng-class="{'badge badge-warning': c.estSolicitudUnidad==0, 'badge badge-danger': c.estSolicitudUnidad==2, 'badge badge-success': c.estSolicitudUnidad==1}" style="font-size:11px;">{{c.estSolicitudUnidad==0 ? 'PENDIENTE' : (c.estSolicitudUnidad==1?'APROBADO':'RECHAZADO')}}</span></td>	
+							<td data-title="'TIPO'"  style="vertical-align:inherit;width:8%; text-align: center;"> <span ng-class="{'badge badge-primary': (c.estEdit==0 && c.estSolicitudUnidad==0), 'badge badge-success': (c.estEdit==1 && c.estSolicitudUnidad==0)}" style="font-size:11px;font-weight:bold;">{{(c.estEdit==0 && c.estSolicitudUnidad==0) ? 'Nuevo' : ((c.estEdit==1 && c.estSolicitudUnidad==0)?'Modificado':'')}}</span></td>
+				        </tr>
+				  </table>
+    	</div>
+    	
+    	<div class="row" id="noMatches" ng-show="!VisibleResultTable">
+		    <div class="col-md-12">
+				<p class="hidden-sm text-center" style="font-size:16px;">No se encontraron solicitudes de unidades para conceptos de pago</p>
+		    </div>
+		</div>
+		
+    </div>
+</div>
+<!-- Fin Panel Table Result --> 
+
+
+<div class="modal fade" id="viewUnidadRec">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+						<h4 class="modal-title">SOLICITUD DE UNIDAD PARA CONCEPTOS DE PAGO <span ng-class="{'badge badge-warning': cpDetalle.estSolicitudUnidad==0, 'badge badge-danger': cpDetalle.estSolicitudUnidad==2, 'badge badge-success': cpDetalle.estSolicitudUnidad==1}" style="font-size:11px;">{{cpDetalle.estSolicitudUnidad==0 ? 'Pendiente' : (cpDetalle.estSolicitudUnidad==1?'Aprobado':'Rechazado')}}</span></h4>		
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" name="formDetalleCP" >
+				                <div class="form-group">
+                                    <label class="col-md-3 control-label">FACULTAD O DEPENDENCIA : </label>
+                                    <div class="col-md-8">								    	
+								    	<input type="text" class="input-sm form-control" title="{{cpDetalle.udDscFac}}" ng-model="cpDetalle.udDscFac" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">UNIDAD : </label>
+                                    <div class="col-md-8">								    	
+								    	<input type="text" class="input-sm form-control" title="{{cpDetalle.udDscUnidad}}" ng-model="cpDetalle.udDscUnidad" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">CÓDIGO : </label>
+                                    <div class="col-md-2">
+                                        <input type="text" class="input-sm form-control" ng-value="cpDetalle.numUnidad" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="cpDetalle.estSolicitudUnidad==2">
+                                    <label class="col-md-3 control-label">MOTIVO DE RECHAZO : </label>
+                                    <div class="col-md-8">
+                                        <textarea class="form-control no-rounded-corner" rows="3" ng-model="cpDetalle.motivoRechazo" readonly style="resize: none; font-weight:bold; border-color:red;"></textarea>
+                                    </div>
+                                </div>
+                    </form>
+			</div>
+			<div class="modal-footer text-center">
+				<button type="button" class="btn btn-primary" ng-click="abrirModalConfirm_aprobarUnidad(cpDetalle.udIdUnidad)" ng-show="cpDetalle.estSolicitudUnidad==0">Aprobar</button>                      
+                <button type="button" class="btn btn-danger" ng-click="abrirModalMotivoRechazo(cpDetalle.udIdUnidad)" ng-show="cpDetalle.estSolicitudUnidad==0">Rechazar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<!-- MODAL CONFIRM -->
+    <div class="modal fade" id="modalConfirm" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                     <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+                      style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+                </div>
+                <div class="modal-body">
+                     <p>{{modalOptions.bodyText}}</p>
+                </div>
+                <div class="modal-footer text-center">
+                     <button type="button" class="btn btn-primary" ng-click="modalOptions.action()" data-dismiss="modal">{{modalOptions.actionButtonText}}</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MOTIVO RECHAZO -->
+    <div class="modal fade" id="modalMotivoRechazo" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+           <div class="modal-content">
+               <div class="modal-header text-center">
+                    <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}" style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+               </div>
+               <div class="modal-body">
+                    <p>{{modalOptions.bodyText}}</p>
+                    <textarea name="comment" id="comment" class="form-control" ng-model="modalOptions.data.motivoRechazo" rows="3" style="resize:none" required></textarea>
+               </div>
+               <div class="modal-footer text-center">
+                    <button type="button" class="btn btn-primary" ng-click="modalOptions.action()" data-dismiss="modal" ng-disabled="!modalOptions.data.motivoRechazo">{{modalOptions.actionButtonText}}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>        
+               </div>
+            </div>
+       </div>
+   </div>
+
+ <script type="text/javascript">
+    $(document).on('show.bs.modal', '.modal', function (event) {
+        var zIndex = 1040 + (10 * $('.modal:visible').length);
+        /*var zIndex = Math.max.apply(null, Array.prototype.map.call(document.querySelectorAll('*'), function(el) {
+                        return +el.style.zIndex;
+                      })) + 10;*/
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+    
+    $(document).on('hidden.bs.modal', '.modal', function () {
+        $('.modal:visible').length && $(document.body).addClass('modal-open');
+    });
+</script>
+	

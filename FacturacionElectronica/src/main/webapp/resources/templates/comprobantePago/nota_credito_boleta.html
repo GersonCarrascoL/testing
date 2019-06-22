@@ -1,0 +1,321 @@
+<meta charset="utf-8" />
+<style>
+	.highlight {
+  		background-color: #e8ecf1;
+	}
+	.itemModificado{
+		background-color:#F3E2A9;
+	}
+	.form-control[disabled], .form-control[readonly]{
+	           opacity: .9;
+	 }
+	.has-errorColor {
+    	color: red;
+	}	 		
+</style>
+<div data-ng-init="init()">
+	<div ng-show="!formulario.preVisualizacion">
+		<div class="panel panel-inverse">
+		    <div class="panel-heading">
+		        <h4 class="panel-title" style="font-size:15px;">NOTA DE CREDITO PARA BOLETAS DE VENTA</h4>
+		    </div>
+		    <div class="panel-body">
+		   	 	<form name="formularioNota">
+			    	<div class="col-xs-12 col-sm-6 col-md-4">
+			    		<label>Unidad: </label>
+			    		 <input type="text" class="form-control" placeholder="Unidad" ng-model="formulario.establecimiento.descripcion" disabled="true"/>	    	  
+			    		<br/>
+			    	</div>
+			    	<div class="col-xs-12 col-sm-6 col-md-4">
+			    		<label>Fecha:</label>
+				    	<input type="text" class="form-control" placeholder="Fecha" ng-model="formulario.fecha" disabled="true"/>
+			    		<br/>
+			    	</div>
+			    	<div class="col-xs-12 col-sm-6 col-md-4">
+			    		<label>Serie:</label>
+				    	<input type="text" class="form-control" placeholder="Serie" ng-model="formulario.establecimiento.nEstablecimiento" disabled="true"/>
+			    		<br/>
+			    	</div>	    	
+			    	<div class="col-xs-12 col-sm-6 col-md-4">
+			    		<label>Tipo (*):</label>
+				    	<select class="default-select2 form-control" ng-options="tipo as tipo.descripcion for tipo in formulario.tipoNota" ng-model="tipoNotaSeleccionada" ng-change="updateDetalle()">
+				    	</select>  
+			    		<br/>
+			    	</div>	  		    	  
+			    	<div class="col-xs-12 col-sm-6 col-md-4" ng-show="nota.tipo!='00'">
+			    		<label>Motivo (*):</label>
+				    	<input name="motivo" type="text" class="form-control" maxlength="250" placeholder="Motivo" ng-model="nota.motivo" ng-required="nota.numeroDocumentoAsociado!='' && nota.tipo!='00'" ng-pattern="/^[^0-9]/"/>
+			    		<div class="has-errorColor" ng-show="formularioNota.motivo.$dirty">
+			                    <span ng-show="formularioNota.motivo.$error.required">Escriba el motivo</span>
+			                    <span ng-show="formularioNota.motivo.$error.pattern">No debe empezar con numero</span>
+		                </div>		    	
+			    		<br/>
+			    	</div>
+			    	<div class="col-xs-12 col-sm-6 col-md-4" ng-show="formularioNota.motivo.$valid && nota.tipo!='00' && nota.motivo!=''" ng-class="{ 'has-error' : formulario1.$error.required && !formularioNota.boleta.$pristine}">
+			    		<label>Boleta a Modificar (*):</label>
+			    		<div class="input-group">
+			    			<input name="boleta" type="text" class="form-control" placeholder="Boleta" ng-model="nota.numeroDocumentoAsociado" disabled="true" required/>
+	                   		 <div class="input-group-btn" ng-show="boletaSeleccionada!=null">
+		                   		 <a target="_blank" title="ver PDF" ng-click="verPDF(boletaSeleccionada.codEst,boletaSeleccionada.serie,boletaSeleccionada.tipo)">	                	                  		 	
+	 	                   		 	<button class="btn btn-danger"><span class="fa fa-file-pdf-o"></span> PDF</button>
+		                   		 </a>                   		 	
+	                   		 </div>		    			
+			    			<div class="input-group-btn">
+			    				<button class="btn btn-info" ng-click="abrirModal('#boletaBuscar')"><span class="fa fa-search"></span> Buscar</button>
+			    			</div>
+			    		</div>
+			    		<div class="has-errorColor" ng-show="formularioNota.boleta.$dirty">
+		                    <span ng-show="formularioNota.boleta.$error.required">Ingrese una boleta a modificar</span>
+		                </div>
+			    		<br/>
+			    	</div>		    	
+	    		</form>		
+			    	<div class="col-xs-12 col-sm-12 col-md-12" ng-show="nota.tipo!='00'">		    	
+			    		<label style=" padding: 5px;border-width: 1px; border-style: dashed; border-color: #EA6425; ">
+			    			<label style="font-weight: bold;">Recuerde:&nbsp;&nbsp;</label>{{tipoNotaSeleccionada.detalle}}
+			    		</label>
+			    	</div>    			    				    			    	  		    	
+		    </div>
+		</div>
+		<div class="panel panel-inverse" ng-show="!formularioNota.$invalid && nota.tipo!='00'">
+		    <div class="panel-heading">
+		        <h4 class="panel-title" style="font-size:15px;">DETALLE</h4>
+		    </div>
+		    <div class="panel-body text-center">	
+				<div class="col-xs-12">		
+					<table ng-table="tableDetalle" class="table table-bordered table-condensed">
+				        <colgroup>
+				          <col width="10%" />
+				          <col width="10%" />
+				          <col width="30%" />
+				          <col width="10%" />
+				          <col width="10%" />
+				          <col width="10%" />	
+				          <col width="10%" />
+				          <col width="10%" />											          												          
+				        </colgroup>	
+						<tr ng-repeat="row in $data" ng-class="{'itemModificado': row.bandera ==true}">
+							<td data-title="'Tipo Afect'" style="text-align: center;">{{row.descTipoIgv}}</td>						
+							<td data-title="'Cant.'" style="text-align: right;">
+								<div ng-show="bandImporte[$index]">{{row.cantidad}}</div>
+								<div ng-show="nota.tipo=='07'">
+									<input type="text" numerico-decimal="true" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" class="form-control" ng-show="!bandImporte[$index]" ng-model="row.cantidad"></input>							
+								</div>
+							</td>
+							<td data-title="'Descripcion'" style="text-align: left;">
+								<div ng-show="bandImporte[$index]">{{row.descripcion}}</div>
+								<div ng-show="nota.tipo=='03'"> 
+									<input ng-show="!bandImporte[$index]" type="text" class="form-control" ng-model="row.descripcion" maxlength="200"></input>
+								</div>							
+							</td>
+							<td data-title="'Val. Unit.'" style="text-align: right;">
+								<div ng-show="bandImporte[$index]">{{row.precioU}}</div>
+								<div ng-show="nota.tipo=='07'"> 
+									<input ng-show="!bandImporte[$index]" numerico-decimal="true" type="text" class="form-control" ng-show="!bandImport[$index]" ng-model="row.precioU"></input>
+								</div>											
+							</td>																	
+							<td data-title="'Val. Vent.'" style="text-align: right;">{{(row.precioT).toFixed(2)}}</td>
+							<td data-title="'IGV'" style="text-align: right;">{{row.codTipoIgv==10?(row.igvT).toFixed(2): 0.00}}</td>								
+							<td data-title="'Imp. Vent.'" style="text-align: right;">{{row.codTipoIgv==10?(row.precioT + row.igvT).toFixed(2): row.precioT.toFixed(2)}}</td>						
+	                        <td data-title="'Editar'" ng-if="nota.tipo=='03' || nota.tipo=='07'" align="center">
+	                         	<button title="Editar Precio" ng-show="bandImporte[$index]" class="btn btn-success" ng-click="modificarImporte($index)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+	                         	<button title="Editar" ng-show="!bandImporte[$index]" class="btn btn-default" ng-click="modificarImporte($index)"><i class="fa fa-check" aria-hidden="true"></i></button>
+	                         	<button title="Descartar" ng-show="!bandImporte[$index]" class="btn btn-default" ng-click="bandImporte[$index]=true"><i class="fa fa-close" aria-hidden="true"></i></button>                         	
+	                        </td>																					
+						</tr>										
+					</table>					
+				</div>	
+		   	  <button type="button" class="btn btn-primary" ng-disabled="!formulario.siguiente" ng-click="calcularOperaciones(); formulario.preVisualizacion=true">Siguiente</button>  		    	
+		    </div>
+		</div>
+	</div>		
+	<div class="panel panel-inverse" ng-show="formulario.preVisualizacion">
+	    <div class="panel-heading">
+	        <h4 class="panel-title" style="font-size:15px;">NOTA DE CREDITO</h4>
+	    </div>
+	    <div class="panel-body">
+	    	<div class="row">
+		    	<div class="col-xs-12 col-sm-4 col-md-4">
+	                 <label>Boleta Relacionada:</label>
+	               	 <input type="text" class="form-control" value="{{nota.numeroDocumentoAsociado}}"  disabled/>  
+	               	 <br/>
+		    	</div>	    	
+		    	<div class="col-xs-12 col-sm-4 col-md-4">
+		            <label>{{boletaSeleccionada.tipoDoc}}:</label>
+		           	<input type="text" class="form-control" value="{{boletaSeleccionada.docIden}}"  disabled/>                              
+	    			<br/>
+		    	</div>	    	
+		    	<div class="col-xs-12 col-sm-4 col-md-4">
+	                 <label>Cliente:</label>
+	               	 <input type="text" class="form-control" value="{{boletaSeleccionada.nombre}}"  disabled/>  
+	               	 <br/>
+		    	</div>	 
+		    	<div class="col-xs-12 col-sm-4 col-md-4">
+	                <label>Moneda:</label>
+	               	<input type="text" class="form-control" value="{{boletaSeleccionada.moneda}}"  disabled/>  
+		    		<br/>
+		    	</div>	
+		    	<div class="col-xs-12 col-sm-4 col-md-4">
+	           		 <label>Tipo:</label>
+	              	 <input type="text" class="form-control" value="{{tipoNotaSeleccionada.descripcion}}"  disabled/>  	 
+		    		 <br/>
+		    	</div>
+		    	<div class="col-xs-12 col-sm-4 col-md-4">
+	       			 <label>Motivo:</label>
+	               	 <input type="text" class="form-control" value="{{nota.motivo}}"  disabled/>  
+		    		 <br/>
+		    	</div>	  
+		    	<div class="col-xs-12 col-sm-4 col-md-4">
+	       			 <label>Fecha:</label>
+	               	 <input type="text" class="form-control" value="{{formulario.fecha}}"  disabled/>  
+		    		 <br/>
+		    	</div>			    	  	    	   			
+			</div>	
+			<br/>	
+   			<div class="tablecontainer table-responsive">																						
+				<table ng-table="tableDetalle" class="table table-bordered table-condensed">
+			        <colgroup>
+				          <col width="10%" />
+				          <col width="10%" />
+				          <col width="25%" />
+				          <col width="15%" />
+				          <col width="15%" />
+				          <col width="10%" />	
+				          <col width="15%" />												          												          
+			        </colgroup>	
+					<tr ng-repeat="row in $data" ng-if="((nota.tipo=='03' ||  nota.tipo=='07') && row.bandera==true)|| (nota.tipo!='03' && nota.tipo!='07')">
+						<td data-title="'Tipo Afect'" style="text-align: center;">{{row.descTipoIgv}}</td>
+						<td data-title="'Cant.'" style="text-align: right;">{{row.cantidad}}</td>						
+						<td data-title="'Descripcion'" style="text-align: left;">{{row.descripcion}}</td>
+						<td data-title="'Val. Unit.'" style="text-align: right;">{{row.precioU}}</td>																	
+						<td data-title="'Val. Vent.(*)'" style="text-align: right;">{{row.precioT.toFixed(2)}}</td>
+						<td data-title="'IGV'" style="text-align: right;">{{row.codTipoIgv==10?(row.igvT).toFixed(2): 0.00}}</td>						
+						<td data-title="'Imp. Vent.(**)'" style="text-align: right;">{{row.codTipoIgv==10?(row.precioT + row.igvT).toFixed(2): row.precioT.toFixed(2)}}</td>																					
+					</tr>										
+				</table>	
+				<br/>	
+				<div class="form-horizontal">
+		              <div class="col-md-12 text-right">				              	
+		              	<label>Op. Gravada: </label> <input type="text" class="text-right" placeholder="Op. Gravada" disabled="true" value="{{(oper.gravada).toFixed(2)}}"/>
+		              </div>
+		              <div class="col-md-12 text-right">
+		              	<br/>
+		              	<label>Op. Exonerada: </label> <input type="text" class="text-right" placeholder="Op. Exonerada" disabled="true" value="{{(oper.exonerada).toFixed(2)}}">
+		              </div>
+					  <div class="col-md-6">
+		              	<br/>
+		              	<label>(*) Sin impuesto.</label>
+		              </div>		              
+		              <div class="col-md-6 text-right">
+		              	<br/>
+		              	<label>Op.Inafecta: </label> <input type="text" class="text-right" placeholder="Op.Inafecta" disabled="true" value="{{(oper.inafecta).toFixed(2)}}">
+		              </div>
+					  <div class="col-md-6">
+		              	<br/>
+		              	<label>(**) Incluye impuesto, de ser Op. Gravada.</label>
+		              </div>		              
+		              <div class="col-md-6 text-right">
+		              	<br/>
+		              	<label>I.G.V: </label> <input type="text" class="text-right" placeholder="Igv" disabled="true" value="{{(oper.igv).toFixed(2)}}">
+		              </div>
+		              <div class="col-md-12 text-right">
+		              	<br/>
+		              	<label>Importe Total: </label> <input type="text" class="text-right" placeholder="Total" disabled="true" value="{{(oper.igv + oper.gravada + oper.exonerada + oper.inafecta).toFixed(2)}}">
+		              </div>
+					  <div class="text-center">
+						  <button class="btn btn-primary" ng-click="formulario.preVisualizacion=false"><span class="fa fa-chevron-left"></span> Retroceder</button>
+			    		  <button class="btn  btn-primary" ng-click="abrirModal('#myModalConfirmation')">Registrar <span class="fa fa-chevron-right"></span></button>
+					  </div>		              				              						
+				</div>																					
+			</div>	  			  		    	  		    	
+	    </div>
+	</div>	
+</div>
+<!-- Modal Buscar boleta -->
+ <div class="modal fade" data-backdrop="static" id="boletaBuscar" role="dialog">
+    <div class="modal-dialog modal-lg">
+     	<div class="modal-content">
+	       <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">BUSCAR BOLETA</h4>
+	       </div>
+	       <div class="modal-body">
+	       		<form class="form-horizontal">
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">Numero de Boleta: </label>
+				    <div class="col-sm-3">
+					    <input class="form-control" type="text"  placeholder="Numero de Boleta" id="numeroBoleta" ng-model="numeroComprobante" ng-change="initBoletaParaNotas()"/>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <div class="col-sm-12">
+						<div class="alert alert-info">
+						  <strong>Recuerde:</strong> El plazo máximo para generar una nota de crédito es de 7 días antes de la fecha de emisión del comprobante a buscar.
+						</div>					    
+				    </div>				  
+				  </div>				         		
+				</form>
+				<form class="form-horizontal">
+				    <div id="results" ng-show="numeroComprobante!='' && tableBoletas.data.length!=0">
+				        <div class="tab-content">
+							 <div class="tablecontainer table-responsive">
+								    <table ng-table="tableBoletas" class="table table-bordered table-condensed table-hover" style="cursor: pointer;">					
+								        <colgroup>
+							        	  <col width="30%" />
+								          <col width="15%" />
+								          <col width="25%" />
+								          <col width="15%" />
+								          <col width="15%" />													          												          
+								        </colgroup>											
+										<tr ng-repeat="c in $data" ng-click="selectRowBoleta($index,c)" ng-class="{'highlight': c.numeroDocumento == boletaPreSeleccionada.numeroDocumento}" ng-dblclick="aceptarModalBoleta()">
+											<td data-title="'Nº DOCUMENTO'" style="text-align: center;" ><span>{{c.numeroDocumento}}</span></td>
+											<td data-title="'FECHA'" style="text-align: center"><span>{{c.fechaEmision}}</span></td>
+											<td  data-title="'CLIENTE'" style="text-align: center"><span>{{c.nombre}}</span></td>
+											<td  data-title="'IMPORTE'"  style="text-align: right;"><span>{{c.importeOperacion}}</span></td>
+											<td  data-title="'Reporte'"  style="width:10%; text-align: center;">
+						                   		 <a target="_blank" title="Descargar en PDF" ng-click="verPDF(c.codEst,c.serie,c.tipo)">
+						                   		 	<button title="Descargar" class="btn btn-info btn-sm"><span class="fa fa-file-pdf-o"></span></button>
+						                   		 </a>											
+											</td>
+										</tr>	
+									</table>
+						     </div>
+					     </div>
+				    </div>
+			    </form>
+                <div class="row" id="noMatches" ng-show="tableBoletas.data.length==0">
+                    <div class="col-md-12">
+                        <div class="tab-content">
+                            <p class="hidden-sm text-center" style="font-size:16px;">No se encontraron Boletas aceptadas por SUNAT</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+	        <div class="modal-footer" >
+	          <button type="button" class="btn btn-primary" ng-click="aceptarModalBoleta()" ng-disabled="boletaPreSeleccionada ==null" >Aceptar</button>
+	          <button type="button" class="btn btn-white" data-dismiss="modal" ng-click="boletaPreSeleccionada=null">Cerrar</button>	          
+	        </div>
+		</div>
+   </div>
+</div>
+<!-- Modal confirmacion -->
+<div class="modal fade" id="myModalConfirmation" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-sm" >
+      <div class="modal-content">
+        <div class="modal-header">
+           	<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<div style="background-color:#428bca" class="text-center">
+				<h3 style="color:white;" class="modal-title">Registrar</h3>
+			</div>
+        </div>
+        <div class="modal-body text-center">
+          	<p>¿Estás seguro de registrar la nota de crédito?</p>
+        </div>
+        <div class="modal-footer text-center">
+       		<button type="button" class="btn btn-primary" ng-click="registrarNotaCredito()" data-dismiss="modal">Si</button>
+          	<button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        </div>
+      </div>     
+    </div>
+</div>
+<spinner-modal show="{{modalSpinnerShow}}"></spinner-modal>

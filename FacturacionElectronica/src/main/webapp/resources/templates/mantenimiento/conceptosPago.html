@@ -1,0 +1,750 @@
+<meta charset="utf-8" />
+
+<style>
+	.boldFont{
+		font-weight: bold;
+	}
+	.anuladoColor {
+    	color: #ff5b57;
+	}	
+	.pendienteColor {
+    	color: #f79609; 
+    	/*background: #fdebd1;
+    	border-color: #fbd7a3;*/
+	}
+	.table>tbody>tr.pendienteColor>td{
+		/*background: #fdebd1;
+    	border-color: #fbd7a3;*/
+	}
+	.rechazadoColor {
+    	color: #fb2d28;
+    	/*background: #ffdedd;
+    	border-color: #ffbdbc;*/
+	}
+	.table>tbody>tr.rechazadoColor>td{
+		/*background: #ffdedd;
+    	border-color: #ffbdbc;*/
+	}
+	.has-errorColor {
+    	color: red;  
+	}
+	/************Input Select dentro de Input Text*************/
+	.input-group-btn select {
+		border-color: #ccc;
+		margin-top: 0px;
+	    margin-bottom: 0px;
+	    padding-top: 5px;
+	    padding-bottom: 5px; 
+	    height: 30px;
+	}
+	/**************************************************/
+	.highlight {
+  		background-color: #e8ecf1;
+	}
+	
+	.borderDark {
+	    border-color: #abb2b7;
+	}
+	
+	/************** Dibujar Linea **************/
+    #line{
+        border-bottom: 2px #ccc solid;
+        overflow:visible;
+        height:9px;        
+        margin: 5px 0 10px 0;
+    }
+    #line span{
+        background-color: white;        
+        padding: 0 5px;
+    }
+    /**************************************************/
+    
+  /************************ centrar asterisco **************************/
+	.asterisk-required{
+	  /*color:red;*/
+	}	
+	.asterisk-required span{
+	  vertical-align:sub;
+	}
+  /***********************************************************************/  
+
+	/****************** hidden scroll body *************/
+	.scrollHidden {
+	    overflow: hidden;
+	}
+	/***************************************************/  
+	
+	.modal-body .form-control[disabled], .modal-body .form-control[readonly]{
+    	opacity: .9;
+    }
+  
+</style>
+
+
+<!-- <div class="col-md-12"> -->
+
+<!-- Panel CONCEPTO DE PAGO-->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+    	<div class="btn-group pull-right">             
+             	<form action="{{accion}}" method="POST">       
+					<button type="submit" class="btn btn-sm btn-success" id="btnReporte"><span class="fa fa-download"></span> Descargar Reporte</button>    					
+				</form>
+        </div>
+        <h3 class="panel-title" style="font-size:15px;">BUSCAR CONCEPTOS DE PAGO</h3>
+    </div>
+
+    <div class="panel-body">
+    		<div class="row">
+<!--     			<form action="{{accion}}" method="POST">  -->      
+					<div class="col-md-2"></div>
+					<div class="col-md-8">
+						<div style="margin: 0; background-color: transparent; text-align: center;">
+							<button id="btnModalDependencias" type="button" class="m-r-5 btn btn-primary" ng-click="openModalUnidad()"><span class="glyphicon glyphicon-th-list"></span> Elegir Unidad</button>			                					
+						</div>
+					</div>	
+<!-- 				</form>	 -->
+	        </div>
+	        
+			<div class="row">
+				<form class="form-horizontal" style="padding-top:15px;">
+	                 <div class="form-group">
+                           <label class="col-md-3 control-label">UNIDAD : </label>
+                           <div class="col-md-7">								    	
+								<input type="text" class="input-sm form-control" value="{{view.nombreDependencia}}" readonly style="font-weight: bold;"/>
+	
+                           </div>
+                    </div>
+                    <div class="form-group">
+                           <label class="col-md-3 control-label">CODIGO UNIDAD : </label>
+                           <div class="col-md-7">								    	
+								<input type="text" class="input-sm form-control" value="{{( view.udId==null?'':(view.estado_sol_codUnidad==null)?'NO REGISTRADO': (view.numUnidad +(view.estado_sol_codUnidad==0?' (PENDIENTE)': (view.estado_sol_codUnidad==2?' (RECHAZADO)':'')  ) ))}}" readonly style="font-weight: bold;"/>
+                           </div>
+                    </div>
+	            </form>
+			</div>
+	</div>
+</div>
+<!-- Fin Panel CONCEPTO DE PAGO-->
+
+
+<!-- Panel Table Result -->
+<div class="panel panel-inverse" id="panelResult" style="display:none;">
+    <div class="panel-heading">
+        
+       <div class="btn-group pull-right">
+             	<button type="button" class="btn btn-sm btn-primary" ng-click="openModalNewConceptoEspec(view.udId, view.nombreDependencia, view.numUnidad)"><span class="fa fa-plus"></span> Registrar Concepto</button>
+       </div>
+       <h3 id="txtTituloUnidadPadre" class="panel-title" style="font-size:15px;">MANTENIMIENTO DE CONCEPTOS DE PAGO - {{view.nombreDependencia}}</h3>      
+    </div>
+
+    <div class="panel-body">
+            
+    	<div class="tablecontainer table-responsive" ng-show="VisibleResultTable">
+				  
+				   <table ng-table="tableParams" class="table table-condensed table-bordered table-hover" show-filter="true" >					
+							<colgroup>
+							  <col width="6%" />
+							  <col width="37%" />
+							  <col width="12%" />
+							  <col width="15%" />
+							  <col width="20%" />
+							  <col width="10%" />
+							</colgroup>
+							<tr ng-repeat="c in $data">							    
+								<td data-title="'CÓDIGO CONCEPTO'"  style="vertical-align:inherit;width: 6%;text-align: center;" filter="{codigoConcepto6digitos: 'text'}" ><span>{{c.codigoConcepto6digitos}}</span></td>
+								<td data-title="'DESCRIPCIÓN'"  style="vertical-align:inherit;text-align: left" filter="{descr: 'text'}" sortable="'descr'"><span>{{c.descr}}</span></td>
+								<td data-title="'IMPORTE'"  style="vertical-align:inherit;width: 9%; text-align: right;"><span>{{c.monedaSimb}} {{c.monto | number:2}}</span></td>														
+								<td data-title="'SOLICITUD'"  style="vertical-align:inherit;width:12%; text-align: center;"  filter="{ estadoSolicitud: 'select' }" filter-data="tipoSolicitud"> <span ng-class="{'badge badge-warning': c.estadoSolicitud==0, 'badge badge-danger': c.estadoSolicitud==2, 'badge badge-success': c.estadoSolicitud==1}" style="font-size:11px;">{{c.estadoSolicitud==0 ? 'PENDIENTE' : (c.estadoSolicitud==1?'APROBADO':'RECHAZADO')}}</span></td>
+								<td data-title="'ESTADO'" style="vertical-align:inherit;width:5%; text-align: center;"> <button class="btn btn-sm btn-block" title="{{(c.estado==1)? 'Haga click para deshabilitar este concepto':'Haga click para habilitar este concepto'}}" style="font-size:14px;" ng-class="{'btn-success': (c.estadoSolicitud==1 && c.estado==1), 'btn-danger': (c.estadoSolicitud==1 && c.estado==0), 'btn-default': (c.estadoSolicitud==0 || c.estadoSolicitud==2)}" ng-click="abrirModalConfirm_cambiaEstado(c)" ng-disabled="c.estadoSolicitud==0 || c.estadoSolicitud==2">{{c.estado==1 ? 'Habilitado' : 'Deshabilitado'}} </button></td>
+								<td data-title="'OPCIONES'"  style="vertical-align:inherit;width:12%;text-align: center;">
+									<button title="Detalle" ng-click="openModalDetalleConcepto(c)" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i></button>
+								    <button title="Editar"  class="btn btn-sm btn-success" ng-click="openModalActualizar(c)" ng-hide="c.estado==1"><i class="fa fa-pencil-square-o"></i></button> 
+									<button title="Eliminar" class="btn btn-sm btn-danger" ng-click="abrirModalConfirm_eliminarConcepto(c)" ng-hide="c.estado==1"><i class="fa fa-trash"></i></button>
+								</td>
+							</tr>	
+				   </table>
+    	</div>
+    	<div class="row" id="noMatches" ng-show="!VisibleResultTable">
+		    <div class="col-md-12">
+				<p class="hidden-sm text-center" style="font-size:16px;">No se encontraron conceptos de pago en ésta dependencia</p>
+		    </div>
+		</div>
+		
+    </div>
+</div>
+<!-- Fin Panel Table Result --> 
+
+<!-- </div> -->
+
+
+	<!-- Modal Arbol -->
+	<div  id="modalDependencia" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel"><span style="color:#0431B4">DEPENDENCIAS</span>  </h4>
+	      </div>
+	      <div class="modal-body"  style="max-height: 520px;overflow-y: auto;">
+	      
+	
+	            <div class="tree"  ng-show="dependencia != null">
+						<ul>
+							<li ng-show="true">
+								<a ng-click="expandirContraer3($event, 0, dependencia.descripcion, dependencia.numUnidad, dependencia.estSolCodUnidad)"   >{{dependencia.descripcion}}</a>
+								<ul>
+									<li ng-show="primerNivel" ng-repeat="aux1 in dependencia.unidades" >
+										<a ng-click="expandirContraer3($event, aux1.idUnidad, aux1.descripcion, aux1.numUnidad, aux1.estSolCodUnidad)"   >{{aux1.codUnidad}}-{{aux1.descripcion}}</a>
+										<ul>
+											<li ng-show="{{aux1.codUnidad}}" ng-repeat="aux2 in aux1.unidades"  >
+												<a ng-click="expandirContraer3($event, aux2.idUnidad, aux2.descripcion, aux2.numUnidad, aux2.estSolCodUnidad)"    >{{aux2.codUnidad}}-{{aux2.descripcion}}</a>
+												<ul>
+													<li ng-show="{{aux2.codUnidad}}" ng-repeat="aux3 in aux2.unidades"  >
+														<a ng-click="expandirContraer3($event, aux3.idUnidad, aux3.descripcion, aux3.numUnidad, aux3.estSolCodUnidad)">{{aux3.codUnidad}}-{{aux3.descripcion}}</a>
+														<ul>
+															<li ng-show="{{aux3.codUnidad}}" ng-repeat="aux4 in aux3.unidades"  >
+																<a ng-click="expandirContraer3($event, aux4.idUnidad, aux4.descripcion, aux4.numUnidad, aux4.estSolCodUnidad)">{{aux4.codUnidad}}-{{aux4.descripcion}}</a>
+																<ul>
+																	<li ng-show="{{aux4.codUnidad}}" ng-repeat="aux5 in aux4.unidades"  >
+																		<a ng-click="expandirContraer3($event, aux5.idUnidad, aux5.descripcion, aux5.numUnidad, aux5.estSolCodUnidad)">{{aux5.codUnidad}}-{{aux5.descripcion}}</a>
+																		<ul>
+																			<li ng-show="{{aux5.codUnidad}}" ng-repeat="aux6 in aux5.unidades"  >
+																				<a ng-click="expandirContraer3($event, aux6.idUnidad, aux6.descripcion, aux6.numUnidad, aux6.estSolCodUnidad)">{{aux6.codUnidad}}-{{aux6.descripcion}}</a>
+																				<ul>
+																					<li ng-show="{{aux6.codUnidad}}" ng-repeat="aux7 in aux6.unidades"  >
+																						<a ng-click="expandirContraer3($event, aux7.idUnidad, aux7.descripcion, aux7.numUnidad, aux7.estSolCodUnidad)">{{aux7.codUnidad}}-{{aux7.descripcion}}</a>
+																					</li>
+																				</ul>
+																			</li>
+																		</ul>
+																	</li>
+																</ul>
+															</li>
+														</ul>
+													</li>
+												</ul>
+										   </li>
+	
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+	      </div>
+	      <div class="modal-footer">	        
+	        <button  ng-click="aceptarDependencia()"  type="button" class="btn btn-primary">Aceptar</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>  
+	<!-- Fin Modal Arbol -->
+	
+ <!-- Modal Arbol 2 -->
+ <div  id="modalDependencia2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"><span style="color:#0431B4">DEPENDENCIAS</span>  </h4>
+      </div>
+      <div class="modal-body"  style="max-height: 520px;overflow-y: auto;">
+            <div class="tree"  ng-show="dependencia2 != null">
+					<ul>
+						<li ng-show="true">
+							<a ng-click="expandirContraer2($event, 0, dependencia2.descripcion, dependencia2.numUnidad)">{{dependencia2.descripcion}}</a>
+							<ul>
+								<li ng-show="primerNivel" ng-repeat="aux1 in dependencia2.unidades" >
+									<a ng-click="expandirContraer2($event, aux1.idUnidad, aux1.descripcion, aux1.numUnidad)"   >{{aux1.codUnidad}}-{{aux1.descripcion}}</a>
+									<ul>
+										<li ng-show="{{aux1.codUnidad}}" ng-repeat="aux2 in aux1.unidades"  >
+											<a ng-click="expandirContraer2($event, aux2.idUnidad, aux2.descripcion, aux2.numUnidad)"    >{{aux2.codUnidad}}-{{aux2.descripcion}}</a>
+											<ul>
+												<li ng-show="{{aux2.codUnidad}}" ng-repeat="aux3 in aux2.unidades"  >
+													<a ng-click="expandirContraer2($event, aux3.idUnidad, aux3.descripcion, aux3.numUnidad)">{{aux3.codUnidad}}-{{aux3.descripcion}}</a>
+													<ul>
+														<li ng-show="{{aux3.codUnidad}}" ng-repeat="aux4 in aux3.unidades"  >
+															<a ng-click="expandirContraer2($event, aux4.idUnidad, aux4.descripcion, aux4.numUnidad)">{{aux4.codUnidad}}-{{aux4.descripcion}}</a>
+															<ul>
+																<li ng-show="{{aux4.codUnidad}}" ng-repeat="aux5 in aux4.unidades"  >
+																	<a ng-click="expandirContraer2($event, aux5.idUnidad, aux5.descripcion, aux5.numUnidad)">{{aux5.codUnidad}}-{{aux5.descripcion}}</a>
+																	<ul>
+																		<li ng-show="{{aux5.codUnidad}}" ng-repeat="aux6 in aux5.unidades"  >
+																			<a ng-click="expandirContraer2($event, aux6.idUnidad, aux6.descripcion, aux6.numUnidad)">{{aux6.codUnidad}}-{{aux6.descripcion}}</a>
+																			<ul>
+																				<li ng-show="{{aux6.codUnidad}}" ng-repeat="aux7 in aux6.unidades"  >
+																					<a ng-click="expandirContraer2($event, aux7.idUnidad, aux7.descripcion, aux7.numUnidad)">{{aux7.codUnidad}}-{{aux7.descripcion}}</a>
+																				</li>
+																			</ul>
+																		</li>
+																	</ul>
+																</li>
+															</ul>
+														</li>
+													</ul>
+												</li>
+											</ul>
+									   </li>
+
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+      </div>
+      <div class="modal-footer">        
+        <button  ng-click="aceptarDependencia2()"  type="button" class="btn btn-primary">Aceptar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>  
+<!-- Fin Modal Arbol 2 -->
+
+
+<div class="modal fade" data-backdrop="static" id="buscarConcepto">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+						<h4 class="modal-title">BUSCAR CONCEPTO</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="form-group">
+					 	<label class="col-md-10">Código del concepto :</label>
+					 	<!-- <input type="text" class="col-sm-2 input-sm form-control" ng-model="unidadRecaudadora.numUnidad" readonly/>					 	
+					 	<input id="cpBuscado" type="text" class="col-sm-10 input-sm form-control" placeholder="Digite el código del concepto (3 dígitos)" ng-model="view.cpBuscado"/> -->
+					 	<div class="col-md-12" style="margin-bottom: 10px;">
+				            <div class="form-inline">
+				                <div class="form-group">
+				                    <input type="text" class="col-md-1 input-sm form-control" ng-model="unidadRecaudadora.numUnidad" readonly style="width:50px;font-weight: bold;"/>
+				                </div>
+				                <div id="line" class="form-group" style="width:8px;"></div>
+				                <div class="form-group">
+				                    <input id="cpBuscado" type="text" class="col-md-10 input-sm form-control" placeholder="Digite el código del concepto (3 dígitos)" ng-model="view.cpBuscado" style="width:400px;"/>
+				                </div>
+				            </div>
+				        </div>
+                    </div>
+                    <script type="text/javascript">
+							$("#cpBuscado").mask('000');
+					</script>
+				</div>
+				
+				<div class="row" id="results_CP" style="display:none;">
+					<div class="col-md-12 tab-content">
+						<div id="tableCRUCContainer" class="tablecontainer table-responsive">
+							 <table ng-table="tableParams1" class="table table-bordered table-condensed table-hover">					
+									<!-- <tr ng-repeat="c in $data" style="cursor: pointer;" ng-click="selectRowConcepto($index,c)" ng-dblclick="dobleClickConcepto($index,c)" ng-class="{'highlight': $index == selectedRow}"> -->
+									<tr ng-repeat="c in $data" style="cursor: pointer;" ng-click="selectRowConcepto($index,c)" ng-class="{'highlight': $index == selectedRow}">
+										<td data-title="'CÓDIGO'"  style="width:8%; text-align: center;" ><span>{{c.codCpago}}</span></td>
+										<td data-title="'CONCEPTO'" style="text-align: left"><span>{{c.concepto}}</span></td>														
+									</tr>	
+							 </table>
+						</div>
+					</div>
+				</div>
+				
+				<!-- NO MATCHES RESULTS  -->
+				<div class="row" id="noMatches_CP" style="display:none;">
+				    <div class="col-md-12">
+					    <div class="tab-content text-center">
+							<p class="hidden-sm" style="font-size:16px;">No se encontraron coincidencias </p>
+							<a href="javascript:;" class="btn btn-sm btn-primary" ng-click="crearConceptoManualmente()">Crearlo manualmente</a>
+						</div>
+				    </div>
+				</div>
+				<!-- END NO MATCHES RESULTS  -->
+			</div>
+			<div class="modal-footer text-center">				
+				<button type="button" id="btnAcceptarCP" class="btn btn-sm btn-primary" ng-click="aceptarConcepto2()" ng-disabled="selectedRow==null">Crear</button>
+				<button type="button" class="btn btn-sm btn-white" data-dismiss="modal">Cancelar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="buscarCodigoUniRec">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+						<h4 class="modal-title">ELEGIR UNIDAD</h4>
+			</div>
+			<div class="modal-body">
+				
+				<div class="row" id="results_UR" style="display:none;">
+					<div class="col-md-12 tab-content">
+						<div id="tableURContainer" class="tablecontainer table-responsive">
+							 <table ng-table="tableParamsUR" class="table table-bordered table-condensed table-hover">					
+									<tr ng-repeat="c in $data" style="cursor: pointer;" ng-click="selectRowURecaudadora($index,c)" ng-dblclick="dobleClickURecaudadora($index,c)" ng-class="{'highlight': $index == selectedRowUR}">
+										<td data-title="'CÓDIGO'"  style="width:8%; text-align: center;" ><span>{{c.numUnidad}}</span></td>
+										<td data-title="'UNIDAD'" style="text-align: left"><span>{{c.udDscUnidad}}</span></td>														
+									</tr>	
+							 </table>
+						</div>
+					</div>
+				</div>
+				
+				<!-- NO MATCHES RESULTS  -->
+				<div class="row" id="noMatches_UR" style="display:none;">
+				    <div class="col-md-12">
+					    <div class="tab-content">
+							<p class="hidden-sm text-center" style="font-size:16px;">No se encontraron unidades registradas </p>
+						</div>
+				    </div>
+				</div>
+				<!-- END NO MATCHES RESULTS  -->
+			</div>
+			<div class="modal-footer text-center">				
+				<a href="javascript:;" class="btn btn-sm btn-primary" ng-click="aceptarURecaudadora()" ng-disabled="selectedRowUR==null">Aceptar</a>
+				<a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Cerrar</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<input id="viewMode" type="hidden" value="1"> <!-- modo mantenimiento -->
+
+
+<!-- <div class="modal fade" data-backdrop="static" id="modalConceptoPago" style="overflow-y: auto;"> -->
+<div class="modal fade" data-backdrop="static" id="modalConceptoPago">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+						<h4 class="modal-title">{{!view.processActualizar?'REGISTRAR CONCEPTO DE PAGO':'EDITAR CONCEPTO DE PAGO'}}</h4>
+						
+			</div>
+			<div class="modal-body">
+				<div class="m-b-10 row">
+                	<span class="col-md-3 text-right asterisk-required"><em>(<span>*</span>) : campos obligatorios</em></span>
+                </div>
+				<form class="form-horizontal" name="formSolCP" >								
+							   <div class="form-group">
+                                    <label class="col-md-3 control-label">UNIDAD : </label>
+                                    <div class="col-md-8">								    	
+								    	<input type="text" class="input-sm form-control" name="newCP_unidad" ng-model="unidadRecaudadora.udDscUnidad" placeholder="Nombre de la unidad" disabled required style="font-weight: bold;"/>
+			    						<div class="has-errorColor" ng-show="formSolCP.newCP_unidad.$dirty">
+										    <span ng-show="formSolCP.newCP_unidad.$error.required">Seleccione una unidad</span>
+										</div>
+                                    </div>
+                               </div>
+                               <div class="form-group">
+                                    <label class="col-md-3 control-label">TIPO DE CONCEPTO <span ng-show="view.regNuevoCodConcepto" class="asterisk-required">(<span>*</span>) </span>:</label>
+                                    <div class="col-md-8">
+                                        <select class="default-select input-sm form-control" name="newCP_tipo" ng-show="view.regNuevoCodConcepto" ng-options="tipc.idTipoCpago as tipc.nombre for tipc in listaTipoConcepto" ng-model="concepto.idTipoCpago" ng-disabled="!view.regNuevoCodConcepto" style="padding-left:5px;" ng-required="view.regNuevoCodConcepto">
+								    		<option value="">Tipo de Concepto</option>
+								    	</select>
+								    	<input type="text" class="input-sm form-control" ng-show="view.processActualizar || view.regConcepto" ng-value="concepto.tcpDescr" readonly style="font-weight: bold;"/>
+								    	<div class="has-errorColor" ng-show="formSolCP.newCP_tipo.$dirty">
+					                         <span ng-show="formSolCP.newCP_tipo.$error.required">Seleccione un tipo de Concepto de Pago</span>
+					                    </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">CÓDIGO DEL CONCEPTO : </label>
+                                    <div class="col-md-2">
+                                        <input type="text" class="input-sm form-control" id="newCP_codigoCP" name="newCP_codigoCP" ng-value="unidadRecaudadora.numUnidad+ '-' +concepto.codCPago" placeholder="Codigo del Concepto" disabled required style="font-weight: bold;"/>
+                                        <div class="has-errorColor" ng-show="formSolCP.newCP_codigoCP.$dirty">
+		                                      <span ng-show="formSolCP.newCP_codigoCP.$error.required">Escriba el código del concepto</span>
+		                                </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">CONCEPTO <span ng-show="view.regNuevoCodConcepto" class="asterisk-required">(<span>*</span>) </span>: </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="input-sm form-control" name="newCP_nombre" ng-model="concepto.concepto" placeholder="Nombre" ng-disabled="!view.regNuevoCodConcepto" required ng-class="{'boldFont': !view.regNuevoCodConcepto}"/>
+									    <div class="has-errorColor" ng-show="formSolCP.newCP_nombre.$dirty">
+		                                      <span ng-show="formSolCP.newCP_nombre.$error.required">Escriba un nombre para el concepto</span>
+		                                </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">DESCRIPCIÓN : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="input-sm form-control" name="newCP_desc" ng-model="concepto.descr" placeholder="Alias para el concepto (opcional)" />
+									    <div class="has-errorColor" ng-show="formSolCP.newCP_desc.$dirty">
+		                                      <span ng-show="formSolCP.newCP_desc.$error.required">Escriba una descripción para el concepto</span>
+		                                </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">BANCO <span ng-show="view.regNuevoCodConcepto" class="asterisk-required">(<span>*</span>) </span>: </label>
+                                    <div class="col-md-5">
+                                        <select class="default-select input-sm form-control" name="newCP_banco" ng-show="view.regNuevoCodConcepto" ng-options="banco.codigo as banco.nombre for banco in listaBancos" ng-model="concepto.codBanco" ng-disabled="!view.regNuevoCodConcepto" style="padding-left:5px;" ng-required="view.regNuevoCodConcepto">
+								    		<option value="">Nombre del banco</option>
+								    	</select>
+								    	<input type="text" class="input-sm form-control" ng-show="view.processActualizar || view.regConcepto" ng-value="concepto.nombreBanco" readonly style="font-weight: bold;"/>
+								    	<div class="has-errorColor" ng-show="formSolCP.newCP_banco.$dirty">
+					                         <span ng-show="formSolCP.newCP_banco.$error.required">Seleccione un banco</span>
+					                    </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+								    <label class="col-md-3 control-label">IMPORTE (Sin IGV) :</label>
+								    <div class="col-md-4">
+									    <div class="input-group">
+									      <input type="text" class="input-sm form-control" id="newCP_monto" name="newCP_monto" ng-model="concepto.monto" placeholder="Precio (Sin IGV)" ng-pattern="/^(([0-9]+)([\.]([0-9]+))?|([\.]([0-9]+))?)$/" />
+									      <div class="input-group-btn">
+									        <select class="btn btn-sm" name="newCP_moneda" ng-options="mon.idMoneda as mon.monedaDesc + ' (' +mon.monedaSimb + ')' for mon in listaMonedas" ng-model="concepto.idMoneda" required></select>
+									      </div>
+									    </div>
+									    <div class="has-errorColor" ng-show="formSolCP.newCP_monto.$dirty">
+			                                  <!-- <span ng-show="formSolCP.newCP_monto.$error.required">Asigne un precio al concepto</span> -->
+			                                  <span ng-show="formSolCP.newCP_monto.$error.pattern">Formato de importe inválido (sólo números y punto decimal)</span>
+			                            </div>
+								    </div>
+								</div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">FACTURABLE <span ng-show="view.regNuevoCodConcepto" class="asterisk-required">(<span>*</span>) </span>:</label>
+                                    <div class="col-md-8" ng-show="view.regNuevoCodConcepto">                                        
+                                        <label class="radio-inline" ><input type="radio" name="opFacturable" value="0" ng-model="concepto.facturable" ng-disabled="!view.regNuevoCodConcepto"/>Opcional</label>
+                                        <label class="radio-inline"><input type="radio" name="opFacturable" value="1" ng-model="concepto.facturable" checked ng-disabled="!view.regNuevoCodConcepto"/>Obligatorio</label>                                        
+                                    </div>
+                                    <div class="col-md-2" ng-show="view.processActualizar || view.regConcepto">
+                                    	<input type="text" class="input-sm form-control" value="{{concepto.facturable==0 ? 'Opcional' : 'Obligatorio'}}" readonly style="font-weight: bold;"/>
+                                    </div> 
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">I.G.V. <span ng-show="view.regNuevoCodConcepto" class="asterisk-required">(<span>*</span>) </span>:</label>
+                                    <div class="col-md-8" ng-show="view.regNuevoCodConcepto">
+                                        <label class="radio-inline"><input type="radio" name="opIgv" value="0" ng-model="concepto.igv" checked ng-disabled="!view.regNuevoCodConcepto"/>No</label>
+                                        <label class="radio-inline"><input type="radio" name="opIgv" value="1" ng-model="concepto.igv" ng-disabled="!view.regNuevoCodConcepto"/>Si</label>                                        
+                                    </div>
+                                    <div class="col-md-2" ng-show="view.processActualizar || view.regConcepto">
+                                    	<input type="text" class="input-sm form-control" value="{{concepto.igv==0 ? 'No' : 'Si'}}" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">RESOLUCIÓN RECTORAL : </label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="input-sm form-control" id="newCP_rr" name="newCP_rr" ng-model="concepto.resolRectoral" placeholder="Número Resolución Rectoral"/>
+									    <div class="has-errorColor" ng-show="formSolCP.newCP_rr.$dirty">
+		                                      <span ng-show="formSolCP.newCP_rr.$error.required">Escriba el número de la Resolución Rectoral</span>
+		                                </div>
+                                    </div>
+                                    <script type="text/javascript">
+									 	$('#newCP_rr').mask("R.R. N° 00000-R-00", {placeholder: "R.R. N° _____-R-__"});
+									</script>
+                                </div>
+                                <div class="m-b-0 form-group">
+                                    <label class="col-md-3 control-label">OBSERVACIONES : </label>
+                                    <div class="col-md-8">
+                                        <textarea class="form-control no-rounded-corner" rows="3" placeholder="Escriba aquí todas sus observaciones" ng-model="concepto.observaciones" style="resize: none;"></textarea>
+                                    </div>
+                                </div>
+                                
+                    </form> 
+			</div>
+			<div class="modal-footer text-center">
+				<!-- <a href="javascript:;" class="btn btn-default" data-dismiss="modal">Cerrar</a> -->
+				<button class="btn btn-primary" ng-show="!view.processActualizar" ng-click="abrirModalConfirm_agregarConcepto()" ng-disabled="formSolCP.$invalid"><loading></loading> Registrar</button>
+	    		<button class="btn btn-success" ng-show="view.processActualizar && !view.processVolverAEnviar" ng-click="abrirModalConfirm_actualizarItem()" ng-disabled="formSolCP.$invalid"> Guardar</button>
+				<button class="btn btn-primary" ng-show="view.processActualizar && view.processVolverAEnviar" ng-click="abrirModalConfirm_actualizarItem()" ng-disabled="formSolCP.$invalid"> Volver a enviar</button>
+				<button class="btn btn-white" ng-show="!view.processActualizar" ng-click="cancelarRegistro()">Cancelar</button>
+				<button class="btn btn-white" ng-show="view.processActualizar" ng-click="cancelarActualizacion()">Cancelar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="detalleConceptoPago">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+						<h4 class="modal-title">CONCEPTO DE PAGO <span ng-class="{'badge badge-warning': cpDetalle.estadoSolicitud==0, 'badge badge-danger': cpDetalle.estadoSolicitud==2, 'badge badge-success': cpDetalle.estadoSolicitud==1}" style="font-size:11px;">{{cpDetalle.estadoSolicitud==0 ? 'Pendiente' : (cpDetalle.estadoSolicitud==1?'Aprobado':'Rechazado')}}</span></h4>		
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" name="formDetalleCP" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">UNIDAD : </label>
+                                    <div class="col-md-8">								    	
+								    	<input type="text" class="input-sm form-control" name="detCP_unidad" ng-model="cpDetalle.udDesc" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">TIPO DE CONCEPTO : </label>
+                                    <div class="col-md-8">
+                                        <!-- <select class="default-select input-sm form-control" name="detCP_tipo" ng-options="tipc.idTipoCpago as tipc.nombre for tipc in listaTipoConcepto" ng-model="cpDetalle.idTipoCpago" disabled style="font-weight: bold; padding-left:5px;">
+								    		<option value="">Tipo de Concepto</option>
+								    	</select> -->
+								    	<input type="text" class="input-sm form-control" ng-value="cpDetalle.tcpDescr" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">CÓDIGO DEL CONCEPTO : </label>
+                                    <div class="col-md-2">
+                                        <input type="text" class="input-sm form-control" id="detCP_codigoCP" name="detCP_codigoCP" ng-value="cpDetalle.codigoUnidad+'-'+cpDetalle.codCPago" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">CONCEPTO : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="input-sm form-control" name="detCP_nombre" ng-model="cpDetalle.concepto" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">DESCRIPCIÓN : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="input-sm form-control" name="detCP_desc" ng-model="cpDetalle.descr" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">BANCO : </label>
+                                    <div class="col-md-5">
+                                        <!-- <select class="default-select input-sm form-control" name="detCP_banco" ng-options="banco.codigo as banco.nombre for banco in listaBancos" ng-model="cpDetalle.codBanco" readonly style="font-weight: bold; padding-left:5px;">
+								    		<option value="">Nombre del banco</option>
+								    	</select> -->
+								    	<input type="text" class="input-sm form-control" ng-value="cpDetalle.nombreBanco" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+								    <label class="col-md-3 control-label">IMPORTE (Sin IGV) : </label>
+								    <div class="col-md-4">
+									      <input type="text" class="input-sm form-control" name="detCP_monto" value="{{cpDetalle.monedaSimb}} {{cpDetalle.monto | number:2}}" readonly style="font-weight: bold;"/>
+								    </div>
+								</div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">FACTURABLE :</label>
+                                    <div class="col-md-2">                                        
+                                        <!-- <label class="radio-inline"><input type="radio" name="detOpFacturable" value="0" ng-model="cpDetalle.facturable" disabled/>Opcional</label>
+                                        <label class="radio-inline"><input type="radio" name="detOpFacturable" value="1" ng-model="cpDetalle.facturable" disabled/>Obligatorio</label> -->
+                                        <input type="text" class="input-sm form-control" value="{{cpDetalle.facturable==0 ? 'Opcional' : 'Obligatorio'}}" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">I.G.V. :</label>
+                                    <div class="col-md-2">
+                                        <!-- <label class="radio-inline"><input type="radio" name="detOpIgv" value="0" ng-model="cpDetalle.igv" disabled/>No</label>
+                                        <label class="radio-inline"><input type="radio" name="detOpIgv" value="1" ng-model="cpDetalle.igv" disabled/>Si</label> -->
+                                        <input type="text" class="input-sm form-control" value="{{cpDetalle.igv==0 ? 'No' : 'Si'}}" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">RESOLUCIÓN RECTORAL : </label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="input-sm form-control" name="detCP_rr" ng-model="cpDetalle.resolRectoral" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">OBSERVACIONES : </label>
+                                    <div class="col-md-8">
+                                        <textarea class="form-control no-rounded-corner" rows="3" ng-model="cpDetalle.observaciones" readonly style="resize: none; font-weight: bold;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="cpDetalle.estadoSolicitud==2">
+                                    <label class="col-md-3 control-label">MOTIVO RECHAZO : </label>
+                                    <div class="col-md-8">
+                                        <textarea class="form-control no-rounded-corner" rows="3" ng-model="cpDetalle.motivoRechazo" readonly style="resize: none; font-weight:bold; border-color:red;"></textarea>
+                                    </div>
+                                </div>
+                    </form>
+			</div>
+			<div class="modal-footer text-center">
+				<a href="javascript:;" class="btn btn-default" data-dismiss="modal">Cerrar</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="modalVerificaCambios">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			   <div class="modal-header text-center">
+			        <h3 class="btn-warning" style="margin: 0 auto">Guardar</h3>
+			   </div>
+			   <div class="modal-body">
+			        <p style="font-size: 13px;">No se han detectado cambios en éste concepto. Si desea salir sin guardar los cambios haga click en el botón [Cancelar]</p>
+			   </div>
+			   <div class="modal-footer text-center">
+			    	<a href="javascript:;" class="btn btn-sm btn-default" data-dismiss="modal">Aceptar</a>			                
+			   </div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="modalMensaje">
+	    <div class="modal-dialog modal-sm">	       
+	      <div class="modal-content">
+	        <div class="modal-header text-center">
+	          <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+	          <!-- <h4 class="modal-title text-center"></h4> -->
+	          <h3 class="btn-warning" style="margin: 0 auto">{{modalMensajeTitle}}</h3>
+	        </div>
+	        <div class="modal-body">
+	          <p class="text-center semi-bold">{{modalMensajeText}}</p>
+	        </div>
+	         <div class="modal-footer text-center">
+	         	<button type="button" class="btn btn-sm btn-info" data-dismiss="modal">Aceptar</button>
+	        </div>	       
+	      </div>	      
+	    </div>
+</div>	
+
+
+	<!-- MODAL CONFIRM -->
+    <div class="modal fade" id="modalConfirm" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                     <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+                      style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+                </div>
+                <div class="modal-body">
+                     <p>{{modalOptions.bodyText}}</p>
+                </div>
+                <div class="modal-footer text-center">
+                     <button type="button" class="btn btn-primary" ng-click="modalOptions.action()" data-dismiss="modal">{{modalOptions.actionButtonText}}</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MESSAGE -->
+    <div class="modal fade" id="modalShowMessage" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+            	<div class="modal-header text-center">
+		          <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+			         style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+		        </div>
+		        <div class="modal-body">
+		          <p class="text-center semi-bold">{{modalOptions.bodyText}}</p>
+		        </div>
+		         <div class="modal-footer text-center">
+		         	<button type="button" class="btn btn-sm btn-info" data-dismiss="modal">{{modalOptions.closeButtonText}}</button>
+		        </div>
+            </div>
+        </div>
+    </div>
+
+
+<script type="text/javascript">
+    $(document).on('show.bs.modal', '.modal', function (event) {
+        //var zIndex = 1040 + (10 * $('.modal:visible').length);
+        var zIndex = Math.max.apply(null, Array.prototype.map.call(document.querySelectorAll('*'), function(el) {
+                        return +el.style.zIndex;
+                      })) + 10;
+        var zIndex = (zIndex<1040)?1040:zIndex;
+
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+    
+    $(document).on('hidden.bs.modal', '.modal', function () {
+    	$(this).css("z-index", '');
+        $('.modal:visible').length && $(document.body).addClass('modal-open');        
+    });
+</script>

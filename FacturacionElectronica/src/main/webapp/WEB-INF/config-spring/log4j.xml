@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="FACTURACION-INFO" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="${catalina.base}/logs/facturacion.info" />
+        <param name="datePattern" value="'.'yyyyMMdd" />
+        <param name="threshold" value="INFO"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter"> 
+        	<param name="LevelToMatch" value="INFO"/> 
+        	<param name="AcceptOnMatch" value="true"/> 
+        </filter>
+        <filter class="org.apache.log4j.varia.DenyAllFilter"/>
+    </appender>
+    
+    <appender name="FACTURACION-TRACE" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="${catalina.base}/logs/facturacion.trace" />
+        <param name="datePattern" value="'.'yyyyMMdd" />
+        <param name="threshold" value="TRACE"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter"> 
+        	<param name="LevelToMatch" value="TRACE"/> 
+        	<param name="AcceptOnMatch" value="true"/> 
+        </filter>
+        <filter class="org.apache.log4j.varia.DenyAllFilter"/>
+    </appender>
+    
+    <appender name="FACTURACION-WARN" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="${catalina.base}/logs/facturacion.warn" />
+        <param name="datePattern" value="'.'yyyyMMdd" />
+        <param name="threshold" value="WARN"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter"> 
+        	<param name="LevelToMatch" value="WARN"/> 
+        	<param name="AcceptOnMatch" value="true"/> 
+        </filter>
+        <filter class="org.apache.log4j.varia.DenyAllFilter"/>
+    </appender>
+    
+    <appender name="FACTURACION-DEBUG" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="${catalina.base}/logs/facturacion.debug" />
+        <param name="datePattern" value="'.'yyyyMMdd" />
+        <param name="threshold" value="DEBUG"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter"> 
+        	<param name="LevelToMatch" value="DEBUG"/> 
+        	<param name="AcceptOnMatch" value="true"/> 
+        </filter>
+        <filter class="org.apache.log4j.varia.DenyAllFilter"/>
+    </appender>
+    
+    <appender name="FACTURACION-ERROR" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="${catalina.base}/logs/facturacion.error" />
+        <param name="datePattern" value="'.'yyyyMMdd" />
+        <param name="threshold" value="ERROR"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter"> 
+        	<param name="LevelToMatch" value="ERROR"/> 
+        	<param name="AcceptOnMatch" value="true"/> 
+        </filter>
+        <filter class="org.apache.log4j.varia.DenyAllFilter"/>
+    </appender>
+    
+    <appender name="FACTURACION-FATAL" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="${catalina.base}/logs/facturacion.fatal" />
+        <param name="datePattern" value="'.'yyyyMMdd" />
+        <param name="threshold" value="FATAL"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter"> 
+        	<param name="LevelToMatch" value="FATAL"/> 
+        	<param name="AcceptOnMatch" value="true"/> 
+        </filter>
+        <filter class="org.apache.log4j.varia.DenyAllFilter"/>
+    </appender>
+
+    <!--                           -->
+    <!-- setup log4j's root logger -->
+    <!--                           -->
+    <root>
+        <level value="INFO" />
+        <appender-ref ref="FACTURACION-INFO"/>
+        <appender-ref ref="FACTURACION-TRACE"/>
+        <appender-ref ref="FACTURACION-WARN"/>
+        <appender-ref ref="FACTURACION-DEBUG"/>
+        <appender-ref ref="FACTURACION-ERROR"/>
+        <appender-ref ref="FACTURACION-FATAL"/>
+    </root>
+</log4j:configuration>

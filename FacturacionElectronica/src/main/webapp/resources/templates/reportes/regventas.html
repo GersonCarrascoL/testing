@@ -1,0 +1,205 @@
+<meta charset="utf-8" />
+<div class="panel panel-inverse">
+	<div class="panel-heading">
+		<h3 class="panel-title" style="font-size: 15px;">REPORTE DE
+			VENTAS E INGRESOS</h3>
+	</div>
+	<div class="panel-body">
+
+		<form class="form-horizontal col-md-12">
+			<div class="form-group">
+				<div class="col-md-4 col-md-offset-4 text-center">
+                     <label class="radio-inline" style="font-weight: bold; font-size: 14px;"><input type="radio" name="opcion" value="mes" ng-click="mostrarModalMes()"/>MES</label>
+                     <label class="radio-inline" style="font-weight: bold; font-size: 14px; margin-left: 30px;"><input type="radio" name="opcion" value="intervalo" ng-click="mostrarModalIntervalo()"/>INTERVALO</label>              
+                </div>                                   
+			</div>
+		</form>
+		
+		</br></br>
+		
+		<div id="porMes" style="display: none">
+			<div class="panel-body">
+				<form class="form-horizontal ng-pristine ng-valid ng-valid-required ng-valid-pattern col-md-offset-3">
+					<div class="form-group">
+						<div class="col-md-3 col-md-offset-2">
+							<h3 class="panel-title" style="font-size: 15px; font-weight: bold;">BUSCAR POR MES</h3>
+						</div>
+					</div>
+					<div class="form-group">
+		        		<label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Unidad :</label>
+		                <div class="col-md-5">
+							<select2  class="form-control" ng-model="facultad" ng-change="actualizarAccion()"  s2-options="facultad.udId as facultad.unidad for facultad in facultades">
+							</select2>								
+		                 </div>   		
+		    		</div>
+		    		<div class="form-group">
+						<label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Año :</label>
+						<div class="col-md-5">
+							<select class="form-control" style="font-size: 13px;"
+								ng-change="actualizarAccion()" ng-model="year"
+								ng-options="year.id as year.name for year in years">
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-2 control-label " style="font-weight: bold; font-size:14px;">Mes :</label>
+						<div class="col-md-5">
+							<select class="form-control" style="font-size: 13px;"
+								ng-change="actualizarAccion()" ng-model="month"
+								ng-options="month.id as month.name for month in months"
+								ng-init="month=months[0].id">
+							</select>
+						</div>
+					</div>
+				</form>
+						
+				<form action="{{accionD}}" method="POST" class="form-horizontal col-md-offset-3">
+					<div class="form-group">
+						<div class="col-md-3 col-md-offset-2">
+							<button type="submit" class="btn btn-primary btn-sm mb1 bg-green" id="btnReporteExcel" ng-disabled="month<=0">
+								<i class="fa fa-file-excel-o"></i> Descargar .xls
+							</button>
+						</div>
+					</div>
+				</form>
+					
+			</div>
+		</div>
+		<div id="porIntervalo" style="display: none">
+			<div class="panel-body">
+				<form class="form-horizontal ng-pristine ng-valid ng-valid-required ng-valid-pattern col-md-offset-3">
+				    <div class="form-group">
+						<div class="col-md-3 col-md-offset-2">
+							<h3 class="panel-title" style="font-size: 15px; font-weight: bold;">BUSCAR POR INTERVALO</h3>
+						</div>
+					</div>
+				    <div class="form-group">
+		        		<label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Unidad :</label>
+		                <div class="col-md-5">
+							<select2  class="form-control" ng-model="facultad"  s2-options="facultad.udId as facultad.unidad for facultad in facultades">
+							</select2>								
+		                 </div>   		
+		    		</div>
+		    		
+					<div class="form-group">
+						<label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Fecha Inicial :</label>
+						<div class="col-md-5">
+							<div id="fecInicio" class="input-group">
+								<input type="text" class="form-control" name="fechaComienzo"
+									id="fechaComienzo" ng-init="actualizarAccionxI()"
+									ng-change="sel_fec_ini()" ng-model="fechaComienzo"
+									placeholder="Fecha Inicial" disabled="true" /> 
+								<label
+									for="fechaComienzo" id="myButtonInicial" data-toggle="tooltip"
+									data-placement="bottom" title="fecha Inicial"
+									class="input-group-addon btn btn-inverse"> <span
+									class="glyphicon glyphicon-calendar"></span>
+								</label>
+								<script>
+									$(function() {
+										$.datepicker.regional['es'] = {
+											monthNames : [ 'Enero', 'Febrero',
+													'Marzo', 'Abril', 'Mayo',
+													'Junio', 'Julio', 'Agosto',
+													'Septiembre', 'Octubre',
+													'Noviembre', 'Diciembre' ],
+											monthNamesShort : [ 'Ene', 'Feb',
+													'Mar', 'Abr', 'May', 'Jun',
+													'Jul', 'Ago', 'Sep', 'Oct',
+													'Nov', 'Dic' ],
+											dayNames : [ 'Domingo', 'Lunes',
+													'Martes', 'Mi&eacute;rcoles',
+													'Jueves', 'Viernes',
+													'S&aacute;bado' ],
+											dayNamesShort : [ 'Dom', 'Lun', 'Mar',
+													'Mié', 'Juv', 'Vie',
+													'S&aacute;b' ],
+											dayNamesMin : [ 'Do', 'Lu', 'Ma', 'Mi',
+													'Ju', 'Vi', 'S&aacute;' ]
+										};
+										$.datepicker
+												.setDefaults($.datepicker.regional['es']);
+										$("#fechaComienzo").datepicker({
+											dateFormat : 'dd/mm/yy',
+											changeMonth : true,
+											changeYear : true,
+											minDate : new Date(2005, 1 - 1, 1),
+											maxDate : '+0Y'
+										});
+										$("#myButtonInicial").click(function() {
+											$("#fechaComienzo").datepicker("show");
+										});
+									});
+								</script>
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group" >
+						<label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Fecha Final :</label>
+						<div class="col-md-5">
+							<div class="input-group">
+								<input type="text" class="form-control" name="fechaFinal"
+									id="fechaFinal" ng-change="sel_fec_fin()" ng-model="fechaFinal"
+									placeholder="Fecha Final" disabled="true"/> 
+								<label
+									ng-disabled="fechaComienzo==''" for="fechaFinal"
+									id="myButtonFinal" data-toggle="tooltip" data-placement="bottom"
+									title="fecha Final" class="input-group-addon btn btn-inverse">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</label>
+								<script>
+									$(function() {
+										$.datepicker.regional['es'] = {
+											monthNames : [ 'Enero', 'Febrero',
+													'Marzo', 'Abril', 'Mayo',
+													'Junio', 'Julio', 'Agosto',
+													'Septiembre', 'Octubre',
+													'Noviembre', 'Diciembre' ],
+											monthNamesShort : [ 'Ene', 'Feb',
+													'Mar', 'Abr', 'May', 'Jun',
+													'Jul', 'Ago', 'Sep', 'Oct',
+													'Nov', 'Dic' ],
+											dayNames : [ 'Domingo', 'Lunes',
+													'Martes', 'Mi&eacute;rcoles',
+													'Jueves', 'Viernes',
+													'S&aacute;bado' ],
+											dayNamesShort : [ 'Dom', 'Lun', 'Mar',
+													'Mié', 'Juv', 'Vie',
+													'S&aacute;b' ],
+											dayNamesMin : [ 'Do', 'Lu', 'Ma', 'Mi',
+													'Ju', 'Vi', 'S&aacute;' ]
+										};
+										$.datepicker
+												.setDefaults($.datepicker.regional['es']);
+										$("#fechaFinal").datepicker({
+											dateFormat : 'dd/mm/yy',
+											changeMonth : true,
+											changeYear : true,
+											minDate : new Date(2007, 1 - 1, 1),
+											maxDate : '+0Y'
+										});
+										$("#myButtonFinal").click(function() {
+											$("#fechaFinal").datepicker("show");
+										});
+									});
+								</script>
+							</div>
+						</div>
+					</div>
+				</form>
+				
+				<form action="{{accionB}}" method="POST" class="form-horizontal col-md-offset-3">
+					<div class="form-group">
+						<div class="col-md-3 col-md-offset-2">
+							<button type="submit" class="btn btn-primary btn-sm mb1 bg-green" id="btnReporteExcel" ng-disabled="!flag_boton">
+								 <i class="fa fa-file-excel-o"></i> Descargar .xls
+							</button>
+						</div>
+					</div>
+				</form>
+				
+			</div>
+		</div>
+	</div>
+</div>

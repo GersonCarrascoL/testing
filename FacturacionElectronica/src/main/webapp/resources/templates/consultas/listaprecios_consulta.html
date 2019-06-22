@@ -1,0 +1,393 @@
+<meta charset="utf-8" />
+<style>
+	.anuladoColor {
+    	color: red;
+	}
+	.modal-body .form-control[disabled], .modal-body .form-control[readonly]{
+    	opacity: .9;
+    }
+</style>
+
+<!-- PANEL LISTA DE PRECIOS -->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+    	<div class="btn-group pull-right">             
+             	<form action="{{actionReporteBienes}}" method="POST">       
+					<button type="submit" class="btn btn-sm btn-success" id="btnReporteExcel"><span class="fa fa-file-excel-o" style="padding-right:3px;"></span>  Descargar</button>    					
+				</form>
+        </div>
+        
+        <h3 class="panel-title" style="font-size:15px;">CONSULTA DE LISTA DE BIENES</h3>
+    </div>
+
+    <div class="panel-body">
+       
+        <div class="row">       
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div style="margin: 0; background-color: transparent; text-align: center;">
+					<button id="btnMisBienes" type="button" class="btn btn-info" ng-click="getMyBienes()" ng-show="administracionCentral"><span class="fa fa-book"></span> Mis Bienes</button>
+					<button id="btnModalDependencias" type="button" class="btn btn-success" ng-click="openModalUnidad()"><span class="glyphicon glyphicon-th-list"></span> Elegir Dependencia</button>
+				</div>
+			</div>		
+        </div>
+        
+    </div>
+ </div>
+ <!-- FIN PANEL LISTA DE PRECIOS -->
+ 
+ 
+ <!-- Panel Table Result -->
+<div class="panel panel-inverse" id="panelResult" style="display:none">
+    <div class="panel-heading">
+        <h3 id="txtTituloUnidadPadre" class="panel-title" style="font-size:15px;">{{view.nombrePadre}}</h3>
+    </div>
+
+    <div class="panel-body">
+    
+    	<!-- ENCABEZADO DEPENDENCIA ELEGIDA -->
+		<div>
+			<div  id="boxEncabezado" class="note note-info"  style="display:none" >
+				<span style="color:blue;  font-size: 15px">DEPENDENCIA:</span>
+				<span id="txtNombreDependencia"  style="font-size: 15px"  ></span>
+			</div>
+		</div>
+		<!-- FIN ENCABEZADO DEPENDENCIA ELEGIDA -->
+		
+		<div ng-show="VisibleResultTable">
+			<form class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-4 control-label" style="font-weight: bold; font-size:14px;">Categoría de Artículos :</label>
+                  <div class="col-md-4">
+                    <select class="form-control" ng-model="tableParams.filter().descCategoriaBien" ng-options="catBien.filterCategoriaBien as catBien.descCategoriaBien for catBien in listCatBienSelect">
+                    </select>
+                  </div>                
+                </div>
+              </form>
+		</div>
+		
+		<script type="text/ng-template" id="tableheaderBienes">
+			<tr>
+			    <th>CÓDIGO ARTÍCULO</th>
+			    <th>DESCRIPCIÓN</th>
+				<th>UNIDAD MEDIDA</th>
+			    <th>PRECIO UNITARIO</th>
+			    <th>OPCIONES</th>			    
+			</tr>
+			<tr>
+			    <th>
+					<input type="text" class="form-control" ng-model="tableParams.filter().codigo" maxlength="50" placeholder="Buscar código">
+				</th>
+			    <th><input type="text" class="form-control" ng-model="tableParams.filter().descripcion" maxlength="50" placeholder="Buscar artículo"></th>
+			    <th></th>
+			    <th></th>
+			    <th></th>			    
+			</tr>
+		</script>
+  
+        <div id="containerTableItems" class="tablecontainer table-responsive" ng-show="VisibleResultTable">		
+					<table ng-table="tableParams" template-header="tableheaderBienes" class="table table-condensed table-bordered table-hover" show-filter="true" show-group="false">
+				        <colgroup>
+                          <col width="13%" />
+                          <col width="61%" />
+                          <col width="8%" />
+                          <col width="10%" />
+                          <col width="8%" />
+                        </colgroup>
+				        <tr class="ng-table-group" ng-repeat-start="group in $groups">
+				          <td colspan="6">
+				            <a href="" ng-click="group.$hideRows = !group.$hideRows">
+				              <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span><strong>{{group.value}}</strong>
+				            </a>
+				          </td>
+				        </tr>
+				        
+				        <tr ng-hide="group.$hideRows" ng-repeat-start="(key, values) in group.data | orderBy:orderNullToDown | groupBy: 'descCategoriaBien' ">
+				          <td ng-if="key !== 'undefined' && group.value !== 'undefined'" class="text-left text-uppercase text-success" colspan="6"><strong>{{(key=='NULL' || key=='null' || key=='')?'SIN CATEGORIA':key}}</strong></td>
+				        </tr>
+				        <!-- <tr ng-hide="group.$hideRows" ng-repeat="c in group.data" ng-repeat-end> -->
+				        <tr ng-hide="group.$hideRows" ng-repeat-end ng-repeat="c in values" >
+							<td data-title="'CÓDIGO ARTÍCULO'"  style="width: 13%;text-align: left;" ><span ng-class="{anuladoColor: c.estado==0}">{{c.codigo}}</span></td>
+							<td data-title="'UNIDAD'" groupable="'udDesc'" ng-if="false" style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.udDesc}}</span></td>
+							<td  data-title="'DESCRIPCIÓN'"  style="width: 61%;text-align: left"  filter="{descripcion: 'text'}" sortable="'descripcion'"><span ng-class="{anuladoColor: c.estado==0}">{{c.descripcion}}</span></td>
+							<td  data-title="'UNIDAD MEDIDA'"  style="width: 8%;text-align: center"><span ng-class="{anuladoColor: c.estado==0}">{{c.unidadMedidaDesc}}</span></td>
+							<td  data-title="'PRECIO UNITARIO'"  style="width: 10%;text-align: right;"><span ng-class="{anuladoColor: c.estado==0}">{{c.monedaSimb}} {{c.precio | number:2}}</span></td>
+							<td  data-title="'OPCIONES'" style="width: 8%;text-align:center;"> 
+								<button ng-click="openModalDetalleItem(c)" title="Ver Detalle" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i></button>
+							</td>
+							<!-- <td  data-title="'HISTORIAL PRECIOS'"  style="width: 4%;text-align: center;"> <button ng-click="openModalHistorialPrecios(c)"   class="btn btn-sm btn-info"><i class="glyphicon glyphicon-list"></i></button></td>	 -->
+				        </tr>
+				        
+				        <tr ng-repeat-end ng-if="false">
+        				</tr>
+				  </table>
+        </div>
+        
+        <loading-datos></loading-datos>
+        
+        <div class="row" id="noMatches" ng-show="noDataTable">
+		    <div class="col-md-12">
+				<p class="hidden-sm text-center" style="font-size:16px;">No se encontraron artículos en ésta dependencia</p>
+		    </div>
+		</div>
+		
+    </div>
+</div>
+<!-- Fin Panel Table Result -->
+
+<!-- Modal #Detalle -->
+	<div class="modal fade" id="Detalle">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+						<h4 class="modal-title">DETALLE DEL ARTÍCULO</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal" name="formDetalleItem" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad : </label>
+                                    <div class="col-md-8">
+								    	<input type="text" class="form-control" name="detItem_unidad" ng-model="itDetalle.udDesc" readonly style="font-weight: bold;"/>	
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Concepto de Pago : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_CodConcepto" value="{{(itDetalle.codigoConcepto6digitos==null || itDetalle.codigoConcepto6digitos=='')?'Concepto no Asignado':itDetalle.codigoConcepto6digitos}}" readonly style="font-weight: bold;"/>	
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="itDetalle.idUnidadConcepto!=null">
+                                    <label class="col-md-3 control-label">Descripción Concepto : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="input-sm form-control" name="detItem_descConcepto" ng-model="itDetalle.descrUnidadConcepto" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Categoría : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_catBien" value="{{(itDetalle.idBienCata==null || itDetalle.idBienCata=='')?'Sin Categoría':itDetalle.descCategoriaBien}}" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Catálogo del Artículo : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_catCodProd" ng-model="itDetalle.nombreCatalogo" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad de Medida : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_unidadMed" ng-model="itDetalle.unidadMedidaDesc" readonly style="font-weight: bold;"/>                                     								    	
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Descripción Artículo : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_desc" ng-model="itDetalle.descripcion" readonly style="font-weight: bold;"/>                                        
+                                    </div>
+                                </div> 
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Valor Unitario : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_importe" value="{{itDetalle.monedaSimb}} {{itDetalle.precio | number:2}}" readonly style="font-weight: bold;"/>                                        
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Tipo IGV : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_descIgv" ng-model="itDetalle.descTipoIgv" readonly style="font-weight: bold;"/>                                     								    	
+                                    </div>
+                                </div>
+                                 <div class="form-group">
+                                    <label class="col-md-3 control-label">{{(itDetalle.nameTipoResol==null || itDetalle.nameTipoResol=='')?'Resolución' : getLabelTipoResolucion(itDetalle.nameTipoResol)}} : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="detItem_Resol" value="{{(itDetalle.nameTipoResol==null || itDetalle.nameTipoResol=='')?'En Trámite' : itDetalle.numResolucion }}" readonly style="font-weight: bold;"/>                                                                            
+                                    </div>
+                                </div>
+
+                            </form>
+					</div>
+					<div class="modal-footer text-center">
+						<a href="javascript:;" class="btn btn-default" data-dismiss="modal">Cerrar</a>					
+					</div>
+				</div>
+			</div>
+	</div>
+ 	
+	
+  <!-- Modal Confirm -->
+  <div class="modal fade" id="Confirm" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>This is a small modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+ <!-- Modal Arbol -->
+	<div  id="modalDependencia" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel"><span style="color:#0431B4">DEPENDENCIAS</span>  </h4>
+	      </div>
+	      <div class="modal-body"  style="max-height: 520px;overflow-y: auto;">
+	      
+	
+	            <div class="tree"  ng-show="dependencia != null">
+						<ul>
+							<li ng-show="true">
+								<a ng-click="expandirContraer($event,dependencia.descripcion)"   >{{dependencia.descripcion}}</a>
+								<ul>
+									<li ng-show="primerNivel" ng-repeat="aux1 in dependencia.unidades" >
+										<a ng-click="expandirContraer($event, aux1.descripcion)"   >{{aux1.codUnidad}}-{{aux1.descripcion}}</a>
+										<ul>
+											<li ng-show="{{aux1.codUnidad}}" ng-repeat="aux2 in aux1.unidades"  >
+												<a ng-click="expandirContraer($event, aux2.descripcion)"    >{{aux2.codUnidad}}-{{aux2.descripcion}}</a>
+												<ul>
+													<li ng-show="{{aux2.codUnidad}}" ng-repeat="aux3 in aux2.unidades"  >
+														<a ng-click="expandirContraer($event, aux3.descripcion)">{{aux3.codUnidad}}-{{aux3.descripcion}}</a>
+														<ul>
+															<li ng-show="{{aux3.codUnidad}}" ng-repeat="aux4 in aux3.unidades"  >
+																<a ng-click="expandirContraer($event, aux4.descripcion)">{{aux4.codUnidad}}-{{aux4.descripcion}}</a>
+																<ul>
+																	<li ng-show="{{aux4.codUnidad}}" ng-repeat="aux5 in aux4.unidades"  >
+																		<a ng-click="expandirContraer($event, aux5.descripcion)">{{aux5.codUnidad}}-{{aux5.descripcion}}</a>
+																		<ul>
+																			<li ng-show="{{aux5.codUnidad}}" ng-repeat="aux6 in aux5.unidades"  >
+																				<a ng-click="expandirContraer($event, aux6.descripcion)">{{aux6.codUnidad}}-{{aux6.descripcion}}</a>
+																				<ul>
+																					<li ng-show="{{aux6.codUnidad}}" ng-repeat="aux7 in aux6.unidades"  >
+																						<a ng-click="expandirContraer($event, aux7.descripcion)">{{aux7.codUnidad}}-{{aux7.descripcion}}</a>
+																					</li>
+																				</ul>
+																			</li>
+																		</ul>
+																	</li>
+																</ul>
+															</li>
+														</ul>
+													</li>
+												</ul>
+										   </li>
+	
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+	      </div>
+	      <div class="modal-footer">	        
+	        <button  ng-click="aceptarDependencia()"  type="button" class="btn btn-primary">Aceptar</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>  
+	<!-- Fin Modal Arbol -->
+
+  
+<div class="modal fade" id="modalMensaje" role="dialog">
+	    <div class="modal-dialog modal-sm">	       
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title text-center">{{modalMensajeTitle}}</h4>
+	        </div>
+	        <div class="modal-body">
+	          <p class="text-center semi-bold">{{modalMensajeText}}</p>
+	        </div>
+	         <div class="modal-footer text-center">
+	         	<button type="button" class="btn btn-sm btn-info" data-dismiss="modal">Aceptar</button>
+	        </div>	       
+	      </div>	      
+	    </div>
+</div>
+    
+<input id="viewMode" type="hidden" value="2"> <!-- modo consulta -->
+
+<!-- #modal-HISTRIAL PRECIOS -->
+<div class="modal fade" id="modalHistorialPrecios">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+				<h4 class="modal-title">Historial de Precios</h4>
+			</div>
+			<div class="modal-body">
+			
+				<div class="profile-info">
+                            <form class="form-horizontal" name="formItemNuevo2" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad: </label>
+                                    <div class="col-md-9">
+								    	<input type="text" class="form-control" ng-model="historial.unidadName" disabled/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Artículo: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" ng-model="historial.itemName"  disabled/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Código del Artículo: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" ng-model="historial.codItem"  disabled/>
+                                    </div>
+                                </div>
+                            </form>
+                </div>
+                <!-- end profile-info -->
+                
+                <div class="text-center" style="border:1px solid #ddd;border-color: #e2e7eb;background-color:#cdd2f3;">
+                	<h5 style="color:#012898;">DETALLE CRONOLOGICO DE PRECIOS</h5>
+                </div>
+                 
+				<!-- begin row -->
+				<div class="row" id="resultHistorial" style="display:none;">
+				    <div class="col-md-12">
+							 <div id="tableContainer" class="tablecontainer table-responsive">
+								   <table ng-table="tableParamsHistorial" class="table table-bordered table-condensed table-hover">
+								        <colgroup>
+								          <col width="25%" />
+								          <col width="25%" />
+								          <col width="50%" />
+								        </colgroup>							
+										<tr ng-repeat="c in $data">
+											<td data-title="'FECHA Y HORA'"  style="text-align: center;" ><span>{{c.fecha}}</span></td>
+											<td  data-title="'PRECIO UNITARIO'"  style="text-align: right;"><span>{{c.monedaSimb}} {{c.precio | number:2}}</span></td>
+											<td  data-title="'USUARIO'"  style="text-align: left;"><span>{{c.usuario}}</span></td>
+										</tr>	
+									</table>
+						     </div>
+				    </div>
+				</div>
+				
+				<!-- NO MATCHES RESULTS  -->
+				<div class="row" id="noHistory" style="display:none;">
+				    <div class="m-t-5 col-md-12">
+							<p class="hidden-sm text-center" style="font-size:14px;">No hay registro del historial de precios </p>
+				    </div>
+				</div>
+				<!-- END NO MATCHES RESULTS  -->
+							
+			</div>
+			<div class="modal-footer text-center">
+			     <button type="button" class="btn btn-sm btn-info" data-dismiss="modal">Aceptar</button>
+			</div>
+		</div>
+	</div>
+</div>

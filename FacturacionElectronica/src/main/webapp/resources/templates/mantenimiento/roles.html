@@ -1,0 +1,347 @@
+<meta charset="utf-8" />
+<style>
+	.anuladoColor {
+    	/* color: #f79609; */
+	}
+	.has-error span {
+		color: #ff5b57;
+	}
+	.has-error .fa{
+		color: #fff;
+	}
+
+	
+	/* tab color */
+	.nav-tabs>li>a {
+	  /* border-color: #777777; */
+	  background-color: #242a30;
+	  color: #aaacb3;
+	  border: none!important;
+	  border-top-left-radius: 3px;
+	  border-top-right-radius: 3px;
+	}
+
+	/* active tab color */
+	.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+	  background-color: #fff;
+	  color: #242a30;
+	  border: none!important;
+	}
+	
+	/* hover tab color */
+	.nav-tabs>li>a:hover {
+	  background-color: #fafafa;
+	  border-color: #000000;
+	  /* color:#6e7179; */
+	  color:#242a30;
+	}
+	.nav-tabs>li{
+	  background-color: transparent;
+	}
+	.nav-tabs{
+	  background-color: #242a30;
+	  border-top-left-radius: 3px;
+	  border-top-right-radius: 3px;
+	}
+	.ui-datepicker { position: relative; z-index: 10000 !important; }
+	.InputDate[disabled]{
+		/* background: #e5e9ed; */
+		background: #fff;
+    	opacity: 1;
+	}
+	/************************ centrar asterisco **************************/
+	.asterisk-required{
+	  /*color:red;*/
+	}	
+	.asterisk-required span{
+	  vertical-align:sub;
+	}
+    /***********************************************************************/  
+
+    .form-control.field-success{
+    	color: #3c763d;
+    	background-color: #dff0d8;
+    }
+    .form-control.field-danger{
+    	color: #a94442;
+    	background-color: #f2dede;
+    }    
+    .modal-body .form-control[disabled], .modal-body .form-control[readonly]{
+    	opacity: .9;
+    }
+</style>
+
+<!-- begin panel -->
+<div class="panel panel-inverse panel-with-tabs">
+    <div class="panel-heading">
+        <h4 class="panel-title" style="font-size:15px;">MANTENIMIENTO DE ROLES</h4>
+    </div>
+    <div id="myTabContent" class="tab-content">
+       	<div class="row">
+		   <form name="formBuscar1" >
+		     <div class="form-group">
+		         <div class="col-md-4">
+		         	<div class="input-group">
+		            	<button id="btnModalNuevoItem" type="button" class="btn btn-sm btn-primary" ng-click="openModalNewDni()"><span class="glyphicon glyphicon-plus"></span> Registrar</button>			            	
+		            </div>
+		         </div>
+		      </div>
+		    </form>
+		</div>
+    </div>
+</div>
+<!-- end panel -->
+
+ <!-- Panel Table Result -->
+<div class="panel panel-inverse" id="panelResult" style="">
+    <!-- <div class="panel-heading">
+        <h3 id="txtTituloUnidadPadre" class="panel-title" style="font-size:15px;">{{view.nombrePadre}}</h3>
+    </div> -->
+
+    <div class="panel-body">
+    	<script type="text/ng-template" id="tableheader">
+			<tr>
+			    <th>N°</th>
+			    <th>NOMBRES</th>
+			    <th>EMAIL</th>
+			    <th>PERFIL</th>
+			    <th>DNI</th>	
+				<th>ESTADO</th>
+				<th>OPCIONES</th>		    
+			</tr>
+		</script>
+		<div id="containerTableItems" class="tablecontainer table-responsive" ng-show="VisibleResultTable"> 
+                   <table ng-table="tableParams" template-header="tableheader" class="table table-condensed table-bordered table-hover" show-filter="true" show-group="false">
+                        <colgroup>
+                          <col width="6%" />
+                          <col width="20%" />
+                          <col width="20%" />
+                          <col width="10%" />
+                          <col width="9%" />
+                          <col width="15%" />
+                        </colgroup>
+                        
+                        <tr ng-hide="group.$hideRows" ng-repeat-end ng-repeat="c in listaRoles" >
+                            <script type="text/ng-template" id="path/to/your/filters/descripcion.html">
+                                    <input type="text" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control" maxlength="15" placeholder="Buscar" />  
+                            </script>
+                            <td data-title="'N°'" style="width: 6%;text-align: left;" ><span>{{$index + 1}}</span></td>
+                            <td data-title="'NOMBRES'" style="width: 20%;text-align: left"><span>{{c.nombres}} {{c.apellidos}}</span></td>
+                            <td  data-title="'EMAIL'"  style="width: 20%;text-align: left"  filter="{descripcion: 'path/to/your/filters/descripcion.html'}" sortable="'descripcion'"><span ng-class="{anuladoColor: c.estado==0}">{{c.email}}</span></td>
+                            <td  data-title="'PERFIL'"  style="width: 10%;text-align: center"><span ng-class="{anuladoColor: c.estado==0}">{{c.perfil}}</span></td>
+                            <td  data-title="DNI"  style="width: 9%;text-align: right;"><span ng-class="{anuladoColor: c.estado==0}">{{c.dni}}</span></td>                          
+                            <td  data-title="'ESTADO'" style="width: 15%;text-align: center;"> <button ng-click="abrirModalConfirm_cambiaEstadoUsuRol(c,$index)"   class="btn btn-block" ng-class="{'btn-success': c.estado==1, 'btn-danger': c.estado==0}">{{c.estado==1 ? 'Habilitado' : 'Deshabilitado'}}</button></td>
+                            <td  data-title="'OPCIONES'" style="width: 15%;text-align:center;"> 
+                                <button ng-click="openModalDetalleItem(c)" title="Ver Detalle" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i></button>                             
+                                <button ng-click="openModalActualizarUsuarioRol(c,$index)" title="Editar" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-edit"></i></button>
+                                <button ng-click="abrirModalConfirm_eliminarUsuario(c)" title="Eliminar" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                            </td>                                
+                        </tr>
+                        <tr ng-repeat-end ng-if="false">
+        				</tr>
+                  </table>  
+        </div>
+          
+        <div class="row" id="noMatches" ng-show="!VisibleResultTable">
+            <div class="col-md-12">
+                <p class="hidden-sm text-center" style="font-size:16px;">No se encontraron artículos en ésta dependencia</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Panel Table Result -->
+<!-- MODAL CONFIRM -->
+    <div class="modal fade" id="modalConfirm" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                     <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+                      style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+                </div>
+                <div class="modal-body">
+                     <p>{{modalOptions.bodyText}}</p>
+                </div>
+                <div class="modal-footer text-center">
+                     <button type="button" class="btn btn-primary" ng-click="modalOptions.action()" data-dismiss="modal">{{modalOptions.actionButtonText}}</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="modalMessages" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                     <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+                      style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+                </div>
+                <div class="modal-body">
+                     <p>{{modalOptions.bodyText}}</p>
+                </div>
+                <div class="modal-footer text-center">
+                     <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+		<!-- #modal-Nuevo -->
+	<div class="modal fade" id="ModalUsuarioRol">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" ng-click="limpiar()" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+						<h4 class="modal-title">{{dataView.title}}</h4>
+					</div>
+					<div class="modal-body">
+							<div class="m-b-10 row">
+                            	<span class="col-md-4 text-right asterisk-required"><em>(<span>*</span>) : campos obligatorios</em></span>
+                            </div>
+							<form class="form-horizontal" name="formSinRUC" >
+					
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Número Documento <span class="asterisk-required">(<span>*</span>) </span>:</label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_dni.$invalid && !formSinRUC.sinruc_dni.$pristine }">                                        
+                                        <div id="dniRow" class="input-group" >
+									    		<input type="text" class="input-sm form-control" id="sinruc_dni" name="sinruc_dni" ng-model="UsuarioRol.dni"  placeholder="N° DNI" ng-disabled="UsuarioRol.id_hist != null && UsuarioRol.id_hist != ''" ng-minlength="{{UsuarioRol.tipoDoc==1?8: 1}}" ng-maxlength="{{UsuarioRol.tipoDoc==1?8: (UsuarioRol.tipoDoc==9?15:12)}}" ng-keyup="viewReniec.existeDNI=false;" capitalize required/>
+
+									    		<div class="input-group-btn" ng-show="UsuarioRol.tipoDoc==1">
+									    			<button id="btnVerificaDNI"  type="button" class="btn btn-sm btn-primary" ng-show="!manual" ng-click="consultaDNI_Cliente()" style="font-size:13px; width: 130px;padding-left:1px;padding-right:1px;" ng-disabled="formSinRUC.sinruc_dni.$error.required || !formSinRUC.sinruc_dni.$valid"><span class="fa fa-check-square-o"></span> Validar DNI <loading></loading></button>
+									        	</div>
+			    						</div>
+                                        <span ng-show="formSinRUC.sinruc_dni.$error.required && !formSinRUC.sinruc_dni.$pristine">Escriba el DNI (8 digitos)</span>
+                                        <span ng-show="formSinRUC.sinruc_dni.$error.maxlength && !formSinRUC.sinruc_dni.$pristine">Complete el DNI (8 digitos)</span>
+                                        <span ng-show="formSinRUC.sinruc_dni.$error.minlength && !formSinRUC.sinruc_dni.$pristine">Complete el DNI (8 digitos)</span>
+<!--                                        <span id="mensajeVerificaDNI" style="color:#e20808; display:none;">DNI no encontrado</span> -->
+										<div id="mensajeVerificaDNI" style="margin-bottom:0px;display:none;" class="alert alert-warning">
+	                                        <strong>¡Upps!</strong> DNI no encontrado. Favor de registrarlo <strong><a style="text-decoration:underline;" ng-click="registrarManualmente()">manualmente</a></strong>.
+                                        </div>
+                                        <div id="mensajeServicioDNI" style="margin-bottom:0px;display:none;" class="alert alert-warning">
+                                            <i class="fa fa-bullhorn" aria-hidden="true"></i> <strong>¡Upps!</strong> Servicio no disponible. Favor de registrar <strong><a style="text-decoration:underline;" ng-click="registrarManualmente()">manualmente</a></strong>.
+                                        </div>
+                                    </div>
+                                    <script type="text/javascript">                                    	
+									 	$("#sinruc_dni").mask('00000000'); //para DNI
+									</script>
+                                </div>
+                                
+                                <div class="form-group" ng-show="manual">
+                                    <label class="col-md-4 control-label">Nombres <span class="asterisk-required">(<span>*</span>) </span>: </label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_nombres.$invalid && !formSinRUC.sinruc_nombres.$pristine }">
+                                        <input type="text" class="input-sm form-control input_sinruc_nombres" maxlength="100" name="sinruc_nombres" ng-model="UsuarioRol.nombres" placeholder="Nombres" capitalize required/>
+                                        <span ng-show="formSinRUC.sinruc_nombres.$error.required && !formSinRUC.sinruc_nombres.$pristine && $scope.manual">Escriba los nombre del cliente</span>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="manual">
+                                    <label class="col-md-4 control-label">Apellidos <span class="asterisk-required">(<span>*</span>) </span>: </label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_nombres.$invalid && !formSinRUC.sinruc_nombres.$pristine }">
+                                        <input type="text" class="input-sm form-control input_sinruc_nombres" maxlength="100" name="sinruc_nombres" ng-model="UsuarioRol.apellidos" placeholder="Apellidos" capitalize required/>
+                                        <span ng-show="formSinRUC.sinruc_nombres.$error.required && !formSinRUC.sinruc_nombres.$pristine && $scope.manual">Escriba los apellidos del cliente</span>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="viewReniec.existeDNI || (UsuarioRol.id_hist != null && UsuarioRol.id_hist != '' && !(manual))">
+                                    <label class="col-md-4 control-label">Apellidos y Nombres <span class="asterisk-required">(<span>*</span>) </span>: </label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_nombres.$invalid && !formSinRUC.sinruc_nombres.$pristine }">
+                                        <input type="text" class="input-sm form-control input_sinruc_nombres" maxlength="100" name="sinruc_nombres" ng-model="UsuarioRol.nombres" placeholder="Nombres" ng-disabled="UsuarioRol.tipoDoc==1" capitalize required/>
+                                        <span ng-show="formSinRUC.sinruc_nombres.$error.required && !formSinRUC.sinruc_nombres.$pristine">Escriba el nombre del cliente</span>
+                                    </div>
+                                </div>
+                                
+                                
+								                               
+                                <div class="form-group" ng-show="viewReniec.existeDNI ||  (UsuarioRol.id_hist != null && UsuarioRol.id_hist != '')">
+                                    <label class="col-md-4 control-label">Correo electrónico : </label>
+                                    <div class="col-md-8" >
+	                                    <div class="input-group" ng-class="{ 'has-error' :formSinRUC.sinruc_email.$invalid && !formSinRUC.sinruc_email.$pristine }">
+	                                        <input type="text" class="input-sm form-control" maxlength="90" name="sinruc_email" ng-model="UsuarioRol.email" placeholder="Correo electrónico principal"  ng-pattern="/^[a-z0-9]([\._]?[a-z0-9]){1,}/" required/>
+	                                        <span class="input-group-addon" id="basic-addon">@unmsm.edu.pe</span>
+	                                    </div>
+	                                    <span ng-show="formSinRUC.sinruc_email.$error.pattern && !formSinRUC.sinruc_email.$pristine">Ingrese un email valido</span>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="viewReniec.existeDNI || (UsuarioRol.id_hist != null && UsuarioRol.id_hist != '')">
+                                    <label class="col-md-4 control-label">Perfil : </label>
+                                    <div class="col-md-8" ng-class="{ 'has-error' :formSinRUC.sinruc_tipDoc.$invalid && !formSinRUC.sinruc_tipDoc.$pristine }">
+                                        <select class="form-control default-select2 input-sm" id="tipoDocSinRUC" name="tipoDocSinRUC" ng-options="UsuarioRol.codigoPerfil as UsuarioRol.descripcionGeneral for UsuarioRol in listaPerfil" ng-model="userTipoPer1.codigoPerfil" ng-disabled="UsusarioRol.id_hist != null && UsusarioRol.id_hist != ''" required></select>
+                                        <span ng-show="formSinRUC.tipoDocSinRUC.$error.required && !formSinRUC.tipoDocSinRUC.$pristine">Elija un tipo de perfil</span>
+                                    </div>                                    
+                                </div>
+                            </form>
+					</div>
+					<div class="modal-footer">						
+						<input type="submit" id="btnRegistrarClieSinRuc" class="btn" ng-class="{ 'btn-success' :UsuarioRol.id_hist, 'btn-primary':!UsuarioRol.id_hist }" ng-click="abrirModalConfirm_submitUsuarioRol()" ng-disabled="formSinRUC.$invalid" value="{{(!UsuarioRol.id_hist || manual) ? 'Registrar' : 'Guardar'}}" />
+						<a href="javascript:;" ng-click="limpiar()" class="btn btn-white" data-dismiss="modal">Cancelar</a>
+					</div>
+				</div>
+			</div>
+	</div>
+	<!-- Modal #Detalle -->
+	<div class="modal fade" id="Detalle">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+						<h4 class="modal-title">DETALLE DEL USUARIO</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal" name="formDetalleItem" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Nombres : </label>
+                                    <div class="col-md-8">
+								    	<input type="text" class="form-control" name="detItem_unidad" ng-model="usuDetalle.nomCompleto" readonly style="font-weight: bold;"/>	
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Email : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_CodConcepto" ng-model="usuDetalle.email"readonly style="font-weight: bold;"/>	
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Perfil : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_CodConcepto" ng-model="usuDetalle.perfil"readonly style="font-weight: bold;"/>	
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Dni : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_CodConcepto" ng-model="usuDetalle.dni"readonly style="font-weight: bold;"/>	
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Estado : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="input-sm form-control" name="detItem_descConcepto" value="{{ usuDetalle.estado==1 ? 'Habilitado':'Deshabilitado'}}"  readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                            </form>
+					</div>
+					<div class="modal-footer text-center">
+						<a href="javascript:;" class="btn btn-default" data-dismiss="modal">Cerrar</a>					
+					</div>
+				</div>
+			</div>
+	</div>
+
+<script type="text/javascript">
+    $(document).on('show.bs.modal', '.modal', function (event) {
+        //var zIndex = 1040 + (10 * $('.modal:visible').length);
+        var zIndex = Math.max.apply(null, Array.prototype.map.call(document.querySelectorAll('*'), function(el) {
+                        return +el.style.zIndex;
+                      })) + 10;
+        var zIndex = (zIndex<1040)?1040:zIndex;
+
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+    
+    $(document).on('hidden.bs.modal', '.modal', function () {
+    	$(this).css("z-index", '');
+        $('.modal:visible').length && $(document.body).addClass('modal-open');        
+    });
+</script>
+
+ 

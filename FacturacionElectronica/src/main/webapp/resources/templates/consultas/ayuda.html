@@ -1,0 +1,146 @@
+<meta charset="utf-8" />
+<div class="panel panel-inverse">
+	<div class="panel-heading">
+		<h3 class="panel-title" style="font-size: 15px;">PREGUNTAS FRECUENTES</h3>
+	</div>
+	<div class="panel-body">
+	<div id="exTab3" class="container">	
+	<ul class="nav nav-pills columnas">
+			<li class="active" ><a id="basico" ng-init="bloque='1'" ng-click="bloque='1'" data-toggle="tab"><i class="fa fa-user" aria-hidden="true"></i> SOY NUEVO, ¿QUÉ HACER?</a>
+			</li>
+			<li><a id="intermedio" ng-click="bloque='2'" data-toggle="tab" ng-click="zach='2b'" data-toggle="tab"><i class="fa fa-info-circle" aria-hidden="true"></i>  TENGO UNA CONSULTA</a>
+			</li>
+			<li><a id="avanzado" ng-click="bloque='3'" data-toggle="tab" ng-click="zach='3b'" data-toggle="tab"><i class="fa fa-phone-square" aria-hidden="true"></i> ¿CÓMO LOS CONTACTO?</a>
+			</li>
+		</ul>
+
+			<div class="tab-content clearfix">
+			  	<div class="tab-pane" ng-class="{'active': bloque=='1'}" id="1">
+				  <h3><strong>¡Bienvenidos a Facturación Electrónica!</strong></h3>
+				  <br/>
+				  <p>Para los iniciantes hemos preparado una serie de videotutoriales, que facilitaran su aprendizaje en el sistema.<br/></p>
+				  <p><strong>Recuerde: </strong> los videotutoriales solo pueden ser visualizados por correos institucionales <strong>("@unmsm.edu.pe").</strong><br/></p>
+				  <br/>
+				  <a target="_blank" ng-click="recomendacion='rec1'" class="btn btn-primary" href="https://drive.google.com/drive/folders/0B-OSr1wAqLPzeGNmMHpxQkhQNUk?usp=sharing"><i class="fa fa-rocket" aria-hidden="true"></i>&nbsp;Empezar</a>
+				  <br/>
+				  <br/>
+				  <div class="alert alert-warning" ng-show="recomendacion=='rec1'">
+				  	<p><strong>¡Recomendación!&nbsp;</strong>
+				  	Cuando termine sus actividades dentro del sistema, Procure <strong>Cerrar Sesión</strong> debidamente.
+				  	Verificar los datos de la <strong>Previsualización</strong> antes de Registrar el comprobante, para evitar realizar Notas de Crédito.</p>
+				  </div>
+				</div>
+				<div class="tab-pane" ng-class="{'active': bloque=='2'}" id="2">
+          			<h3><strong>Preguntas Frecuentes</strong></h3>
+          			<br/>
+          			<ul class="fa-ul">
+          				<li class="alert alert-info cursor" ng-click="pregunta='1'"><h4><strong><i ng-hide="pregunta=='1'" class="fa fa-chevron-right" aria-hidden="true"></i><i ng-show="pregunta=='1'" class="fa fa-chevron-down" aria-hidden="true"></i>&nbsp;SIN ENVIAR A SUNAT</strong></h4></li>
+          					<div class="parrafoAyuda" ng-show="pregunta=='1'">
+          						<p>Esto significa que mediante el proceso de envío, no hubo una conexion con SUNAT en el momento que emitió.<br/>
+          						Pruebe intentarlo mas tarde, dandole clic en el mensaje <strong>"SIN ENVIAR SUNAT"</strong> nuevamente en Mantenimento de Comprobantes de Pago.<br/>
+          						<strong>Recuerde:</strong> Los comprobantes deben ser enviados de preferencia el mismo dia de emisión, caso contrario puede enviarlo dentro de los 7 dias habiles.<br/>
+          						</p>
+          					</div>
+          				<li class="alert alert-info cursor" ng-click="pregunta='2'"><h4><strong><i ng-hide="pregunta=='2'" class="fa fa-chevron-right" aria-hidden="true"></i><i ng-show="pregunta=='2'" class="fa fa-chevron-down" aria-hidden="true"></i>&nbsp;ENVIADO Y ANULADO SUNAT</i></strong></h4></li>
+	         				<div class="parrafoAyuda" ng-show="pregunta=='2'">
+	         					<p>Esto significa, la respuesta que nos envia SUNAT, la cual es debido a un error al momento de enviar el comprobante (Error de Comprobante, Error de Envio, etc).
+	         					<strong>Recomendación:</strong> En caso de tener este inconveniente, favor de contactarnos, para mencionarle el error por la cual se anuló el comprobante.
+	         					</p>
+	         				</div>
+          				<li class="alert alert-info cursor" ng-click="pregunta='3'">
+          					<h4><strong><i ng-hide="pregunta=='3'" class="fa fa-chevron-right" aria-hidden="true"></i><i ng-show="pregunta=='3'" class="fa fa-chevron-down" aria-hidden="true"></i>&nbsp;ERROR EN EL COMPROBANTE - ANTES DE ENVIAR A SUNAT</strong></h4>
+          				</li>
+          					<div class="parrafoAyuda" ng-show="pregunta=='3'">
+          						<p>Si el estado del comprobante es <strong>SIN ENVIAR A SUNAT</strong>, después de la emisión. Y desea corregir algún dato que no es observación, se tiene que realizar una <strong>nota de crédito.</strong>
+          						Para luego realizar otro comprobante, con los datos corregidos.<br/>
+          						<strong>Recuerde:</strong> Para emitir la nota de crédito el comprobante debe tener el estado <strong>ENVIADO Y ACEPTADO SUNAT.</strong><br/>
+          						</p>
+          					</div>
+          				<li class="alert alert-info cursor" ng-click="pregunta='4'">
+          					<h4><strong><i ng-hide="pregunta=='4'" class="fa fa-chevron-right" aria-hidden="true"></i><i ng-show="pregunta=='4'" class="fa fa-chevron-down" aria-hidden="true"></i>&nbsp;ERROR EN EL COMPROBANTE - DESPUES DE ENVIAR A SUNAT</strong></h4>
+          				</li>
+          					<div class="parrafoAyuda" ng-show="pregunta=='4'">
+          						<p>Si el estado del comprobante es <strong>ENVIADO Y ACEPTADO SUNAT</strong>, después de la emisión. Y desea corregir algún dato que no es observación, se tiene que realizar una <strong>nota de crédito.</strong>
+          						Para luego realizar otro comprobante, con los datos corregidos.<br/>
+          						<strong>Recuerde:</strong> Para emitir la nota de crédito el comprobante debe tener el estado <strong>ENVIADO Y ACEPTADO SUNAT.</strong><br/> No es necesario realizar una nota de crédito por el dato observación, 
+          						ya que es solo para control interno, si requiere cambiarlo, favor de contactarnos.<br/>
+          						</p>
+          					</div>
+          				<li class="alert alert-info cursor" ng-click="pregunta='5'">
+          					<h4><strong><i ng-hide="pregunta=='5'" class="fa fa-chevron-right" aria-hidden="true"></i><i ng-show="pregunta=='5'" class="fa fa-chevron-down" aria-hidden="true"></i>&nbsp;LLENADO DE BIENES Y SERVICIOS SIN RESOLUCIÓN</strong></h4>
+          				</li>
+          					<div class="parrafoAyuda" ng-show="pregunta=='5'">
+          						<p>Si desea realizar el registro de un bien y/o servicio, que no tenga como sustento del mismo; ni un tipo de resolucion especificado en el sistema.
+          						Ud debe enviar mensaje con asunto <strong>SFE - LLENADO DE BIENES Y SERVICIOS - (NUMERO DE SERIE)</strong>, con copia a los siguientes correos: <strong>tesoreria.quipucamayoc@unmsm.edu.pe, j.quipucamayoc@unmsm.edu.pe </strong>y
+          						<strong> ofgeneraleconomia@unmsm.edu.pe</strong>, adjuntando el archivo escaneado del <strong>archivo que sustente el servicio</strong>, ademas del archivo excel que se encuentra <strong><a target="_blank" href="https://drive.google.com/drive/folders/0B-OSr1wAqLPzeGNmMHpxQkhQNUk?usp=sharing">aqui</a></strong>, para luego solo esperar la confirmacion para proceder con el llenado.  
+          						</p>
+          					</div>
+          				<li class="alert alert-info cursor" ng-click="pregunta='6'">
+          					<h4><strong><i ng-hide="pregunta=='6'" class="fa fa-chevron-right" aria-hidden="true"></i><i ng-show="pregunta=='6'" class="fa fa-chevron-down" aria-hidden="true"></i>&nbsp;NO PUEDO ACCEDER AL SISTEMA</strong></h4>
+          				</li>
+          					<div class="parrafoAyuda" ng-show="pregunta=='6'">
+          						<p>En caso de no poder acceder al sistema, puede ser por un <strong>mantenimiento</strong> dentro del sistema, posible <strong>problema en su correo institucional</strong> o no <strong>cerró la sesión</strong> correctamente.
+          						</p>
+          					</div>
+          				<li class="alert alert-info cursor" ng-click="pregunta='7'">
+          					<h4><strong><i ng-hide="pregunta=='7'" class="fa fa-chevron-right" aria-hidden="true"></i><i ng-show="pregunta=='7'" class="fa fa-chevron-down" aria-hidden="true"></i>&nbsp;CONTINGENCIA. ¿QUE HACER?</strong></h4>
+          				</li>
+          					<div class="parrafoAyuda" ng-show="pregunta=='7'">
+          						<p>Si el sistema no esta operando, por un problema de internet o luz. Puede realizar comprobantes fisicos, pero con <strong>autorización de la oficina de tesoreria</strong>. Para mas detalle, comunicarse con ellos.
+          						<br/>
+          						<strong>Recuerde: </strong> Los comprobantes fisicos, no figuraran en el registro de ventas electronico, debido a que se consideran los emitidos por el sistema,es decir, de forma electronica. 
+          						</p>
+          					</div>
+          				<li class="alert alert-info cursor" ng-click="pregunta='8'">
+          					<h4><strong><i ng-hide="pregunta=='8'" class="fa fa-chevron-right" aria-hidden="true"></i><i ng-show="pregunta=='8'" class="fa fa-chevron-down" aria-hidden="true"></i>&nbsp;SERVICIOS CONSULTA RUC Y/O CONSULTA DNI</strong></h4>
+          				</li>
+          					<div class="parrafoAyuda" ng-show="pregunta=='8'">
+          						<p>Si los servicios CONSULTA RUC y/o CONSULTA DNI, toma mucho tiempo en obtener los datos, es porque el <strong>servicio no esta disponible en ese momento</strong>. Pruebe a <strong>intentarlo mas tarde</strong> o espere el tiempo estimado para continuar de forma manual.
+          						<br/>
+          						<strong>Recuerde: </strong>Cuando Ud ingrese los datos por DNI o RUC manualmente, esta aceptando que los datos que ingresa, realmente existan.
+          						</p>
+          					</div>
+          			</ul>
+				</div>
+        		<div class="tab-pane" ng-class="{'active': bloque=='3'}" id="3">
+          			<h3><strong>Contáctanos</strong></h3>
+          			<br/>
+<!--           			<div class="alert alert-info"> -->
+	         		<ul class="list-group" id="contact-list">
+	                   <li class="list-group-item alert alert-info">
+	                       <div class="col-xs-12 col-sm-3">
+	                           <img src="resources/assets/img/contact.jpg" alt="Jean Cruz" class="img-responsive img-circle" />
+	                       </div>
+	                       <div class="col-xs-12 col-sm-9 text-center">
+	                           <h3 class="name"><strong>Tesoreria - Quipucamayoc</strong></h3><br/>
+	                           <p>Para cualquier consulta adicional, les dejamos nuestros medios de comunicación:</p>
+	                           <br/>
+	                           <div class="text-center">
+		                           	<div class="col-sm-5">
+		                           		<i class="fa fa-phone fa-2x text-muted c-info" data-toggle="tooltip" title="Llamar"></i>
+	                           			<p>&nbsp;<strong>Anexo: 7665</strong></p>
+		                           	</div>
+		                           	<div class="col-sm-5">
+		                           		<i class="fa fa-envelope fa-2x text-muted c-info" data-toggle="tooltip" title="Enviar Correo"></i>
+	                           			<p>&nbsp;<strong>tesoreria.quipucamayoc@unmsm.edu.pe</strong></p>
+		                           	</div>
+	                           </div>
+	                       </div>
+	                       <div class="clearfix"></div>
+	                   </li>
+	                   </ul>
+          				
+<!--           			</div> -->
+				</div>
+			</div>
+  	</div>
+<!-- 		<ul class="nav nav-tabs"> -->
+<!-- 			<li class="active"><a data-toggle="tab" href="#nuevo">SOY NUEVO, ¿QUE HACER?</a><li> -->
+<!-- 			<li><a data-toggle="tab" href="#consulta">TENGO UNA CONSULTA</a><li> -->
+<!-- 			<li><a data-toggle="tab" href="#contacto">¿CÓMO LOS CONTACTO?</a><li> -->
+<!-- 		</ul> -->
+<!-- 		<div class="btn btn-info">SOY NUEVO, ¿QUE HACER?</div> -->
+<!-- 		<div class="btn btn-alert">TENGO UNA CONSULTA</div> -->
+<!-- 		<div class="btn btn-success">¿CÓMO LOS CONTACTO?</div> -->
+	</div>
+</div>

@@ -1,0 +1,442 @@
+<meta charset="utf-8" />
+<style>
+	.anuladoColor {
+    	color: red;
+	}
+	.pendienteColor {
+    	color: #f79609; 
+    	/*background: #fdebd1;
+    	border-color: #fbd7a3;*/
+	}
+	.rechazadoColor {
+    	color: #fb2d28;
+    	/*background: #ffdedd;
+    	border-color: #ffbdbc;*/
+	}
+	.has-errorColor {
+    	color: red;
+	}
+	.modal-dialog.modal-wide {
+      width: 82%;
+    }
+    /* .hlinea {
+          -moz-border-bottom-colors: none;
+          -moz-border-image: none;
+          -moz-border-left-colors: none;
+          -moz-border-right-colors: none;
+          -moz-border-top-colors: none;
+          border-color: #EEEEEE -moz-use-text-color #FFFFFF;
+          border-style: solid none #e2dbdb;
+          border-width: 1px 0;
+          margin: 2px 0;
+    } */
+    .vlinea:before {
+        content:"";
+        position: absolute;
+        /*z-index: -1;*/
+        top: 0;
+        bottom: 0;
+        left: 52%;
+        border-left: 1px dashed  #f38484;
+    }
+    .vlinea {
+        /*height: 100px;*/
+        /*border:1px solid #333;*/
+        position:relative;
+    }
+    
+    .modal-body .form-control[disabled], .modal-body .form-control[readonly]{
+        opacity: .9;
+    }
+    
+    
+</style>
+
+<!-- Panel Table Result -->
+<div class="panel panel-inverse" id="panelResult" style="display:none">
+    <div class="panel-heading">
+        <h3 id="txtTituloUnidadPadre" class="panel-title" style="font-size:15px;">SOLICITUDES DE CONCEPTOS DE PAGO</h3>
+    </div>
+
+    <div class="panel-body">
+    
+    	<!-- ENCABEZADO DEPENDENCIA ELEGIDA -->
+		<div>
+			<div  id="boxEncabezado" class="note note-info"  style="display:none" >
+				<span style="color:blue;  font-size: 15px">DEPENDENCIA:</span>
+				<span id="txtNombreDependencia"  style="font-size: 15px"  ></span>
+			</div>
+		</div>
+		<!-- FIN ENCABEZADO DEPENDENCIA ELEGIDA -->
+		
+		<div class="row" style="border-bottom:1px dashed #9ea3a9;">
+			<div class="col-md-12">
+              <form class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Facultad o Dependencia :</label>
+                  <div class="col-md-4">
+                    <select class="form-control" ng-model="tableParams.filter().udIdPadre" ng-options="fac.udId as fac.udDsc for fac in facultadesPadre">
+                       <!-- <option style="display:none" value=""></option> --> 
+                    </select>
+                  </div>
+                  
+                  <div class="col-md-5">
+	                  <label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Año :</label>
+	                  <div class="col-md-3">
+	                    <select class="form-control" ng-model="tableParams.filter().regYear" ng-options="yea.id as yea.name for yea in years">
+	                      <!-- <option style="display:none" value=""></option> -->
+	                    </select>
+	                  </div>
+	                  
+	                  <label class="col-md-2 control-label" style="font-weight: bold; font-size:14px;">Mes :</label>
+	                  <div class="col-md-4">
+	                    <select class="form-control" ng-model="tableParams.filter().regMonth" ng-options="mes.idMes as mes.dscMes for mes in meses">
+	                      <!-- <option style="display:none" value=""></option> -->
+	                    </select>
+	                  </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+        </div>
+        
+       <!-- <hr style="border:solid;"> -->
+       
+       </br>
+        
+    	<div class="tablecontainer table-responsive" ng-show="VisibleResultTable">
+				  <table ng-table="tableParams" class="table table-condensed table-bordered table-hover" show-filter="true" show-group="false">
+				        <colgroup>
+				          <col width="10%" />
+				          <col width="52%" />
+				          <col width="10%" />
+				          <col width="5%" />
+				          <col width="13%" />
+				          <col width="10%" />
+				        </colgroup>
+				        <tr class="ng-table-group" ng-repeat-start="group in $groups">
+				          <td colspan="6">
+				            <a href="" ng-click="group.$hideRows = !group.$hideRows">
+				              <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span><strong>{{(group.data[0].udDescPadre==group.value)?group.value:group.data[0].udDescPadre+' - '+group.value}} {{(group.data[0].codigoUnidad==null || group.data[0].codigoUnidad=='')?'':'- ('+group.data[0].codigoUnidad+')'}}</strong>
+				            </a>				            
+				          </td>
+				        </tr>
+				        <tr ng-hide="group.$hideRows" ng-repeat="c in group.data" ng-repeat-end>
+				            <td data-title="'UNIDAD'" groupable="'udDesc'" ng-if="false" style="width:text-align: left;"><span>{{c.udDesc}}</span></td>
+							<td data-title="'CÓDIGO CONCEPTO'"  style="vertical-align:inherit;width: 6%;text-align: center;" filter="{codigoConcepto6digitos: 'text'}" sortable="'codigoConcepto6digitos'"><span>{{c.codigoConcepto6digitos}}</span></td>
+							<td data-title="'DESCRIPCIÓN'"  style="vertical-align:inherit;text-align: left" filter="{descr: 'text'}" sortable="'descr'"><span>{{c.descr}}</span></td>
+							<td data-title="'FECHA'" style="vertical-align:inherit;width: 10%;text-align: center;" filter="{fechaModif: 'text'}" sortable="'fechaModif'"><span>{{c.fechaModif}}</span></td>
+							<td data-title="'DETALLE'"  style="vertical-align:inherit;width:4%;text-align: center;"> <button   class="btn btn-sm btn-info" ng-click="openModalDetalleConcepto(c)"><i class="fa fa-info-circle"></i></button></td>
+							<td data-title="'SOLICITUD'"  style="vertical-align:inherit;width:12%; text-align: center;"  filter="{ estadoSolicitud: 'select' }" filter-data="tipoSolicitud"> <span ng-class="{'badge badge-warning': c.estadoSolicitud==0, 'badge badge-danger': c.estadoSolicitud==2, 'badge badge-success': c.estadoSolicitud==1}" style="font-size:11px;">{{c.estadoSolicitud==0 ? 'PENDIENTE' : (c.estadoSolicitud==1?'APROBADO':'RECHAZADO')}}</span></td>	
+							<td data-title="'TIPO'"  style="vertical-align:inherit;width:8%; text-align: center;"> <span ng-class="{'badge badge-primary': (c.estEdit==0 && c.estadoSolicitud==0), 'badge badge-success': (c.estEdit==1 && c.estadoSolicitud==0)}" style="font-size:11px;font-weight:bold;">{{(c.estEdit==0 && c.estadoSolicitud==0) ? 'Nuevo' : ((c.estEdit==1 && c.estadoSolicitud==0)?'Modificado':'')}}</span></td>
+				        </tr>
+				  </table>
+    	</div>
+    	
+    	<div class="row" id="noMatches" ng-show="!VisibleResultTable">
+		    <div class="col-md-12">
+				<p class="hidden-sm text-center" style="font-size:16px;">No se encontraron solicitudes de conceptos de pago</p>
+		    </div>
+		</div>
+		
+    </div>
+</div>
+<!-- Fin Panel Table Result --> 
+
+	<!-- #modal-viewConcepto -->
+<div class="modal fade" id="viewConcepto">
+            <div class="modal-dialog modal-wide modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                        <h4 class="modal-title text-center">SOLICITUD DE CONCEPTO DE PAGO <span ng-class="{'badge badge-warning': cpDetalle.estadoSolicitud==0, 'badge badge-danger': cpDetalle.estadoSolicitud==2, 'badge badge-success': cpDetalle.estadoSolicitud==1}" style="font-size:11px;">{{cpDetalle.estadoSolicitud==0 ? 'Pendiente' : (cpDetalle.estadoSolicitud==1?'Aprobado':'Rechazado')}}</span></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="vlinea">
+                        <form class="form-horizontal form-bordered" name="formEditarCP" >
+                                <div class="col-md-12 form-group" >
+                                    <div class="col-md-2" style="padding:8px 15px;border:none;">
+                                        
+                                    </div>
+                                    <div class="col-md-4 text-center" style="padding:8px 15px;border:none;">
+                                        <h4> ESTABLECIDO POR EL AREA DE TESORERÍA</h34>
+                                    </div>
+                                    <div class="col-md-1" style="display:inline-block;width:50px;border:none;padding:8px 15px;">
+                                    </div>
+                                    <div class="col-md-5 text-center" style="padding:8px 15px;border:none;">
+                                        <h4> SOLICITADO POR LA DEPENDENCIA <span class="badge badge-info" style="font-size:11px;" ng-show="cpDetalle.estadoSolicitudMaestro==0">Nuevo</span></h4>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="border:none;">
+                                    <!--<label class="col-md-2 col-md-offset-4 control-label">Importe : </label>--> 
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+                                    <div class="col-md-1" style="display:inline-block;width:50px;border:none;">                                                                        
+                                    </div>                               
+                                    <div class="p-t-5 col-md-5" style="border:none;">                                    
+                                        <label class="control-label">Facultad o Dependencia : </label>
+                                        <input type="text" title="{{newcp.namePadre}}" class="input-sm form-control" name="newCP_unidad2" ng-model="newcp.namePadre" readonly style="font-weight: bold;"/>                                     
+                                    </div>
+                                </div> 
+                                <div class="form-group">
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+                                    <div class="col-md-1" style="display:inline-block;width:50px;border:none;">                                                                        
+                                    </div>                               
+                                    <div class="p-t-0 col-md-5" style="border:none;">                                    
+                                        <label class="p-t-0 control-label">Unidad : </label>
+                                        <input type="text" title="{{newcp.nameUnidad}}" class="input-sm form-control" name="newCP_unidad2" ng-model="newcp.nameUnidad" readonly style="font-weight: bold;"/>                                     
+                                    </div>
+                                </div>
+                            
+                            <div style="border-bottom:1px solid #eee;" ng-show="cpDetalle.estadoSolicitudMaestro==0">                               
+                                <div class="form-group" style="border:none;">
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+									<div class="col-md-1 text-center" style="padding:20px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true"></i>
+                                    </div>                              
+                                    <div class="p-t-5 col-md-5" style="border:none;">                                    
+                                        <label class="p-t-0 control-label">Tipo de Concepto : </label>
+                                        <input type="text" class="input-sm form-control" ng-model="cpDetalle.tcpDescr" readonly style="font-weight: bold;"/>                                     
+                                    </div>                                    
+                                </div>
+                                <div class="form-group" style="border:none;">
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+                                    <div class="col-md-1 text-center" style="padding:20px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="p-t-0 col-md-5" style="border:none;">
+                                        <label class="p-t-0 control-label">Código del Concepto : </label>
+                                        <input type="text" class="input-sm form-control" ng-model="cpDetalle.codigoConcepto6digitos" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="border:none;">
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+                                    <div class="col-md-1 text-center" style="padding:20px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="p-t-0 col-md-5" style="border:none;">
+                                        <label class="p-t-0 control-label">Nombre del Concepto : </label>
+                                        <input type="text" class="input-sm form-control" ng-model="cpDetalle.descr" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="border:none;">
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+                                    <div class="col-md-1 text-center" style="padding:20px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="p-t-0 col-md-5" style="border:none;">
+                                        <label class="p-t-0 control-label">Banco : </label>
+                                        <input type="text" class="input-sm form-control" ng-model="cpDetalle.nombreBanco" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>                                
+                                <div class="form-group" style="border:none;">
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+                                    <div class="col-md-1 text-center" style="padding:20px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true"></i>
+                                    </div> 
+                                    <div class="p-t-0 col-md-5" style="border:none;">
+                                        <label class="p-t-0 control-label">Facturable : </label>
+                                        <input type="text" class="input-sm form-control" value="{{cpDetalle.facturable==1?'Obligtorio':'Opcional'}}" readonly style="font-weight: bold;"/>                                                                              
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+                                    <div class="col-md-1 text-center" style="padding:20px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true"></i>
+                                    </div> 
+                                    <div class="p-t-0 col-md-5" style="border:none;">
+                                        <label class="p-t-0 control-label">I.G.V. : </label>
+                                        <input type="text" class="input-sm form-control" value="{{cpDetalle.igv==1?'Si':'No'}}" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                           </div>
+                           
+                            <div style="border-bottom:1px solid #eee;" ng-show="!cpDetalle.estadoSolicitudMaestro==0">                               
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" style="padding:13px 15px;">Tipo de Concepto : </label>
+                                    <div class="col-md-4" style="padding:8px 15px;">
+                                        <input type="text" class="input-sm form-control" ng-show="!cpDetalle.estadoSolicitudMaestro==0" ng-value="cpDetalle.tcpDescr" readonly style="font-weight: bold;"/>                                    
+                                    </div>
+                                    <div class="col-md-1 text-center" style="padding:8px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true" ng-show="cpDetalle.estadoSolicitudMaestro==0"></i>
+                                    </div>
+                                    <div class="col-md-5" style="padding:8px 15px;border:none;">
+                                        <input type="text" class="input-sm form-control" ng-show="cpDetalle.estadoSolicitudMaestro==0" ng-value="cpDetalle.tcpDescr" readonly style="font-weight: bold;"/>                                       
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" style="padding:13px 15px;">Código del Concepto : </label>
+                                    <div class="col-md-4" style="padding:8px 15px;">
+                                        <input type="text" class="input-sm form-control" ng-show="!cpDetalle.estadoSolicitudMaestro==0" id="newCP_codigoCP2" name="newCP_codigoCP2" ng-model="cpDetalle.codCPago" readonly style="font-weight: bold;"/>                                        
+                                    </div>
+                                    <div class="col-md-1 text-center" style="padding:8px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true" ></i>
+                                    </div>
+                                    <div class="col-md-5" style="padding:8px 15px;border:none;">
+                                        <input type="text" class="input-sm form-control" name="newCP_codigoCP2" ng-model="cpDetalle.codigoConcepto6digitos"  readonly style="font-weight: bold;"/>                                       
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" style="padding:13px 15px;">Nombre del Concepto : </label>
+                                    <div class="col-md-4" style="padding:8px 15px;">
+                                        <input type="text" title="{{cpDetalle.concepto}}" ng-show="!cpDetalle.estadoSolicitudMaestro==0" class="input-sm form-control" name="newCP_nombre2" ng-model="cpDetalle.concepto" readonly style="font-weight: bold;"/>                                       
+                                    </div>
+                                    <div class="col-md-1 text-center" style="padding:8px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true" ng-show="cpDetalle.estadoSolicitudMaestro==0 || cpDetalle.concepto!=cpDetalle.descr"></i>
+                                    </div>
+                                    <div class="col-md-5" style="padding:8px 15px;border:none;">
+                                        <input type="text" title="{{cpDetalle.descr}}" ng-show="cpDetalle.estadoSolicitudMaestro==0 || cpDetalle.concepto!=cpDetalle.descr" class="input-sm form-control" name="newCP_desc2" ng-model="cpDetalle.descr"  readonly style="font-weight: bold;"/>                                       
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" style="padding:13px 15px;">Banco : </label>
+                                    <div class="col-md-4" style="padding:8px 15px;">
+                                        <input type="text" class="input-sm form-control" ng-show="!cpDetalle.estadoSolicitudMaestro==0" ng-value="cpDetalle.nombreBanco" readonly style="font-weight: bold;"/>
+                                    </div>
+                                    <div class="col-md-1 text-center" style="padding:8px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true" ng-show="cpDetalle.estadoSolicitudMaestro==0"></i
+                                    ></div>
+                                    <div class="col-md-5" style="padding:8px 15px;border:none;">
+                                        <input type="text" class="input-sm form-control" ng-show="cpDetalle.estadoSolicitudMaestro==0" ng-value="cpDetalle.nombreBanco" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>                                
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" style="padding:14px 15px;">Facturable :</label>
+                                    <div class="col-md-4" style="padding:8px 15px;">
+                                        <label class="radio-inline" ng-show="cpDetalle.facturable==0 && !cpDetalle.estadoSolicitudMaestro==0"><input type="radio" name="opFacturable2" value="0" ng-model="cpDetalle.facturable" disabled/>Opcional</label>
+                                        <label class="m-l-0 radio-inline" ng-show="cpDetalle.facturable==1 && !cpDetalle.estadoSolicitudMaestro==0"><input type="radio" name="opFacturable2" value="1" ng-model="cpDetalle.facturable" checked disabled/>Obligatorio</label>                                        
+                                    </div>
+                                    <div class="col-md-1 text-center" style="padding:8px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true" ng-show="cpDetalle.estadoSolicitudMaestro==0"></i>
+                                    </div>
+                                    <div class="col-md-5" style="padding:8px 15px;border:none;">
+                                        <label class="radio-inline" ng-show="cpDetalle.facturable==0 && cpDetalle.estadoSolicitudMaestro==0"><input type="radio" name="opFacturable3" value="0" ng-model="cpDetalle.facturable" disabled/>Opcional</label>
+                                        <label class="m-l-0 radio-inline" ng-show="cpDetalle.facturable==1 && cpDetalle.estadoSolicitudMaestro==0"><input type="radio" name="opFacturable3" value="1" ng-model="cpDetalle.facturable" checked disabled/>Obligatorio</label>                                        
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" style="padding:14px 15px;">I.G.V. :</label>
+                                    <div class="col-md-4" style="padding:8px 15px;">
+                                        <label class="radio-inline" ng-show="cpDetalle.igv==0 && !cpDetalle.estadoSolicitudMaestro==0"><input type="radio" name="opIgv2" value="0" ng-model="cpDetalle.igv" checked disabled/>No</label>
+                                        <label class="m-l-0 radio-inline" ng-show="cpDetalle.igv==1 && !cpDetalle.estadoSolicitudMaestro==0"><input type="radio" name="opIgv2" value="1" ng-model="cpDetalle.igv" disabled/>Si</label>
+                                    </div>
+                                    <div class="col-md-1 text-center" style="padding:8px 15px;width:50px;border:none;">
+                                    	<i class="fa fa-arrow-right fa-2x" aria-hidden="true" ng-show="cpDetalle.estadoSolicitudMaestro==0"></i>
+                                    </div>
+                                    <div class="col-md-5" style="padding:8px 15px;border:none;">
+                                        <label class="radio-inline" ng-show="cpDetalle.igv==0 && cpDetalle.estadoSolicitudMaestro==0"><input type="radio" name="opIgv3" value="0" ng-model="cpDetalle.igv" checked disabled/>No</label>
+                                        <label class="m-l-0 radio-inline" ng-show="cpDetalle.igv==1 && cpDetalle.estadoSolicitudMaestro==0"><input type="radio" name="opIgv3" value="1" ng-model="cpDetalle.igv" disabled/>Si</label>
+                                    </div>
+                                </div>
+                           </div>
+                                <div class="form-group" style="border:none;">                                    
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+                                    <div class="col-md-1" style="display:inline-block;width:50px;border:none;">                                                                        
+                                    </div>                               
+                                    <div class="p-t-5 col-md-5" style="border:none;">                                    
+                                        <label class="control-label">Importe : </label>
+                                        <input type="text" class="input-sm form-control" name="newCP_monto2" value="{{cpDetalle.monedaSimb}} {{cpDetalle.monto | number:2}}"  readonly style="font-weight: bold;"/>                                     
+                                    </div>
+                                </div>                               
+
+                                <div class="form-group">                                    
+                                    <div class="col-md-6" style="border:none;">                                                                        
+                                    </div>  
+                                    <div class="col-md-1" style="display:inline-block;width:50px;border:none;">                                                                        
+                                    </div> 
+                                    <div class="p-t-0 col-md-5" style="border:none;">
+                                        <label class="p-t-0 control-label">Resolución Rectoral : </label>
+                                        <input type="text" class="input-sm form-control" name="newCP_rr" ng-model="cpDetalle.resolRectoral" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-2" style="border:none;">                                                                        
+                                    </div>
+                                    <div class="col-md-4" style="border:none;"> 
+                                            <label class="p-t-0 control-label" ng-show="cpDetalle.estadoSolicitud==2">Motivo de Rechazo : </label>
+                                            <textarea class="form-control no-rounded-corner" rows="3" ng-model="cpDetalle.motivoRechazo" readonly style="resize: none; font-weight:bold; border-color:red;" ng-show="cpDetalle.estadoSolicitud==2" disabled></textarea>                           
+                                    </div>  
+                                    <div class="col-md-1" style="display:inline-block;width:50px;border:none;">                                                                
+                                    </div> 
+                                    <div class="col-md-5" style="border:none;">
+                                        <label class="p-t-0 control-label">Observaciones : </label>
+                                        <textarea class="form-control no-rounded-corner" rows="3" ng-model="cpDetalle.observaciones" readonly style="font-weight: bold; resize: none;"></textarea>
+                                    </div>
+                                </div>
+                        </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer text-center">
+                        <button type="button" class="btn btn-primary" ng-click="abrirModalConfirm_aprobarConcepto(cpDetalle.idCPU)" ng-show="cpDetalle.estadoSolicitud==0">Aprobar</button>                      
+                        <button type="button" class="btn btn-danger" ng-click="abrirModalMotivoRechazo(cpDetalle.idCPU)" ng-show="cpDetalle.estadoSolicitud==0">Rechazar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+	
+
+    <!-- MODAL CONFIRM -->
+    <div class="modal fade" id="modalConfirm" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                     <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+                      style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+                </div>
+                <div class="modal-body">
+                     <p>{{modalOptions.bodyText}}</p>
+                </div>
+                <div class="modal-footer text-center">
+                     <button type="button" class="btn btn-primary" ng-click="modalOptions.action()" data-dismiss="modal">{{modalOptions.actionButtonText}}</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MOTIVO RECHAZO -->
+    <div class="modal fade" id="modalMotivoRechazo" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+           <div class="modal-content">
+               <div class="modal-header text-center">
+                    <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}" style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+               </div>
+               <div class="modal-body">
+                    <p>{{modalOptions.bodyText}}</p>
+                    <textarea name="comment" id="comment" class="form-control" ng-model="modalOptions.data.motivoRechazo" rows="3" style="resize:none" required></textarea>
+               </div>
+               <div class="modal-footer text-center">
+                    <button type="button" class="btn btn-primary" ng-click="modalOptions.action()" data-dismiss="modal" ng-disabled="!modalOptions.data.motivoRechazo">{{modalOptions.actionButtonText}}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>        
+               </div>
+            </div>
+       </div>
+   </div>
+
+
+<script type="text/javascript">
+    $(document).on('show.bs.modal', '.modal', function (event) {
+        var zIndex = 1040 + (10 * $('.modal:visible').length);
+        /*var zIndex = Math.max.apply(null, Array.prototype.map.call(document.querySelectorAll('*'), function(el) {
+                        return +el.style.zIndex;
+                      })) + 10;*/
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+    
+    $(document).on('hidden.bs.modal', '.modal', function () {
+        $('.modal:visible').length && $(document.body).addClass('modal-open');
+    });
+</script>   
+	

@@ -1,0 +1,46 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: "sunat";
+  src:url("fonts/sunat.eot");
+  src:url("fonts/sunat.eot?#iefix") format("embedded-opentype"),
+    url("fonts/sunat.woff") format("woff"),
+    url("fonts/sunat.ttf") format("truetype"),
+    url("fonts/sunat.svg#sunat") format("svg");
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+[data-icon]:before {
+  font-family: "sunat" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="ccarrot-"]:before,
+[class*=" ccarrot-"]:before {
+  font-family: "sunat" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ccarrot-category:before {
+  content: "\61";
+}
+.ccarrot-sunat:before {
+  content: "\62";
+}

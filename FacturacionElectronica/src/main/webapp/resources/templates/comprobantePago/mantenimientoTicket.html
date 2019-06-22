@@ -1,0 +1,437 @@
+<meta charset="utf-8" />
+<style>
+	input[type=checkbox] {
+	  transform: scale(1.2);
+	}
+	.comprobConNotaDeCredito{
+		background-color: #FCEEEE;
+	}
+	.tags {
+	   margin-bottom: 5px;
+	}	
+	.tags .tag {
+	   display: inline-block;
+	   margin-right: 5px;
+	   font-size: 13px;
+	} 
+	.tag .close {
+	   font-size: 14px;
+	   margin-left: 5px;
+	}
+	.anuladoColor {
+    	color: red;
+	}
+	.highlight {
+  		background-color: #e8ecf1;
+	}
+	/* tab color */
+	.nav-tabs>li>a {
+	  /* border-color: #777777; */
+	  background-color: #242a30;
+	  color: #aaacb3;
+	  border: none!important;
+	  border-top-left-radius: 3px;
+	  border-top-right-radius: 3px;
+	}
+	/* active tab color */
+	.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+	  background-color: #fff;
+	  color: #242a30;
+	  border: none!important;
+	}
+	/* hover tab color */
+	.nav-tabs>li>a:hover {
+	  background-color: #fafafa;
+	  border-color: #000000;
+	  /* color:#6e7179; */
+	  color:#242a30;
+	}
+	.nav-tabs>li{
+	  background-color: transparent;
+	}
+	.nav-tabs{
+	  background-color: #242a30;
+	  border-top-left-radius: 3px;
+	  border-top-right-radius: 3px;
+	}
+	.has-errorColor {
+    	color: red;
+	}
+</style>
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title" style="font-size:15px;">CONSULTA</h4>
+    </div>
+    <div class="panel-body">
+    	<form name="formularioConsulta">
+	    	<div class="col-xs-12 col-sm-4" ng-class="{ 'has-error' : (formularioConsulta.fechaInicial.$error.required || formularioConsulta.fechaInicial.$error.pattern) && !formularioConsulta.fechaInicial.$pristine}">
+	    		<label>Fecha Inicial:</label>
+	    		<div class="input-group">
+	    			<input type="text" class="input-sm form-control InputDate" name="fechaInicial" id="fechaInicial" ng-model="fechaInicial" placeholder="fechaInicial" ng-pattern="/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/" required disabled/>
+					<label class="input-group-addon btn btn-inverse" id="btnFechaInicial"><span class="glyphicon glyphicon-calendar"></span></label>
+		    	</div>
+	    		<div class="has-errorColor" ng-show="formularioConsulta.fechaInicial.$dirty">
+                    <span ng-show="formularioConsulta.fechaInicial.$error.required">Ingrese una fecha</span>
+                    <span ng-show="formularioConsulta.fechaInicial.$error.pattern">Ingrese una fecha valida</span>
+                </div>
+	    	</div>
+	    	<div class="col-xs-12 col-sm-4" ng-class="{ 'has-error' : (formularioConsulta.fechaFinal.$error.required || formularioConsulta.fechaFinal.$error.pattern) && !formularioConsulta.fechaFinal.$pristine}">
+	    		<label>Fecha Final:</label>
+	    		<div class="input-group">
+	    			<input type="text" class="input-sm form-control InputDate" name="fechaFinal" id="fechaFinal" ng-model="fechaFinal" placeholder="fechaFinal" ng-pattern="/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/" required disabled/>
+					<label class="input-group-addon btn btn-inverse" id="btnFechaFinal"><span class="glyphicon glyphicon-calendar"></span></label>
+		    	</div>
+	    		<div class="has-errorColor" ng-show="formularioConsulta.fechaFinal.$dirty">
+                    <span ng-show="formularioConsulta.fechaFinal.$error.required">Ingrese una fecha</span>
+                    <span ng-show="formularioConsulta.fechaFinal.$error.pattern">Ingrese una fecha valida</span>
+                </div>
+	    	</div>
+	    	<div class="col-xs-12 col-sm-4">
+	    		<br>
+	    		<button class="btn  btn-primary center-block" ng-click="consultar()" ng-disabled="formularioConsulta.$invalid">Consultar</button>
+	    	</div>
+    	</form>
+    	<script>
+					$(function() {
+						$.datepicker.regional['es'] = {
+						        	monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+						        	monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+						        	dayNames: ['Domingo', 'Lunes', 'Martes', 'Mi&eacute;rcoles', 'Jueves', 'Viernes', 'S&aacute;bado'],
+						        	dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','S&aacute;b'],
+						        	dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','S&aacute;']
+						        };
+	
+						$.datepicker.setDefaults($.datepicker.regional['es']);
+						  
+						var dateFormat = "dd/mm/yy",
+					      from = $( "#fechaInicial" ).datepicker({
+					            dateFormat : 'dd/mm/yy',
+					            changeMonth : true,
+					            changeYear : true,
+					            yearRange: '-100y:c+nn',
+					            minDate: '01/01/05',
+					            maxDate: '0d'
+					        })
+					        .on( "change", function() {
+					          to.datepicker( "option", "minDate", getDate( this ) );
+					        }),
+					      to = $( "#fechaFinal" ).datepicker({
+					            dateFormat : 'dd/mm/yy',
+					            changeMonth : true,
+					            changeYear : true,
+					            yearRange: '-100y:c+nn',
+					            minDate: '01/01/05',
+					            maxDate: '0d'
+					        })
+					      .on( "change", function() {
+					        from.datepicker( "option", "maxDate", getDate( this ) );
+					      });
+				        
+				        $("#btnFechaInicial").click(function() { 
+							$("#fechaInicial").datepicker("show");
+						});
+				        
+				        $("#btnFechaFinal").click(function() { 
+							$("#fechaFinal").datepicker("show");
+						});
+					 
+					    function getDate( element ) {
+					      var date;
+					      try {
+					        date = $.datepicker.parseDate( dateFormat, element.value );
+					      } catch( error ) {
+					        date = null;
+					      }
+					 
+					      return date;
+					    }
+				    });
+				</script>
+	</div>
+</div>
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+        <h4 class="panel-title" style="font-size:15px;">MANTENIMIENTO DE TICKETS</h4>
+    </div>
+    <div class="panel-body">   	  	
+		    <div class="row" ng-show="VisibleResultTable">
+		    <br> 
+		    	<center>
+			        <div class="col-xs-11">
+				    	<table>
+							  <tr>  
+							    <td style="background-color: white; border: 1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							    <td>&nbsp;&nbsp;<strong>Sin Anular</strong></td>	
+							    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>			  
+							    <td class="comprobConNotaDeCredito" style="border: 1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							    <td>&nbsp;&nbsp;<strong>Anulado</strong>
+							  </tr>
+				    	 </table>
+			        </div>
+		         </center>
+		        <div class="col-xs-1" style="visibility: hidden;">
+		            <h5>Duplicar PDF&nbsp;&nbsp;<input type="checkbox" style=" vertical-align:bottom;" ng-model="doblePagina"/></h5>
+		        </div>
+	        <br>
+		    </div>    		    	    	 
+    	
+    	<div class="tablecontainer table-responsive" ng-show="VisibleResultTable">
+        	<table ng-table="tableParams" class="table table-bordered table-condensed">
+         		<colgroup>
+				  <col width="10%" />
+				  <col width="15%" />
+				  <col width="15%" />
+				  <col width="27%" />
+				  <col width="20%" />	
+				</colgroup>       	
+                <tr ng-repeat="c in $data" ng-class="{'comprobConNotaDeCredito': c.estado==0}">
+                   <script type="text/ng-template" id="path/to/your/filters/number.html">
+                        <input type="text" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control" maxlength="12" placeholder="Buscar" />  
+                    </script>
+                    <script type="text/ng-template" id="path/to/your/filters/serie.html">
+                        <input type="text" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control" maxlength="3" placeholder="Buscar" />  
+                    </script>
+                    <script type="text/ng-template" id="path/to/your/filters/comp.html">
+                        <input type="text" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control" maxlength="8" placeholder="Buscar" />  
+                    </script>
+                    <script type="text/ng-template" id="path/to/your/filters/emision.html">
+                         <input type="text" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control" maxlength="8" placeholder="Buscar" />  
+                    </script>
+                    <script type="text/ng-template" id="path/to/your/filters/nombre.html">
+                         <input type="text" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control" maxlength="20" placeholder="Buscar" />  
+                    </script>                       
+                	<td  data-title="'TIENDA'" filter="{ 'codEstab': 'path/to/your/filters/serie.html'}" style="vertical-align:middle;text-align: center"><div ng-bind="c.codEstab"></div></td>
+                    <td  data-title="'N° Comprobante'" filter="{ 'correlativo': 'path/to/your/filters/comp.html'}" style="vertical-align:middle;text-align: center"><div ng-bind="c.correlativo"></div></td>
+                    <td  data-title="'FECHA DE EMISIÓN'" filter="{ 'fechaEmision': 'path/to/your/filters/emision.html'}" style="vertical-align:middle;text-align: center">{{$c.fechaEmision=c.fechaEmision.substr(0,c.fechaEmision.length-11) | date:'dd/MM/yyyy'}}</td>
+                    <td  data-title="'TOTAL'" filter="{ 'importeOperacion': 'path/to/your/filters/number.html'}" style="vertical-align:middle;text-align: right">{{c.moneda|simbolo}} {{c.total}}</td>
+                    <td  data-title="'OPCIONES'" style="vertical-align:middle;text-align: center;">
+                     	 <a title="Detalle" class="btn btn-info" ng-click="detallar(c)"><span class="fa fa-info-circle"></span></a>
+                   		 <a target="_blank" title="Descargar en PDF" class="btn  btn-success" ng-disabled="c.estado==0" ng-click="verPDF(c.anexo,c.correlativo)" ><span class="fa fa-download"></span></a>
+                   		 <a title="Anular" class="btn btn-danger" ng-click="abrirModalConfirm_anularTicket(c.anexo,c.correlativo)" ng-disabled="c.estado==0"><span class="fa fa-ban"></span></a>
+                    </td>
+                </tr>
+            </table>	
+    	</div>
+    	<div class="row" id="noMatches" ng-show="!VisibleResultTable">
+		    <div class="col-md-12">
+				<p class="hidden-sm text-center" style="font-size:15px;">No se encontraron TICKETS</p>
+		    </div>
+		</div>
+	</div>
+</div>
+<!-- Modal Confirm -->
+  <div class="modal fade" data-backdrop="static" id="detalle" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">DETALLE</h4>
+        </div>
+        <div class="modal-body">
+        	<div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Correlativo: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.correlativo"></label>
+		    	</div>
+	    	</div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Emisión: </label>
+		    	</div>
+		    	<div class="col-xs-9 ">
+		    		<label>{{detalle.fechaEmisionP.substr(0,10) | date:'dd/MM/yyyy'}} {{detalle.fechaEmisionP.substr(10,9)}}</label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Dependencia Generadora: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.facultad"></label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Unidad: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.unidad"></label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Anexo: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.anexo"></label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Moneda: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.moneda"></label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Dirección: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.direccion"></label>
+		    	</div>
+		    </div>
+			<div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Codigo Establecimiento: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.codEstab"></label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Forma de pago: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.formaPago"></label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Subtotal: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label>{{detalle.moneda|simbolo}} {{detalle.subtotal.toFixed(2)}}</label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>IGV: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label>{{detalle.moneda|simbolo}} {{detalle.igv.toFixed(2)}}</label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Total: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label>{{detalle.moneda|simbolo}}	 {{detalle.total.toFixed(2)}}</label>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Usuario: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.usuario"></label>
+		    	</div>
+	    	</div>	
+	    	<div class="row">
+		    	<div class="col-xs-3 text-right">
+		    		<label>Serie Fabricacion Maquina: </label>
+		    	</div>
+		    	<div class="col-xs-9">
+		    		<label ng-bind="detalle.serieFabMaq"></label>
+		    	</div>
+		    </div>    	
+        </div>
+        <div class="modal-footer">
+	        <div class="col-md-12 text-center">
+	        	<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+	        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="confirmacion" class="modal fade bs-example-modal-sm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  			<div class="modal-dialog modal-sm" role="document">
+    			<div class="modal-content">
+					<div class="modal-header">
+						<div style="background-color:#428bca" class="text-center">
+							<h3 style="color:white;" class="modal-title">{{tituloMensaje}}</h3>
+						</div>
+					</div>
+					<div class="modal-body">
+						<label>{{textoMensaje}}</label>
+					</div>
+					<div class="modal-footer text-center">
+			     	 	<button class="btn btn-primary" ng-click="cambiarColor(cTemp,indice)" data-dismiss="modal">Si</button>
+						<a href="javascript:;" class="btn btn-default" data-dismiss="modal">No</a>
+					</div>
+				</div>
+			</div>
+	</div>
+	<div id="descargarPDF" class="modal fade bs-example-modal-lg" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+ 			<div class="modal-dialog modal-lg" role="document">
+   			<div class="modal-content">
+				<div class="modal-header">
+					<div style="background-color:#428bca" class="text-center">
+						<h3 style="color:white;" class="modal-title">{{tipCom}}</h3>
+					</div>
+				</div>
+				<div class="modal-body">
+					<object type="application/pdf" data="{{url}}" width="875" height="700">this is not working as expected</object>
+				</div>
+				<div class="modal-footer text-center">
+		     	 	<button class="btn  btn-primary" ng-click="cerrar()" type="submit">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- MODAL CONFIRM -->
+    <div class="modal fade" id="modalConfirm" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                     <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+                      style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+                </div>
+                <div class="modal-body">
+                     <p>{{modalOptions.bodyText}}</p>
+                </div>
+                <div class="modal-footer text-center">
+                     <button type="button" class="btn btn-primary" ng-click="modalOptions.action(tempCodEstab,tempCorrelativo)" data-dismiss="modal">{{modalOptions.actionButtonText}}</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	<spinner-modal show="{{cargando.valor}}"></spinner-modal>
+	  <div id="enviarCorreo" class="modal fade" style=" padding-top: 15%;" data-backdrop="static" tabindex="-1" role="dialog">
+  			<div class="modal-dialog" role="document">
+    			<div class="modal-content">
+					<div class="modal-header">
+						<div style="background-color:#428bca" class="text-center">
+							<h3 style="color:white;" class="modal-title">Enviar correo</h3>
+						</div>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal" id="formCorreo" name="formCorreo">
+                         	<div class="form-group">
+	                             <label class="col-md-4 control-label">{{tipCom}}:</label>
+	                             <div class="col-md-8">
+	                                 <input type="text" class="input-sm form-control" ng-model="correoModel.documento" required disabled/>
+	                             </div>
+                             </div>		                          
+                         	<div class="form-group">
+	                             <label class="col-md-4 control-label">CORREO:</label>
+	                             <div class="col-md-8" ng-class="{ 'has-errorColor' :formCorreo.email.$invalid && !formCorreo.email.$pristine }">
+	                                 <input type="text" class="input-sm form-control" name="email" ng-model="correoModel.correoDestino" placeholder="Correo electrónico a enviar" ng-pattern="/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/" required/>
+	                                 <span ng-show="formCorreo.email.$error.pattern && !formCorreo.email.$pristine">Ingrese un email válido</span>
+	                             </div>
+                             </div>	                          					
+						</form>
+					</div>
+					<div class="modal-footer">
+			     	 	<button class="btn btn-primary" ng-click="enviarCorreo()" data-dismiss="modal" ng-disabled="formCorreo.$invalid">Enviar</button>
+						<a href="javascript:;" class="btn btn-default" data-dismiss="modal">Cerrar</a>
+					</div>
+				</div>
+			</div>
+	</div>

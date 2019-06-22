@@ -1,0 +1,1134 @@
+<meta charset="utf-8" />
+<style>
+	.anuladoColor {
+    	/*color: #f79609;*/
+	}
+	.has-errorColor {
+    	color: #ff5b57;
+	}
+	.highlight {
+  		background-color: #e8ecf1;
+	}
+	/************************ centrar asterisco **************************/
+	.asterisk-required{
+	  /*color:red;*/
+	}	
+	.asterisk-required span{
+	  vertical-align:sub;
+	}
+    /***********************************************************************/ 
+
+    /************Input Select dentro de Input Text*************/
+	.input-group-btn select {
+		border-color: #ccc;
+		margin-top: 0px;
+	    margin-bottom: 0px;
+	    padding-top: 5px;
+	    padding-bottom: 5px; 
+	    height: 30px;
+	}
+	/**************************************************/
+	.modal-body .form-control[disabled], .modal-body .form-control[readonly]{
+    	opacity: .9;
+    }
+</style>
+
+<!-- PANEL TABLA LISTA DE PRECIOS -->
+<div class="panel panel-inverse">
+    <div class="panel-heading">
+    	<div class="btn-group pull-right">             
+             	<form action="{{actionReporteServicios}}" method="POST">       
+					<button type="submit" class="btn btn-sm btn-success" id="btnReporteExcel"><span class="fa fa-file-excel-o" style="padding-right:3px;"></span>  Descargar</button>    					
+				</form>
+        </div>
+        <h3 class="panel-title" style="font-size:15px;">MANTENIMIENTO DE LISTA DE SERVICIOS</h3>
+    </div>
+
+    <div class="panel-body">
+       
+        <div class="row">       
+			<div class="col-md-1"></div>
+			<div class="col-md-10">
+				<div style="margin: 0; background-color: transparent; text-align: center;">
+					<button id="btnModalDependencias" type="button" class="m-r-5 btn btn-success" ng-click="openModalUnidad()" ng-show="!administracionCentral"><span class="glyphicon glyphicon-th-list"></span> Elegir Dependencia</button>
+					<button id="btnModalMisCategorias" type="button" class="m-r-5 btn btn-info" ng-click="openModalGestionCategoriasServ()"><span style="font-size: 1.2em; vertical-align: middle;" class="icon ccarrot-category"></span> Mis Categorías</button>
+					<button id="btnModalNuevoItem" type="button" title="Agregar servicio en otra unidad" class="btn btn-primary" ng-click="openModalNewItem()"><span class="glyphicon glyphicon-plus"></span> Registrar Nuevo Servicio</button>														
+				</div>
+			</div>		
+        </div>
+        
+    </div>
+ </div>
+ <!-- FIN PANEL TABLA LISTA DE PRECIOS -->
+ 
+ <!-- Panel Table Result -->
+<div class="panel panel-inverse" id="panelResult" style="display:none">
+    <div class="panel-heading">
+        <h3 id="txtTituloUnidadPadre" class="panel-title" style="font-size:15px;">{{view.nombrePadre}}</h3>
+    </div>
+
+    <div class="panel-body">
+    
+    	<!-- ENCABEZADO DEPENDENCIA ELEGIDA -->
+		<div>
+			<div  id="boxEncabezado" class="note note-info"  style="display:none" >
+				<span style="color:blue;  font-size: 15px">DEPENDENCIA:</span>
+				<span id="txtNombreDependencia"  style="font-size: 15px"  ></span>
+			</div>
+		</div>
+		<!-- FIN ENCABEZADO DEPENDENCIA ELEGIDA -->
+		
+		<div ng-show="VisibleResultTable">
+			<form class="form-horizontal">
+                <div class="form-group">
+                  <label class="col-md-4 control-label" style="font-weight: bold; font-size:14px;">Categoría de Servicios :</label>
+                  <div class="col-md-4">
+                    <select class="form-control" ng-model="tableParams.filter().descCategoriaServ" ng-options="catServ.filterCategoriaServ as catServ.descCategoriaServ for catServ in listCatServSelect">
+                    </select>
+                  </div>                
+                </div>
+              </form>
+		</div>
+
+		<script type="text/ng-template" id="tableheader">
+			<tr>
+			    <th>CÓDIGO SERVICIO</th>
+			    <th>DESCRIPCIÓN</th>
+			    <th>VALOR UNITARIO</th>
+				<th>OPERACIÓN IGV</th>
+			    <th>ESTADO</th>
+			    <th>OPCIONES</th>			    
+			</tr>
+			<tr>
+			    <th>
+					<input type="text" class="form-control" ng-model="tableParams.filter().codigo" maxlength="50" placeholder="Buscar código">
+				</th>
+			    <th><input type="text" class="form-control" ng-model="tableParams.filter().descripcion" maxlength="50" placeholder="Buscar Servicio"></th>
+			    <th></th>
+				<th style="padding-left: 10px;padding-right: 10px;">
+					<select class="form-control" ng-model="tableParams.filter().codTipoperacionIgv" ng-options="opIgv.codTipo as opIgv.descTipo for opIgv in listaTiposOperacionIGV" style="padding-left: 10px;padding-right: 5px;">						
+                    </select>
+				</th>
+			    <th></th>
+			    <th></th>			    
+			</tr>
+		</script>
+
+  
+        <div id="containerTableItems" class="tablecontainer table-responsive" ng-show="VisibleResultTable">	
+				   <table ng-table="tableParams" template-header="tableheader" class="table table-condensed table-bordered table-hover" show-filter="true" show-group="false">
+				        <colgroup>
+				          <col width="13%" />
+				          <col width="43%" />
+				          <col width="9%" />
+				          <col width="10%" />
+				          <col width="9%" />
+				          <col width="16%" />
+				        </colgroup>
+				        <tr class="ng-table-group" ng-repeat-start="group in $groups">
+				          <td colspan="5">
+				            <a href="" ng-click="group.$hideRows = !group.$hideRows" class="m-r-10">
+				              <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span><strong>{{group.value}}</strong>
+				            </a>
+				            <button style="font-size: 13px"  id="btnModalNuevoItemEspec" type="button" title="Agregar servicio en ésta unidad" class="btn btn-xs btn-info" ng-click="openModalNewItemEspec(group.data[0].udId, group.data[0].udDesc)"><span class="glyphicon glyphicon-plus"></span> Agregar</button>
+				          </td>
+				        </tr>
+
+				        <tr ng-hide="group.$hideRows" ng-repeat-start="(key, values) in group.data | orderBy:orderNullToDown | groupBy: 'descCategoriaServ' ">
+				          <td ng-if="key !== 'undefined' && group.value !== 'undefined'" class="text-left text-uppercase text-success" colspan="5"><strong>{{(key=='NULL' || key=='null' || key=='')?'SIN CATEGORIA':key}}</strong></td>
+				        </tr> 
+
+				        <!-- <tr ng-hide="group.$hideRows" ng-repeat-end ng-repeat="c in group.data | filter:{descCategoriaServ:key}:true" > -->
+				        <tr ng-hide="group.$hideRows" ng-repeat-end ng-repeat="c in values" >
+				            
+							<td data-title="CÓDIGO SERVICIO'" style="text-align: left;" ><span ng-class="{anuladoColor: c.estado==0}">{{c.codigo}}</span></td>
+							<td data-title="'UNIDAD'" groupable="'udDesc'" ng-if="false" style="text-align: left"><span ng-class="{anuladoColor: c.estado==0}">{{c.ud_desc}}</span></td>
+							<td  data-title="'DESCRIPCIÓN'" style="text-align: left"  filter="{descripcion: 'text'}" sortable="'descripcion'"><span ng-class="{anuladoColor: c.estado==0}">{{c.descripcion}}</span></td>
+							<td  data-title="'VALOR UNITARIO'" style="text-align: right;"><span ng-class="{anuladoColor: c.estado==0}">{{c.monedaSimb}} {{c.precio | number:2}}</span></td>
+							<td data-title="'OPERACIÓN IGV'" style="text-align: center;"><span ng-class="{anuladoColor: c.estado==0}">{{c.descTipoIgv}}</span></td>
+							<td  data-title="'ESTADO'" style="text-align: center;"> <button ng-click="abrirModalConfirm_cambiaEstado(c)"   class="btn btn-block" ng-class="{'btn-success': c.estado==1, 'btn-danger': c.estado==0}">{{c.estado==1 ? 'Habilitado' : 'Deshabilitado'}}</button></td>
+							<td  data-title="'OPCIONES'" style="text-align:center;"> 
+								<button ng-click="openModalDetalleItem(c)" title="Ver Detalle" class="btn btn-sm btn-info"><i class="fa fa-info-circle"></i></button>
+								<button ng-click="openModalHistorialPrecios(c)" title="Historial de Precios" class="btn btn-sm btn-info"><i class="glyphicon glyphicon-list"></i></button>								
+								<button ng-click="openModalActualizar(c)" title="Editar" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-edit"></i></button>
+								<button ng-click="abrirModalConfirm_eliminarItem(c)" title="Eliminar" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+							</td>								
+				        </tr>
+				        <tr ng-repeat-end ng-if="false">
+        				</tr>
+				  </table>	
+          </div>
+          
+          <loading-datos></loading-datos>          
+          
+          <div class="row" id="noMatches" ng-show="noDataTable">
+		    <div class="col-md-12">
+				<p class="hidden-sm text-center" style="font-size:16px;">No se encontraron servicios en ésta dependencia</p>
+		    </div>
+		  </div>
+		
+    </div>
+</div>
+<!-- Fin Panel Table Result -->
+ 
+   <!-- #modal-Nuevo -->
+	<div class="modal fade" id="Nuevo">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+						<h4 class="modal-title">NUEVO SERVICIO</h4>
+					</div>
+					<div class="modal-body">
+							<div class="m-b-10 row">
+                            	<span class="col-md-3 text-right asterisk-required"><em>(<span>*</span>) : campos obligatorios</em></span>
+                            </div>
+							<form class="form-horizontal" name="formItemNuevo" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+								    	<div class="input-group">
+									    		<input type="text" class="input-sm form-control" name="newItem_unidad" ng-model="newlp.nameUnidad" placeholder="Elija una unidad" readonly required/>
+									    		<div class="input-group-btn">
+													<button type="button" class="btn btn-sm btn-info" ng-click="openModalUnidad2()" style="width:112px;"><span class="glyphicon glyphicon-search"></span> Buscar <loading></loading></button>
+									        	</div>
+			    						</div>
+			    						<div class="has-errorColor" ng-show="formItemNuevo.newItem_unidad.$dirty">
+										    <span ng-show="formItemNuevo.newItem_unidad.$error.required">Seleccione una unidad</span>
+										</div>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-9 col-md-offset-3" style="color: #406c98;padding-left:10px;">Concepto de Pago Relacionado</label>
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Concepto : </label>
+                                    <div class="col-md-9">
+								    	<div class="input-group">
+									    		<input type="text" class="input-sm form-control" name="newItem_CodConcepto" ng-model="item.codigoConcepto6digitos" placeholder="Elija un concepto de pago" readonly/>
+									    		<div class="input-group-btn">
+													<button type="button" class="btn btn-sm btn-info" ng-click="openModalConceptos(1)" ng-disabled="newlp.nameUnidad==''"><span class="glyphicon glyphicon-search"></span> Elegir</button>
+													<button type="button" class="btn btn-sm btn-danger" ng-click="limpiarConceptoElegido()" ng-show="item.idUnidadConcepto!=null"><span class="fa fa-eraser"></span> Limpiar</button>
+									        	</div>
+			    						</div>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="item.idUnidadConcepto!=null">
+                                    <label class="col-md-3 control-label">Descripción : </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="input-sm form-control" name="newItem_descConcepto" ng-model="item.descrUnidadConcepto" readonly/>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-9 col-md-offset-3" style="color: #406c98;padding-left:10px;">Detalle del Servicio</label>
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Categoría : </label>
+                                    <div class="col-md-9">
+                                        <select class="default-select input-sm form-control" name="newItem_catServ" ng-options="cat.idServCata as cat.descCategoriaServ for cat in listaCategoriasServ" ng-model="item.idServCata" >
+								    		 <option value="">Sin Categoría</option>
+								    	</select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad de Medida <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+                                        <select class="default-select input-sm form-control" name="newItem_unidadMed" ng-options="und.unimedcod as und.unimeddes for und in listaUnidMedida" ng-model="item.nUnidadMedida" required>
+								    		 <option value="">Elija la unidad de medida</option>
+								    	</select>
+								    	<div class="has-errorColor" ng-show="formItemNuevo.newItem_unidadMed.$dirty">
+					                         <span ng-show="formItemNuevo.newItem_unidadMed.$error.required">Seleccione una unidad de medida</span>
+					                    </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Descripción <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="input-sm form-control" name="newItem_desc" ng-model="item.descripcion" placeholder="Descripción del artículo" capitalize required/>
+									    <div class="has-errorColor" ng-show="formItemNuevo.newItem_desc.$dirty">
+		                                      <span ng-show="formItemNuevo.newItem_desc.$error.required">Escriba una descripción para el item</span>		                                     
+		                                </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Valor Unitario <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+									      <input type="text" class="input-sm form-control" name="newItem_precio" ng-model="item.precio" placeholder="Valor unitario" ng-change="cambioValorUnitario_registrar()" ng-pattern="/^(([0-9]+)([\.]([0-9]+))?|([\.]([0-9]+))?)$/" required/>
+									      <div class="input-group-btn">
+									        <select class="btn btn-sm" style="width: 122px;" name="newItem_moneda" ng-options="mon.idMoneda as mon.monedaDesc + ' (' +mon.monedaSimb + ')' for mon in listaMonedas" ng-model="item.idMoneda" ng-change="viewItem.monedaDolar=!viewItem.monedaDolar" required></select>
+									      </div>
+									    </div>
+                                        <div class="has-errorColor" ng-show="formItemNuevo.newItem_precio.$dirty">
+			                                  <span ng-show="formItemNuevo.newItem_precio.$error.required">Asigne un precio al item</span>
+			                                  <span ng-show="formItemNuevo.newItem_precio.$error.pattern">Formato de importe inválido (sólo números y punto decimal)</span>
+			                            </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">IGV <span class="asterisk-required">(<span>*</span>) </span> :</label>
+                                    <div class="col-md-6">                                        
+                                        <label class="radio-inline"><input type="radio" name="opIgv" value="10" ng-model="item.codTipoperacionIgv" ng-change="cambioOperacionIGV_registrar(1)"/>Gravada</label>
+                                        <label class="radio-inline"><input type="radio" name="opIgv" value="20" ng-model="item.codTipoperacionIgv" ng-change="cambioOperacionIGV_registrar(0)"/>Exonerada</label>
+                                        <label class="radio-inline"><input type="radio" name="opIgv" value="30" ng-model="item.codTipoperacionIgv" ng-change="cambioOperacionIGV_registrar(0)"/>Inafecta</label>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="item.codTipoperacionIgv==10 && ( (item.idMoneda==38 && item.precio>importeSolesMinDetraccion) || (item.idMoneda==40 && item.precio>importeSolesMinDetraccion/factorCambioDolar))">
+                                    <label class="col-md-3 control-label">Porcentaje Detraccíon <span class="asterisk-required">(<span>*</span>) </span> :</label>
+                                    <div class="col-md-2">                                     	                                                                       	
+                                    	<div class="input-group">
+									      	 <input type="text" class="input-sm form-control" name="newItem_porcentDetrac" ng-model="viewItem.valorDetraccion" placeholder="Asigne una porcentaje a la detracción" ng-pattern="/^(([0-9]{1,2})([\.]([0-9]+))?|([\.]([0-9]+))?)$/" ng-required="item.codTipoperacionIgv==10 && ( (item.idMoneda==38 && item.precio>importeSolesMinDetraccion) || (item.idMoneda==40 && item.precio>importeSolesMinDetraccion/factorCambioDolar))"/>
+									      	 <div class="input-group-addon">%</div>
+									    </div>
+                                    </div>
+                                    <div class="col-md-6 col-md-offset-3 has-errorColor" ng-show="formItemNuevo.newItem_porcentDetrac.$dirty">
+                                        <span ng-show="formItemNuevo.newItem_porcentDetrac.$error.required">Asigne un porcentaje a la detracción</span>
+					                    <span ng-show="formItemNuevo.newItem_porcentDetrac.$error.pattern">Formato de detracción inválido (sólo números y punto decimal, entre 0 y 99.9)</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-9 col-md-offset-3" style="color: #406c98;padding-left:10px;">Resolución Relacionada</label>
+                                        </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Tipo Resolución <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-4">
+                                        <select class="default-select input-sm form-control" name="newItem_TipoResol" ng-options="res as res.nameTipoResol for res in listaTiposResolucion" ng-model="viewResol.resolSelected" ng-change="cambioResolucion_reg()" required>
+								    	</select>
+                                    </div>
+                                    <div class="has-errorColor" ng-show="formItemNuevo.newItem_TipoResol.$dirty">
+                                         <span ng-show="formItemNuevo.newItem_TipoResol.$error.required">Seleccione un tipo de resolución</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">{{viewResol.lblResolSelected}} <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="input-sm form-control maskResolucion" name="newItem_numResolucion" placeholder="Número de resolución {{viewResol.plcHolderResolSelected}}" ng-model="item.numResolucion" ng-pattern="handleResolPatternEntry" capitalize required/>
+                                    </div>
+                                    <div class="col-md-6 col-md-offset-3 has-errorColor" ng-show="formItemNuevo.newItem_numResolucion.$dirty">
+                                          <span ng-show="formItemNuevo.newItem_numResolucion.$error.required">Escriba el número de la resolución</span>
+                                          <span ng-show="formItemNuevo.newItem_numResolucion.$error.pattern">Complete el formato de la resolución</span>                                           
+                                    </div>
+                                </div>
+                                
+                            </form>
+					</div>
+					<div class="modal-footer">						
+						<input type="submit" class="btn btn-primary" ng-click="abrirModalConfirm_registrarItem()" ng-disabled="formItemNuevo.$invalid" value="Registrar" />
+						<a href="javascript:;" class="btn btn-white" data-dismiss="modal">Cancelar</a>
+					</div>
+				</div>
+			</div>
+	</div>
+	
+	<!-- Modal #Editar -->
+	<div class="modal fade" id="Editar">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+						<h4 class="modal-title">EDITAR SERVICIO</h4>
+					</div>
+					<div class="modal-body">
+						<div class="m-b-10 row">
+                            <span class="col-md-3 text-right asterisk-required"><em>(<span>*</span>) : campos obligatorios</em></span>
+                        </div>	
+						<form class="form-horizontal" name="formItemEdit" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+								    	<input type="text" class="input-sm form-control" name="editItem_unidad" placeholder="Elija una unidad" ng-model="itemEditar.udDesc" readonly/>	
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-9 col-md-offset-3" style="color: #406c98;padding-left:10px;">Concepto de Pago Relacionado</label>
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Concepto : </label>
+                                    <div class="col-md-9">
+								    	<div class="input-group">
+									    		<input type="text" class="input-sm form-control" name="newItem_CodConcepto" ng-model="itemEditar.codigoConcepto6digitos" placeholder="Elija un concepto de pago" readonly/>
+									    		<div class="input-group-btn">
+													<button type="button" class="btn btn-sm btn-info" ng-click="openModalConceptos(2)" ng-disabled="itemEditar.udDesc==''"><span class="glyphicon glyphicon-search"></span> Elegir</button>
+													<button type="button" class="btn btn-sm btn-danger" ng-click="limpiarConceptoElegidoEditar()" ng-show="itemEditar.idUnidadConcepto!=null"><span class="fa fa-eraser"></span> Limpiar</button>
+									        	</div>
+			    						</div>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="itemEditar.idUnidadConcepto!=null">
+                                    <label class="col-md-3 control-label">Descripción : </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="input-sm form-control" name="newItem_descConcepto" ng-model="itemEditar.descrUnidadConcepto" readonly/>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-9 col-md-offset-3" style="color: #406c98;padding-left:10px;">Detalle del Servicio</label>
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Categoría : </label>
+                                    <div class="col-md-9">
+                                        <select class="default-select input-sm form-control" name="editItem_catServ" ng-options="cat.idServCata as cat.descCategoriaServ for cat in listaCategoriasServ" ng-model="itemEditar.idServCata" >
+								    		 <option value="">Sin Categoría</option>
+								    	</select>
+                                    </div>
+                                </div>
+                                <!-- <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad de Medida <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+                                    	<input type="text" class="input-sm form-control" name="editItem_unidadMed" ng-model="itemEditar.unidadMedidaDesc"  readonly/>
+                                    </div>
+                                </div> -->
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad de Medida <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+                                        <select class="default-select input-sm form-control" name="editItem_unidadMed" ng-options="und.unimedcod as und.unimeddes for und in listaUnidMedida" ng-model="itemEditar.nUnidadMedida" required>
+								    		 <option value="">Elija la unidad de medida</option>
+								    	</select>
+								    	<div class="has-errorColor" ng-show="formItemEdit.editItem_unidadMed.$dirty">
+					                         <span ng-show="formItemEdit.editItem_unidadMed.$error.required">Seleccione una unidad de medida</span>
+					                    </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Descripción <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="input-sm form-control" name="editItem_desc" ng-model="itemEditar.descripcion" capitalize required/>
+                                        <div class="has-errorColor" ng-show="formItemEdit.editItem_desc.$dirty">
+                                              <span ng-show="formItemEdit.editItem_desc.$error.required">Escriba una descripción para el item</span>                                             
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Valor Unitario <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+									      <input type="text" class="input-sm form-control" name="editItem_precio" ng-model="itemEditar.precio" placeholder="Valor unitario" ng-change="cambioValorUnitario_actualizar()" ng-pattern="/^(([0-9]+)([\.]([0-9]+))?|([\.]([0-9]+))?)$/" required/>
+									      <div class="input-group-btn">
+									        <select class="btn btn-sm" style="width: 122px;" name="editItem_moneda" ng-options="mon.idMoneda as mon.monedaDesc + ' (' +mon.monedaSimb + ')' for mon in listaMonedas" ng-model="itemEditar.idMoneda" required></select>
+									      </div>
+									    </div>
+                                        <div class="has-errorColor" ng-show="formItemEdit.editItem_precio.$dirty">
+			                                  <span ng-show="formItemEdit.editItem_precio.$error.required">Asigne un precio al item</span>
+			                                  <span ng-show="formItemEdit.editItem_precio.$error.pattern">Formato de importe inválido (sólo números y punto decimal)</span>
+			                            </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">IGV <span class="asterisk-required">(<span>*</span>) </span> :</label>
+                                    <div class="col-md-6">                                        
+                                        <label class="radio-inline"><input type="radio" name="opIgvEdit" value="10" ng-model="itemEditar.codTipoperacionIgv" ng-change="cambioOperacionIGV_actualizar(1)"/>Gravada</label>
+                                        <label class="radio-inline"><input type="radio" name="opIgvEdit" value="20" ng-model="itemEditar.codTipoperacionIgv" ng-change="cambioOperacionIGV_actualizar(0)"/>Exonerada</label>
+                                        <label class="radio-inline"><input type="radio" name="opIgvEdit" value="30" ng-model="itemEditar.codTipoperacionIgv" ng-change="cambioOperacionIGV_actualizar(0)"/>Inafecta</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" ng-show="itemEditar.codTipoperacionIgv==10 && ( (itemEditar.idMoneda==38 && itemEditar.precio>importeSolesMinDetraccion) || (itemEditar.idMoneda==40 && itemEditar.precio>importeSolesMinDetraccion/factorCambioDolar))">
+                                    <label class="col-md-3 control-label">Porcentaje Detraccíon <span class="asterisk-required">(<span>*</span>) </span> :</label>
+                                    <div class="col-md-2">                                     	                                                                       	
+                                    	<div class="input-group">
+									      	 <input type="text" class="input-sm form-control" name="editItem_porcentDetrac" ng-model="viewItem.valorDetraccion" placeholder="Asigne una porcentaje a la detracción" ng-pattern="/^(([0-9]{1,2})([\.]([0-9]+))?|([\.]([0-9]+))?)$/" ng-required="itemEditar.codTipoperacionIgv==10 && ( (itemEditar.idMoneda==38 && itemEditar.precio>importeSolesMinDetraccion) || (itemEditar.idMoneda==40 && itemEditar.precio>importeSolesMinDetraccion/factorCambioDolar))"/>
+									      	 <div class="input-group-addon">%</div>
+									    </div>
+                                    </div>
+                                    <div class="col-md-6 col-md-offset-3 has-errorColor" ng-show="formItemEdit.editItem_porcentDetrac.$dirty">
+                                        <span ng-show="formItemEdit.editItem_porcentDetrac.$error.required">Asigne un porcentaje a la detracción</span>
+					                    <span ng-show="formItemEdit.editItem_porcentDetrac.$error.pattern">Formato de detracción inválido (sólo números y punto decimal, entre 0 y 99.9)</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-9 col-md-offset-3" style="color: #406c98;padding-left:10px;">Resolución Relacionada</label>
+                                        </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Tipo Resolución <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-4">
+                                        <select class="default-select input-sm form-control" name="editItem_TipoResol" ng-options="res as res.nameTipoResol for res in listaTiposResolucion" ng-model="viewResol.resolSelected" ng-change="cambioResolucion_edit()" required>
+								    	</select>
+                                    </div>
+                                    <div class="has-errorColor" ng-show="formItemEdit.editItem_TipoResol.$dirty">
+                                         <span ng-show="formItemEdit.editItem_TipoResol.$error.required">Seleccione un tipo de resolución</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">{{viewResol.lblResolSelected}} <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="input-sm form-control maskResolucion" name="editItem_numResolucion" placeholder="Número de resolución {{viewResol.plcHolderResolSelected}}" ng-model="itemEditar.numResolucion" ng-pattern="handleResolPatternEntry" capitalize required/>
+                                    </div>
+                                    <div class="col-md-6 col-md-offset-3 has-errorColor" ng-show="formItemEdit.editItem_numResolRectoral.$dirty">
+                                          <span ng-show="formItemEdit.editItem_numResolucion.$error.required">Escriba el número de la resolución</span>
+                                          <span ng-show="formItemEdit.editItem_numResolucion.$error.pattern">Complete el formato de la resolución</span>                                           
+                                    </div>
+                                </div>
+                                
+                            </form>
+					</div>
+					<div class="modal-footer">
+						<input type="submit" class="btn btn-success" ng-click="abrirModalConfirm_actualizarItem()" ng-disabled="formItemEdit.$invalid" value="Guardar" />
+						<a href="javascript:;" class="btn btn-white" data-dismiss="modal">Cancelar</a>					
+					</div>
+				</div>
+			</div>
+	</div>
+	
+
+<!-- #modal-Nuevo Especifico -->
+	<div class="modal fade" id="NuevoEspecifico">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+						<h4 class="modal-title">NUEVO SERVICIO</h4>
+					</div>
+					<div class="modal-body">
+							<div class="m-b-10 row">
+                            	<span class="col-md-3 text-right asterisk-required"><em>(<span>*</span>) : campos obligatorios</em></span>
+                            </div>
+							<form class="form-horizontal" name="formItemNuevoEspec" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+								    	<input type="text" class="form-control" name="newItem_unidad2" placeholder="Elija una unidad" ng-model="newlp.nameUnidad" readonly required/>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-9 col-md-offset-3" style="color: #406c98;padding-left:10px;">Concepto de Pago Relacionado</label>
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Concepto : </label>
+                                    <div class="col-md-9">
+								    	<div class="input-group">
+									    		<input type="text" class="input-sm form-control" name="newItem_CodConcepto2" ng-model="item.codigoConcepto6digitos" placeholder="Elija un concepto de pago" readonly/>
+									    		<div class="input-group-btn">
+													<button type="button" class="btn btn-sm btn-info" ng-click="openModalConceptos(1)" ng-disabled="newlp.nameUnidad==''"><span class="glyphicon glyphicon-search"></span> Elegir</button>
+													<button type="button" class="btn btn-sm btn-danger" ng-click="limpiarConceptoElegido()" ng-show="item.idUnidadConcepto!=null"><span class="fa fa-eraser"></span> Limpiar</button>
+									        	</div>
+			    						</div>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="item.idUnidadConcepto!=null">
+                                    <label class="col-md-3 control-label">Descripción : </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="input-sm form-control" name="newItem_descConcepto2" ng-model="item.descrUnidadConcepto" readonly/>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-9 col-md-offset-3" style="color: #406c98;padding-left:10px;">Detalle del Servicio</label>
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Categoría : </label>
+                                    <div class="col-md-9">
+                                        <select class="default-select input-sm form-control" name="newItem_catServ2" ng-options="cat.idServCata as cat.descCategoriaServ for cat in listaCategoriasServ" ng-model="item.idServCata" >
+								    		 <option value="">Sin Categoría</option>
+								    	</select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad de Medida <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+                                        <select class="default-select input-sm form-control" name="newItem_unidadMed2" ng-options="und.unimedcod as und.unimeddes for und in listaUnidMedida" ng-model="item.nUnidadMedida" required>
+								    		 <option value="">Elija la unidad de medida</option>
+								    	</select>
+								    	<div class="has-errorColor" ng-show="formItemNuevoEspec.newItem_unidadMed2.$dirty">
+					                         <span ng-show="formItemNuevoEspec.newItem_unidadMed2.$error.required">Seleccione una unidad de medida</span>
+					                    </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Descripción <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" name="newItem_desc2" ng-model="item.descripcion" placeholder="Descripcion del artículo" capitalize required/>
+									    <div class="has-errorColor" ng-show="formItemNuevoEspec.newItem_desc2.$dirty">
+		                                      <span ng-show="formItemNuevoEspec.newItem_desc2.$error.required">Escriba una descripción para el item</span>
+		                                </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Valor Unitario <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+									      <input type="text" class="input-sm form-control" name="newItem_precio2" ng-model="item.precio" placeholder="Valor unitario" ng-change="cambioValorUnitario_registrar()" ng-pattern="/^(([0-9]+)([\.]([0-9]+))?|([\.]([0-9]+))?)$/" required/>
+									      <div class="input-group-btn">
+									        <select class="btn btn-sm" style="width: 122px;" name="newItem_moneda2" ng-options="mon.idMoneda as mon.monedaDesc + ' (' +mon.monedaSimb + ')' for mon in listaMonedas" ng-model="item.idMoneda" ng-change="viewItem.monedaDolar=!viewItem.monedaDolar" required></select>
+									      </div>
+									    </div>
+                                        <div class="has-errorColor" ng-show="formItemNuevoEspec.newItem_precio2.$dirty">
+			                                  <span ng-show="formItemNuevoEspec.newItem_precio2.$error.required">Asigne un precio al item</span>
+			                                  <span ng-show="formItemNuevoEspec.newItem_precio2.$error.pattern">Formato de importe inválido (sólo números y punto decimal)</span>
+			                            </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">IGV <span class="asterisk-required">(<span>*</span>) </span> :</label>
+                                    <div class="col-md-6">                                        
+                                        <label class="radio-inline"><input type="radio" name="opIgv2" value="10" ng-model="item.codTipoperacionIgv" ng-change="cambioOperacionIGV_registrar(1)"/>Gravada</label>
+                                        <label class="radio-inline"><input type="radio" name="opIgv2" value="20" ng-model="item.codTipoperacionIgv" ng-change="cambioOperacionIGV_registrar(0)"/>Exonerada</label>
+                                        <label class="radio-inline"><input type="radio" name="opIgv2" value="30" ng-model="item.codTipoperacionIgv" ng-change="cambioOperacionIGV_registrar(0)"/>Inafecta</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" ng-show="item.codTipoperacionIgv==10 && ( (viewItem.monedaDolar==false && item.precio>importeSolesMinDetraccion) || (viewItem.monedaDolar==true && item.precio>importeSolesMinDetraccion/factorCambioDolar))">
+                                    <label class="col-md-3 control-label">Porcentaje Detraccíon <span class="asterisk-required">(<span>*</span>) </span> :</label>
+                                    <div class="col-md-2">                                     	                                                                       	
+                                    	<div class="input-group">
+									      	 <input type="text" class="input-sm form-control" name="newItem_porcentDetrac2" ng-model="viewItem.valorDetraccion" placeholder="Asigne una porcentaje a la detracción" ng-pattern="/^(([0-9]{1,2})([\.]([0-9]+))?|([\.]([0-9]+))?)$/" ng-required="item.codTipoperacionIgv==10 && ( (viewItem.monedaDolar==false && item.precio>importeSolesMinDetraccion) || (viewItem.monedaDolar==true && item.precio>importeSolesMinDetraccion/factorCambioDolar))"/>
+									      	 <div class="input-group-addon">%</div>
+									    </div>
+                                    </div>
+                                    <div class="col-md-6 col-md-offset-3 has-errorColor" ng-show="formItemNuevoEspec.newItem_porcentDetrac2.$dirty">
+                                         <span ng-show="formItemNuevoEspec.newItem_porcentDetrac2.$error.required">Asigne un porcentaje a la detracción</span>
+					                     <span ng-show="formItemNuevoEspec.newItem_porcentDetrac2.$error.pattern">Formato de detracción inválido (sólo números y punto decimal, entre 0 y 99.9)</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 0">
+                                        <div class="col-md-12">
+                                            <label class="col-md-9 col-md-offset-3" style="color: #406c98;padding-left:10px;">Resolución Relacionada</label>
+                                        </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Tipo Resolución <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-4">
+                                        <select class="default-select input-sm form-control" name="newItem_TipoResol2" ng-options="res as res.nameTipoResol for res in listaTiposResolucion" ng-model="viewResol.resolSelected" ng-change="cambioResolucion_reg()" required>
+								    	</select>
+                                    </div>
+                                    <div class="has-errorColor" ng-show="formItemNuevoEspec.newItem_TipoResol2.$dirty">
+                                         <span ng-show="formItemNuevoEspec.newItem_TipoResol2.$error.required">Seleccione un tipo de resolución</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">{{viewResol.lblResolSelected}} <span class="asterisk-required">(<span>*</span>) </span> : </label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="input-sm form-control maskResolucion" name="newItem_numResolucion" placeholder="Número de resolución {{viewResol.plcHolderResolSelected}}" ng-model="item.numResolucion" ng-pattern="handleResolPatternEntry" capitalize required/>
+                                    </div>
+                                    <div class="col-md-6 col-md-offset-3 has-errorColor" ng-show="formItemNuevoEspec.newItem_numResolucion.$dirty">
+                                          <span ng-show="formItemNuevoEspec.newItem_numResolucion.$error.required">Escriba el número de la resolución</span>
+                                          <span ng-show="formItemNuevoEspec.newItem_numResolucion.$error.pattern">Complete el formato de la resolución</span>                                           
+                                    </div>
+                                </div>
+                                
+                            </form>
+					</div>
+					<div class="modal-footer">
+						<input type="submit" class="btn btn-primary" ng-click="abrirModalConfirm_registrarItemEspec()" ng-disabled="formItemNuevoEspec.$invalid" value="Registrar" />
+						<a href="javascript:;" class="btn btn-white" data-dismiss="modal">Cancelar</a>						
+					</div>
+				</div>
+			</div>
+   </div>
+   
+   <!-- Modal #Detalle -->
+	<div class="modal fade" id="Detalle">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+						<h4 class="modal-title">DETALLE DEL SERVICIO</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal" name="formDetalleItem" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad : </label>
+                                    <div class="col-md-8">
+								    	<input type="text" class="form-control" name="detItem_unidad" ng-model="itDetalle.udDesc" readonly style="font-weight: bold;"/>	
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Concepto de Pago : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_CodConcepto" value="{{(itDetalle.codigoConcepto6digitos==null || itDetalle.codigoConcepto6digitos=='')?'Concepto no Asignado':itDetalle.codigoConcepto6digitos}}" readonly style="font-weight: bold;"/>	
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="itDetalle.idUnidadConcepto!=null">
+                                    <label class="col-md-3 control-label">Descripción Concepto : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="input-sm form-control" name="detItem_descConcepto" ng-model="itDetalle.descrUnidadConcepto" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Categoría : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_catServ" value="{{(itDetalle.idServCata==null || itDetalle.idServCata=='')?'Sin Categoría':itDetalle.descCategoriaServ}}" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad de Medida : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_unidadMed" ng-model="itDetalle.unidadMedidaDesc" readonly style="font-weight: bold;"/>                                     								    	
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Descripción Servicio : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_desc" ng-model="itDetalle.descripcion" readonly style="font-weight: bold;"/>                                        
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Valor Unitario : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_importe" value="{{itDetalle.monedaSimb}} {{itDetalle.precio | number:2}}" readonly style="font-weight: bold;"/>                                        
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Tipo IGV : </label>
+                                    <div class="col-md-8">
+                                    	<input type="text" class="form-control" name="detItem_descIgv" ng-model="itDetalle.descTipoIgv" readonly style="font-weight: bold;"/>                                     								    	
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="itDetalle.codTipoperacionIgv==10 && ( (itDetalle.idMoneda==38 && itDetalle.precio>importeSolesMinDetraccion) || (itDetalle.idMoneda==40 && itDetalle.precio>importeSolesMinDetraccion/factorCambioDolar))">
+                                    <label class="col-md-3 control-label">Porcentaje Detraccíon :</label>
+                                    <div class="col-md-2">
+                                    	<input type="text" class="input-sm form-control" name="newItem_porcentDetrac" value="{{viewItem.valorDetraccion}} %" readonly style="font-weight: bold;"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">{{(itDetalle.nameTipoResol==null || itDetalle.nameTipoResol=='')?'Resolución' : getLabelTipoResolucion(itDetalle.nameTipoResol)}} : </label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="detItem_Resol" value="{{(itDetalle.nameTipoResol==null || itDetalle.nameTipoResol=='')?'En Trámite' : itDetalle.numResolucion }}" readonly style="font-weight: bold;"/>                                                                            
+                                    </div>
+                                </div>
+
+                            </form>
+					</div>
+					<div class="modal-footer text-center">
+						<a href="javascript:;" class="btn btn-default" data-dismiss="modal">Cerrar</a>					
+					</div>
+				</div>
+			</div>
+	</div>
+	
+  
+ <!-- Modal Arbol -->
+	<div  id="modalDependencia" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel"><span style="color:#0431B4">DEPENDENCIAS</span>  </h4>
+	      </div>
+	      <div class="modal-body"  style="max-height: 520px;overflow-y: auto;">
+	      
+	
+	            <div class="tree"  ng-show="dependencia != null">
+						<ul>
+							<li ng-show="true">
+								<a ng-click="expandirContraer($event,dependencia.descripcion)"   >{{dependencia.descripcion}}</a>
+								<ul>
+									<li ng-show="primerNivel" ng-repeat="aux1 in dependencia.unidades" >
+										<a ng-click="expandirContraer($event, aux1.descripcion)"   >{{aux1.codUnidad}}-{{aux1.descripcion}}</a>
+										<ul>
+											<li ng-show="{{aux1.codUnidad}}" ng-repeat="aux2 in aux1.unidades"  >
+												<a ng-click="expandirContraer($event, aux2.descripcion)"    >{{aux2.codUnidad}}-{{aux2.descripcion}}</a>
+												<ul>
+													<li ng-show="{{aux2.codUnidad}}" ng-repeat="aux3 in aux2.unidades"  >
+														<a ng-click="expandirContraer($event, aux3.descripcion)">{{aux3.codUnidad}}-{{aux3.descripcion}}</a>
+														<ul>
+															<li ng-show="{{aux3.codUnidad}}" ng-repeat="aux4 in aux3.unidades"  >
+																<a ng-click="expandirContraer($event, aux4.descripcion)">{{aux4.codUnidad}}-{{aux4.descripcion}}</a>
+																<ul>
+																	<li ng-show="{{aux4.codUnidad}}" ng-repeat="aux5 in aux4.unidades"  >
+																		<a ng-click="expandirContraer($event, aux5.descripcion)">{{aux5.codUnidad}}-{{aux5.descripcion}}</a>
+																		<ul>
+																			<li ng-show="{{aux5.codUnidad}}" ng-repeat="aux6 in aux5.unidades"  >
+																				<a ng-click="expandirContraer($event, aux6.descripcion)">{{aux6.codUnidad}}-{{aux6.descripcion}}</a>
+																				<ul>
+																					<li ng-show="{{aux6.codUnidad}}" ng-repeat="aux7 in aux6.unidades"  >
+																						<a ng-click="expandirContraer($event, aux7.descripcion)">{{aux7.codUnidad}}-{{aux7.descripcion}}</a>
+																					</li>
+																				</ul>
+																			</li>
+																		</ul>
+																	</li>
+																</ul>
+															</li>
+														</ul>
+													</li>
+												</ul>
+										   </li>
+	
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+	      </div>
+	      <div class="modal-footer">	        
+	        <button  ng-click="aceptarDependencia()"  type="button" class="btn btn-primary">Aceptar</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>  
+	<!-- Fin Modal Arbol -->
+	
+ <!-- Modal Arbol 2 -->
+ <div  id="modalDependencia2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"><span style="color:#0431B4">DEPENDENCIAS</span>  </h4>
+      </div>
+      <div class="modal-body"  style="max-height: 520px;overflow-y: auto;">
+            <div class="tree"  ng-show="dependencia2 != null">
+					<ul>
+						<li ng-show="true">
+							<a ng-click="expandirContraer2($event, 0, dependencia2.descripcion)">{{dependencia2.descripcion}}</a>
+							<ul>
+								<li ng-show="primerNivel" ng-repeat="aux1 in dependencia2.unidades" >
+									<a ng-click="expandirContraer2($event, aux1.idUnidad, aux1.descripcion)"   >{{aux1.codUnidad}}-{{aux1.descripcion}}</a>
+									<ul>
+										<li ng-show="{{aux1.codUnidad}}" ng-repeat="aux2 in aux1.unidades"  >
+											<a ng-click="expandirContraer2($event, aux2.idUnidad, aux2.descripcion)"    >{{aux2.codUnidad}}-{{aux2.descripcion}}</a>
+											<ul>
+												<li ng-show="{{aux2.codUnidad}}" ng-repeat="aux3 in aux2.unidades"  >
+													<a ng-click="expandirContraer2($event, aux3.idUnidad, aux3.descripcion)">{{aux3.codUnidad}}-{{aux3.descripcion}}</a>
+													<ul>
+														<li ng-show="{{aux3.codUnidad}}" ng-repeat="aux4 in aux3.unidades"  >
+															<a ng-click="expandirContraer2($event, aux4.idUnidad, aux4.descripcion)">{{aux4.codUnidad}}-{{aux4.descripcion}}</a>
+															<ul>
+																<li ng-show="{{aux4.codUnidad}}" ng-repeat="aux5 in aux4.unidades"  >
+																	<a ng-click="expandirContraer2($event, aux5.idUnidad, aux5.descripcion)">{{aux5.codUnidad}}-{{aux5.descripcion}}</a>
+																	<ul>
+																		<li ng-show="{{aux5.codUnidad}}" ng-repeat="aux6 in aux5.unidades"  >
+																			<a ng-click="expandirContraer2($event, aux6.idUnidad, aux6.descripcion)">{{aux6.codUnidad}}-{{aux6.descripcion}}</a>
+																			<ul>
+																				<li ng-show="{{aux6.codUnidad}}" ng-repeat="aux7 in aux6.unidades"  >
+																					<a ng-click="expandirContraer2($event, aux7.idUnidad, aux7.descripcion)">{{aux7.codUnidad}}-{{aux7.descripcion}}</a>
+																				</li>
+																			</ul>
+																		</li>
+																	</ul>
+																</li>
+															</ul>
+														</li>
+													</ul>
+												</li>
+											</ul>
+									   </li>
+
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+      </div>
+      <div class="modal-footer">        
+        <button  ng-click="aceptarDependencia2()"  type="button" class="btn btn-primary">Aceptar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>  
+<!-- Fin Modal Arbol 2 -->
+  
+  
+<div class="modal fade" id="modalMensaje" role="dialog">
+	    <div class="modal-dialog modal-sm">	       
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title text-center">{{modalMensajeTitle}}</h4>
+	        </div>
+	        <div class="modal-body">
+	          <p class="text-center semi-bold">{{modalMensajeText}}</p>
+	        </div>
+	         <div class="modal-footer text-center">
+	         	<button type="button" class="btn btn-sm btn-info" data-dismiss="modal">Aceptar</button>
+	        </div>	       
+	      </div>	      
+	    </div>
+</div>
+
+ <input id="viewMode" type="hidden" value="1"> <!-- modo mantenimiento -->
+ 
+<!-- #modal-HISTRIAL PRECIOS -->
+<div class="modal fade" id="modalHistorialPrecios">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+				<h4 class="modal-title">HISTORIAL DE PRECIOS</h4>
+			</div>
+			<div class="modal-body">
+			
+			    <div class="profile-info">
+                            <form class="form-horizontal" name="formItemNuevo2" >
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Unidad: </label>
+                                    <div class="col-md-9">
+								    	<input type="text" class="form-control" ng-model="historial.unidadName" style="font-weight: bold;" disabled/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Servicio: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" ng-model="historial.itemName" style="font-weight: bold;"  disabled/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Código del Artículo: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" ng-model="historial.codItem" style="font-weight: bold;"  disabled/>
+                                    </div>
+                                </div>
+                            </form>
+                </div>
+                <!-- end profile-info -->
+                
+                <div class="text-center" style="border:1px solid #ddd;border-color: #e2e7eb;background-color:#cdd2f3;">
+                	<h5 style="color:#012898;">DETALLE CRONOLOGICO DE PRECIOS</h5>
+                </div>
+                 
+				<!-- begin row -->
+				<div class="row" id="resultHistorial" style="display:none;">
+				    <div class="col-md-12">
+							<div id="tableContainer" class="tablecontainer table-responsive">
+								   <table ng-table="tableParamsHistorial" class="table table-bordered table-condensed table-hover">
+								        <colgroup>
+								          <col width="20%" />
+								          <col width="14%" />
+								          <col width="7%" />
+								          <col width="21%" />
+								          <col width="16%" />
+								          <col width="22%" />
+								        </colgroup>							
+										<tr ng-repeat="c in $data">
+											<td data-title="'FECHA Y HORA'"  style="text-align: center;" ><span>{{c.fecha}}</span></td>
+											<td  data-title="'VALOR UNITARIO'"  style="text-align: right;"><span>{{c.monedaSimb}} {{c.precio | number:2}}</span></td>
+											<td  data-title="'UNIDAD MEDIDA'"  style="text-align: center;"><span>{{c.unidadMedidaDes}}</span></td>
+											<td  data-title="'NÚMERO RESOLUCIÓN'"  style="text-align: left;"><span>{{c.numResolucion}}</span></td>
+											<td  data-title="'TIPO RESOLUCIÓN'"  style="text-align: center;"><span>{{c.nameTipoResolucion}}</span></td>
+											<td  data-title="'USUARIO'"  style="text-align: left;"><span>{{c.usuario}}</span></td>
+										</tr>	
+									</table>
+						     </div>
+				    </div>
+				</div>
+				
+				<!-- NO MATCHES RESULTS  -->
+				<div class="row" id="noHistory" style="display:none;">
+				    <div class="m-t-5 col-md-12">
+							<p class="hidden-sm text-center" style="font-size:14px;">No hay registro del historial de precios </p>
+				    </div>
+				</div>
+				<!-- END NO MATCHES RESULTS  -->			
+			</div>
+			<div class="modal-footer text-center">
+			     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<!-- Modal #Gestion Categorias -->
+	<div class="modal fade" id="gestionCategoriasServ">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header text-center">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+						<h4 class="modal-title">GESTIÓN DE CATEGORÍAS DE SERVICIOS</h4>
+					</div>
+					<div class="modal-body">
+						<div class="btn-group pull-left" style="padding-bottom:3px;">
+							<button class="btn btn-primary" ng-click="openModalRegistrarCategoria()"><span class="glyphicon glyphicon-plus"></span> Agregar</button>
+						</div>
+						<!-- begin row -->
+						<div class="row" id="resultGestionCategorias" style="display:none;">
+						    <div class="col-md-12">						    
+									<div id="tableContainer" class="tablecontainer table-responsive">										   
+										   <table ng-table="tableParamsCategorias" class="table table-bordered table-condensed table-hover" show-filter="true">
+										        <colgroup>
+										          <col width="6%" />
+										          <col width="76%" />
+										          <col width="18%" />
+										        </colgroup>							
+												<tr ng-repeat="c in $data">
+													<td data-title="'#'"  style="text-align: center;" ><span>{{ ((tableParamsCategorias.page() - 1) * tableParamsCategorias.count()) + $index +1}}</span></td>
+													<td  data-title="'NOMBRE CATEGORÍA'"  style="text-align: left;" filter="{descCategoriaServ: 'text'}"><span>{{c.descCategoriaServ}}</span></td>
+													<td  data-title="'OPCIONES'"  style="text-align: center;">																						
+														<button ng-click="openModalActualizarCategoria(c)" title="Editar Nombre" class="btn btn-sm btn-success"><i class="glyphicon glyphicon-edit"></i></button>
+														<button ng-click="abrirModalConfirm_eliminarCategoria(c)" title="Eliminar" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+													</td>
+												</tr>	
+											</table>
+								     </div>
+						    </div>
+						</div>
+						
+						<!-- NO MATCHES RESULTS  -->
+						<div class="row" id="noResultCategorias" style="display:none;">
+						    <div class="m-t-5 col-md-12">
+									<p class="hidden-sm text-center" style="font-size:14px;">No hay categorías registradas </p>
+						    </div>
+						</div>
+						<!-- END NO MATCHES RESULTS  -->
+					</div>
+					<div class="modal-footer text-center">
+						<a href="javascript:;" class="btn btn-default" data-dismiss="modal">Cerrar</a>					
+					</div>
+				</div>
+			</div>
+	</div>
+	
+	<!-- #modal-Nuevo -->
+	<div class="modal fade" id="modalNombreCategoria">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body">
+							<form name="formCategoryName" >
+                                <div class="form-group">
+                                    <label class="control-label">Nombre de Categoría : </label>
+                                    <div ng-class="{ 'has-errorColor' :formCategoryName.nameCategoria.$invalid && !formCategoryName.nameCategoria.$pristine }">
+                                        <input type="text" class="input-sm form-control" maxlength=60 name="nameCategoria" id="inputNameCategoria" ng-model="itemCategoria.descCategoriaServ" placeholder="Nombre de la categoría" capitalize required/>
+                                        <span ng-show="formCategoryName.nameCategoria.$error.required && !formCategoryName.nameCategoria.$pristine">Escriba el nombre de la categoría</span>
+                                    </div>
+                                    <script type="text/javascript">
+                                    	$("#inputNameCategoria").mask('B', {
+                                    		translation: {
+                                    			'B': {
+                                    					pattern: /[0-9A-Za-zñÑáéíóúÁÉÍÓÚ\s]/,
+                                    					recursive: true
+                                    				}
+                                    			}
+                                    		});
+                                    </script>
+                                </div>
+                            </form>
+					</div>
+					<div class="modal-footer">						
+						<input type="submit" id="btnRegistrarCategoria" class="btn" ng-class="{'btn-success':itemCategoria.idServCata, 'btn-primary':!itemCategoria.idServCata }" ng-click="submitCategoria()" ng-disabled="formCategoryName.$invalid" value="{{!itemCategoria.idServCata ? 'Registrar' : 'Guardar'}}" />
+						<a href="javascript:;" class="btn btn-white" data-dismiss="modal">Cancelar</a>
+					</div>
+				</div>
+			</div>
+	</div>
+
+	<!-- Modal Lista de Conceptos de Pago -->
+	<div class="modal fade" id="modalListaConceptosPago">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header text-center">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+						<h4 class="modal-title">LISTA DE CONCEPTOS PARA ESTA UNIDAD</h4>
+					</div>
+					<div class="modal-body">
+						<!-- begin row -->
+						<div class="row" id="resultConceptos style="display:none;">
+						    <div class="col-md-12">						    
+									<div id="tableContainer" class="tablecontainer table-responsive">										   
+										   <table ng-table="tableParamsConceptosPago" class="table table-bordered table-condensed table-hover" show-filter="true" style="cursor:pointer;">
+										        <colgroup>
+										          <col width="12%" />
+										          <col width="88%" />
+										        </colgroup>							
+												<tr ng-repeat="c in $data" ng-click="selectRowConcepto($index,c)" ng-class="{'highlight': $index == selectedRow}" ng-dblclick="dobleClickRowConcepto($index,c)">
+												    <script type="text/ng-template" id="text">
+                                                        <input type="text" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control" maxlength="7" placeholder="Buscar" />  
+                                                    </script>
+		                                            <script type="text/ng-template" id="text">
+                                                        <input type="text" name="{{name}}" ng-disabled="$filterRow.disabled" ng-model="params.filter()[name]" class="input-filter form-control" maxlength="20" placeholder="Buscar" />  
+                                                    </script>
+													<td  data-title="'CÓDIGO'"  style="text-align: center;" filter="{codigoConcepto6digitos: 'text'}"><span>{{c.codigoConcepto6digitos}}</span></td>
+													<td  data-title="'DESCRIPCIÓN'"  style="text-align: left;" filter="{descr: 'text'}"><span>{{c.descr}}</span></td>
+												</tr>	
+											</table>
+								     </div>
+						    </div>
+						</div>
+						
+						<!-- NO MATCHES RESULTS  -->
+						<div class="row" id="noResultConceptos" style="display:none;">
+						    <div class="m-t-5 col-md-12">
+									<p class="hidden-sm text-center" style="font-size:14px;margin-bottom: 0px;">No hay conceptos de pago registrados para ésta unidad. </p>
+									<p class="hidden-sm text-center" style="font-size:14px;">Favor de registrarlos en el módulo de Conceptos de pago.</p>
+						    </div>
+						</div>
+						<!-- END NO MATCHES RESULTS  -->
+					</div>
+					<div class="modal-footer text-center">
+						<button type="button" class="btn btn-primary" ng-click="aceptarConcepto()" ng-disabled="!estadoBotonAceptarConcepto">Aceptar</button>
+	          			<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>				
+					</div>
+				</div>
+			</div>
+	</div>
+
+
+<!-- MODAL CONFIRM -->
+    <div class="modal fade" id="modalConfirm" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                     <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+                      style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+                </div>
+                <div class="modal-body">
+                     <p>{{modalOptions.bodyText}}</p>
+                </div>
+                <div class="modal-footer text-center">
+                     <button type="button" class="btn btn-primary" ng-click="modalOptions.action()" data-dismiss="modal">{{modalOptions.actionButtonText}}</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="modalMessages" data-backdrop="static">
+       <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                     <h3 class="btn-primary" ng-class="{'btn-primary':modalOptions.headerColorValue==0,'btn-success':modalOptions.headerColorValue==1,'btn-warning':modalOptions.headerColorValue==2,'btn-danger':modalOptions.headerColorValue==3}"
+                      style="margin: 0 auto">{{modalOptions.headerText}}</h3>
+                </div>
+                <div class="modal-body">
+                     <p>{{modalOptions.bodyText}}</p>
+                </div>
+                <div class="modal-footer text-center">
+                     <button type="button" class="btn btn-default" data-dismiss="modal" >{{modalOptions.closeButtonText}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script type="text/javascript">
+    $(document).on('show.bs.modal', '.modal', function (event) {
+        //var zIndex = 1040 + (10 * $('.modal:visible').length);
+        var zIndex = Math.max.apply(null, Array.prototype.map.call(document.querySelectorAll('*'), function(el) {
+                        return +el.style.zIndex;
+                      })) + 10;
+        var zIndex = (zIndex<1040)?1040:zIndex;
+
+        $(this).css('z-index', zIndex);
+        setTimeout(function() {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+    
+    $(document).on('hidden.bs.modal', '.modal', function () {
+    	$(this).css("z-index", '');
+        $('.modal:visible').length && $(document.body).addClass('modal-open');        
+    });
+</script>

@@ -1,0 +1,89 @@
+.btn-circular {
+  width: 23px;
+  height: 23px;
+  margin-left: 5px;
+  margin-top: 20px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  border: 5px;
+  line-height: 1.428571429;
+  border-radius: 50%;
+  color:#fff;
+  background:#0c1217;
+  border-color:#348fe2;
+}
+
+.btn-circular:hover{
+  width: 23px;
+  height: 23px;
+  margin-left: 5px;
+  margin-top: 20px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  border: 5px;
+  line-height: 1.428571429;
+  border-radius: 50%;
+  color:#fff;
+  background:#348fe2;
+  border-color:#348fe2;	
+}
+
+.btn-circular:active {
+  color:#fff;
+  background: #348fe2;
+  border-color:#348fe2;	
+}
+
+.columnas{
+	display:flex;
+	flex-direction:row;
+	justified-content:center;
+}
+
+.columnas li{
+	float:none;
+	width:33%;
+	text-align:center;
+}
+
+.columnas a {
+	cursor:pointer;
+}
+.activado{
+	background-color:transparent;
+}
+li.active>#basico, li.active>#basico:focus, li.active>#basico:hover{
+	border-color:#285e8e;
+	background-color:#3276b1;
+}
+li.active>#avanzado, li.active>#avanzado:focus, li.active>#avanzado:hover{
+	border-color:#398439;
+	background-color:#47a447;
+}
+a.botonAyuda{
+	-webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+
+    text-decoration: none;
+    color: initial;
+}
+.flechaMenu{
+	float: right;
+}
+
+ul{
+	list-style:none;
+}
+
+.cursor{
+	cursor:pointer;
+	margin-bottom:10px!important;
+}
+
+.parrafoAyuda{
+	padding-left:35px;
+	padding-right:35px;
+}

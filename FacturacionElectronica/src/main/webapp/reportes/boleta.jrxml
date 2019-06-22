@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="boletaPL1" pageWidth="639" pageHeight="842" columnWidth="579" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.6105100000000026"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="912"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="usuario" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["prueba1.quipucamayoc"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="establecimiento" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["029"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="serie" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["00002798"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["EscudoUNMSM.png"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo_quipu" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["logo_quipu.png"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="anulado" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["anulado.png"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+WEBQPROTESORERIA.COMPROB_PAGO.FACULTAD,
+DECODE(WEBQPROTESORERIA.COMPROB_PAGO.UNIDAD,WEBQPROTESORERIA.COMPROB_PAGO.FACULTAD,'',WEBQPROTESORERIA.COMPROB_PAGO.UNIDAD) AS UNIDAD,
+DECODE(WEBQPROTESORERIA.COMPROB_PAGO.UNIDAD,WEBQPROTESORERIA.COMPROB_PAGO.FACULTAD,'','Unidad:') AS CAMPO_UNIDAD,
+DECODE(alumno.CODIGO_MATRICULA,'','','Matrícula:') AS CAMPO_ALUMNO,
+WEBQPROTESORERIA.COMPROB_PAGO.COD_ESTAB,
+WEBQPROTESORERIA.COMPROB_PAGO.SERIE,
+WEBQPROTESORERIA.COMPROB_PAGO.FECHA_EMISION,
+to_char(WEBQPROTESORERIA.COMPROB_PAGO.FECHA_EMISION, 'dd' ) || ' de ' || LOWER(QPRODATAQUIPU.MES.MESDES) || ' del ' || to_char(WEBQPROTESORERIA.COMPROB_PAGO.FECHA_EMISION,'yyyy') FECHA_EMISIONF,
+WEBQPROTESORERIA.COMPROB_PAGO.NOMBRE_CLIENTE,
+WEBQPROTESORERIA.COMPROB_PAGO.DIRECCION,
+WEBQPROTESORERIA.COMPROB_PAGO.DOC_IDEN,
+WEBQPROTESORERIA.COMPROB_PAGO.GUIA,
+WEBQPROTESORERIA.COMPROB_PAGO.TIPO_DOC,
+WEBQPROTESORERIA.DET_COMPB_PAGO.CANTIDAD,
+WEBQPROTESORERIA.DET_COMPB_PAGO.ID_ITEM,
+WEBQPROTESORERIA.DET_COMPB_PAGO.DESCRIPCION,
+TO_CHAR(WEBQPROTESORERIA.DET_COMPB_PAGO.PRECIO_U,'999,999,990.00') PRECIO_U,
+TO_CHAR(WEBQPROTESORERIA.DET_COMPB_PAGO.PRECIO_T,'999,999,990.00') PRECIO_T,
+TO_CHAR(WEBQPROTESORERIA.DET_COMPB_PAGO.IGV_T,'999,999,990.00') IGV_T,
+TO_CHAR((WEBQPROTESORERIA.DET_COMPB_PAGO.PRECIO_T + WEBQPROTESORERIA.DET_COMPB_PAGO.IGV_T),'999,999,990.00') IMPORTE_ITEM,
+WEBQPROTESORERIA.TIPO_OPERACION_IGV.DESC_TIPO OPER_IGV ,
+WEBQPROTESORERIA.DET_COMPB_PAGO.MONEDA,
+(case when WEBQPROTESORERIA.DET_COMPB_PAGO.MONEDA = 'S/' then 'SOLES' ELSE 'DOLARES' END ) moneddat,
+TO_CHAR(WEBQPROTESORERIA.COMPROB_PAGO.SUB_TOTAL,'999,999,990.00') SUB_TOTAL ,
+TO_CHAR(WEBQPROTESORERIA.COMPROB_PAGO.IGV,'999,999,990.00') IGV ,
+TO_CHAR(WEBQPROTESORERIA.COMPROB_PAGO.TOTAL,'999,999,990.00') TOTAL ,
+PCK_UTIL.ALETRAS( WEBQPROTESORERIA.COMPROB_PAGO.TOTAL )   total_letras,
+WEBQPROTESORERIA.UNIDAD_ESTABLECIMENTO.DIRECCION as sucursal,
+WEBQPROTESORERIA.UNIDAD_ESTABLECIMENTO.TELEFONO,
+WEBQPROTESORERIA.UNIDAD_ESTABLECIMENTO.CORREO,
+WEBQPROTESORERIA.UNIDAD_ESTABLECIMENTO.FACTURADORA,
+WEBQPROTESORERIA.COMPROB_PAGO.DETRACCION,
+TO_CHAR(WEBQPROTESORERIA.COMPROB_PAGO.GRAVADA,'999,999,990.00') GRAVADA,
+TO_CHAR(WEBQPROTESORERIA.COMPROB_PAGO.EXONERADA,'999,999,990.00') EXONERADA,
+TO_CHAR(WEBQPROTESORERIA.COMPROB_PAGO.INAFECTA,'999,999,990.00')INAFECTA,
+WEBQPROTESORERIA.COMPROB_PAGO.QR,
+WEBQPROTESORERIA.COMPROB_PAGO.OBSERVACION,
+alumno.CODIGO_MATRICULA AS CODIGO_ALUMNO,
+DECODE(WEBQPROTESORERIA.TXXXX_BANDFACT.IND_SITU,'05',1,0) AS ANULADO
+FROM
+WEBQPROTESORERIA.TIPO_OPERACION_IGV,
+WEBQPROTESORERIA.COMPROB_PAGO
+INNER JOIN WEBQPROTESORERIA.DET_COMPB_PAGO ON WEBQPROTESORERIA.DET_COMPB_PAGO.COD_ESTAB = WEBQPROTESORERIA.COMPROB_PAGO.COD_ESTAB AND WEBQPROTESORERIA.DET_COMPB_PAGO.SERIE = WEBQPROTESORERIA.COMPROB_PAGO.SERIE
+LEFT JOIN WEBQPROTESORERIA.TXXXX_BANDFACT ON  WEBQPROTESORERIA.TXXXX_BANDFACT.TIP_DOCU='03' AND WEBQPROTESORERIA.TXXXX_BANDFACT.NUM_DOCU='B'||WEBQPROTESORERIA.COMPROB_PAGO.COD_ESTAB ||'-'|| WEBQPROTESORERIA.COMPROB_PAGO.SERIE
+LEFT JOIN WEBQPROTESORERIA.ALUMNOSUM alumno ON(alumno.NUMERO_DOCUMENTO=WEBQPROTESORERIA.COMPROB_PAGO.DOC_IDEN AND alumno.ESTADO_PERMANENCIA='AC'),
+WEBQPROTESORERIA.UNIDAD_ESTABLECIMENTO, QPRODATAQUIPU.MES
+WHERE
+WEBQPROTESORERIA.COMPROB_PAGO.COD_ESTAB = $P{establecimiento} AND
+WEBQPROTESORERIA.COMPROB_PAGO.SERIE = $P{serie} AND
+WEBQPROTESORERIA.COMPROB_PAGO.COD_ESTAB = WEBQPROTESORERIA.UNIDAD_ESTABLECIMENTO.CODIGO_ESTAB AND
+QPRODATAQUIPU.MES.MESCOD=WEBQPROTESORERIA.COMPROB_PAGO.MES AND
+WEBQPROTESORERIA.COMPROB_PAGO.TIPO = 1 AND
+WEBQPROTESORERIA.DET_COMPB_PAGO.TIPO = 1 AND
+WEBQPROTESORERIA.TIPO_OPERACION_IGV.COD_TIPO = WEBQPROTESORERIA.DET_COMPB_PAGO.COD_TIPO_IGV ]]>
+	</queryString>
+	<field name="FACULTAD" class="java.lang.String"/>
+	<field name="UNIDAD" class="java.lang.String"/>
+	<field name="CAMPO_UNIDAD" class="java.lang.String"/>
+	<field name="CAMPO_ALUMNO" class="java.lang.String"/>
+	<field name="COD_ESTAB" class="java.lang.String"/>
+	<field name="SERIE" class="java.lang.String"/>
+	<field name="FECHA_EMISION" class="java.sql.Timestamp"/>
+	<field name="FECHA_EMISIONF" class="java.lang.String"/>
+	<field name="NOMBRE_CLIENTE" class="java.lang.String"/>
+	<field name="DIRECCION" class="java.lang.String"/>
+	<field name="DOC_IDEN" class="java.lang.String"/>
+	<field name="GUIA" class="java.lang.String"/>
+	<field name="TIPO_DOC" class="java.lang.String"/>
+	<field name="CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="ID_ITEM" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="PRECIO_U" class="java.lang.String"/>
+	<field name="PRECIO_T" class="java.lang.String"/>
+	<field name="IGV_T" class="java.lang.String"/>
+	<field name="IMPORTE_ITEM" class="java.lang.String"/>
+	<field name="OPER_IGV" class="java.lang.String"/>
+	<field name="MONEDA" class="java.lang.String"/>
+	<field name="MONEDDAT" class="java.lang.String"/>
+	<field name="SUB_TOTAL" class="java.lang.String"/>
+	<field name="IGV" class="java.lang.String"/>
+	<field name="TOTAL" class="java.lang.String"/>
+	<field name="TOTAL_LETRAS" class="java.lang.String"/>
+	<field name="SUCURSAL" class="java.lang.String"/>
+	<field name="TELEFONO" class="java.lang.String"/>
+	<field name="CORREO" class="java.lang.String"/>
+	<field name="FACTURADORA" class="java.lang.String"/>
+	<field name="DETRACCION" class="java.math.BigDecimal"/>
+	<field name="GRAVADA" class="java.lang.String"/>
+	<field name="EXONERADA" class="java.lang.String"/>
+	<field name="INAFECTA" class="java.lang.String"/>
+	<field name="QR" class="java.lang.String"/>
+	<field name="OBSERVACION" class="java.lang.String"/>
+	<field name="CODIGO_ALUMNO" class="java.lang.String"/>
+	<field name="ANULADO" class="java.math.BigDecimal"/>
+	<group name="grupo1" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$P{establecimiento}]]></groupExpression>
+		<groupHeader>
+			<band height="247" splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="23" splitType="Stretch">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-44" x="100" y="5" width="192" height="17"/>
+					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OBSERVACION}==null ? null : "OBS:" + $F{OBSERVACION}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="632" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="63" y="244" width="37" height="388"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-2" x="100" y="244" width="191" height="388"/>
+				<box topPadding="2" leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-4" x="508" y="244" width="71" height="388"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-38" x="363" y="244" width="73" height="388"/>
+				<box topPadding="2" leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-37" x="436" y="244" width="72" height="388"/>
+				<box topPadding="2" leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="0" y="244" width="63" height="388"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="291" y="244" width="72" height="388"/>
+				<box topPadding="2" leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-1" x="338" y="7" width="240" height="123"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[
+R.U.C. N° 20148092282
+
+BOLETA ELECTRÓNICA
+
+    ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="339" y="89" width="240" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["B"+$F{COD_ESTAB}+"- N° "+$F{SERIE}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" onErrorType="Blank">
+				<reportElement key="image-1" x="6" y="26" width="83" height="94"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement key="staticText-15" x="97" y="26" width="217" height="29"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS
+Fundada en 1551]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="97" y="54" width="217" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FACULTAD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-11" x="97" y="65" width="217" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FACTURADORA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-12" x="97" y="101" width="217" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono: "+$F{TELEFONO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-13" x="97" y="89" width="217" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dirección: "+ $F{SUCURSAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-14" x="97" y="112" width="217" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Correo: "+$F{CORREO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" x="417" y="161" width="162" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{MONEDDAT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="89" y="143" width="267" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{NOMBRE_CLIENTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="89" y="161" width="267" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{DIRECCION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="89" y="179" width="267" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{DOC_IDEN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-10" x="0" y="179" width="89" height="18" isRemoveLineWhenBlank="true"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Doc. Identidad:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-12" x="0" y="161" width="89" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Dirección:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-13" x="0" y="143" width="89" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-14" x="356" y="161" width="61" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Moneda:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-41" x="417" y="143" width="162" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{FECHA_EMISIONF}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-23" x="356" y="143" width="61" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-25" x="356" y="179" width="61" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Tipo:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-43" x="417" y="179" width="162" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{TIPO_DOC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-2" x="0" y="226" width="63" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Afect.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="100" y="226" width="191" height="18"/>
+				<box topPadding="2" leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-22" x="508" y="226" width="71" height="18"/>
+				<box topPadding="2" leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Imp.Venta(**)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="363" y="226" width="73" height="18"/>
+				<box topPadding="2" leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Val.Venta(*)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="436" y="226" width="72" height="18"/>
+				<box topPadding="2" leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[IGV(18%)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-2" x="63" y="226" width="37" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Cant.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="291" y="226" width="72" height="18"/>
+				<box topPadding="2" leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Val. Unit.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-46" x="417" y="197" width="162" height="29"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-47" x="89" y="197" width="267" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$F{CODIGO_ALUMNO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-48" x="0" y="197" width="89" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Left">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAMPO_ALUMNO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-49" x="356" y="197" width="61" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Right">
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAMPO_UNIDAD}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" onErrorType="Blank">
+				<reportElement key="image-1" x="63" y="267" width="445" height="365">
+					<printWhenExpression><![CDATA[$F{ANULADO}.intValue()==1 ? new Boolean(true): new Boolean(false)]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{anulado}]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-17" x="291" y="0" width="72" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRECIO_U}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-17" x="436" y="0" width="72" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IGV_T}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="0" width="63" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OPER_IGV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-40" x="508" y="0" width="71" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_ITEM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-17" x="363" y="0" width="73" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRECIO_T}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" x="63" y="0" width="37" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField" x="100" y="0" width="191" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="196" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-17" x="16" y="44" width="215" height="18"/>
+				<box topPadding="2" rightPadding="8"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[(*) Sin impuestos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-17" x="16" y="62" width="215" height="18"/>
+				<box topPadding="2" rightPadding="8"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[(**) Incluye impuestos, de ser Op. Gravada.]]></text>
+			</staticText>
+			<image onErrorType="Blank">
+				<reportElement key="image-2" x="0" y="180" width="190" height="15"/>
+				<imageExpression><![CDATA[$P{logo_quipu}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement key="image-4" x="6" y="84" width="90" height="90"/>
+				<imageExpression><![CDATA[com.google.zxing.client.j2se.MatrixToImageWriter.toBufferedImage(
+    new com.google.zxing.qrcode.QRCodeWriter().encode(
+    $F{QR},
+    com.google.zxing.BarcodeFormat.QR_CODE,300,300))]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="194" splitType="Stretch">
+			<textField pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField" x="459" y="96" width="120" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField" x="459" y="78" width="120" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{IGV}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-8" x="318" y="78" width="118" height="18"/>
+				<box topPadding="2" rightPadding="8">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[I.G.V.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-9" x="318" y="96" width="118" height="18"/>
+				<box topPadding="2" rightPadding="8">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Importe Total]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-9" x="436" y="78" width="23" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-10" x="436" y="96" width="23" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="459" y="42" width="120" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{EXONERADA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-19" x="459" y="60" width="120" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{INAFECTA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-20" x="436" y="60" width="23" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-21" x="436" y="42" width="23" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-22" x="436" y="24" width="23" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{MONEDA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-16" x="318" y="24" width="118" height="18"/>
+				<box topPadding="2" rightPadding="8">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Op. Gravada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-17" x="318" y="42" width="118" height="18"/>
+				<box topPadding="2" rightPadding="8"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Op. Exonerada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-18" x="319" y="60" width="117" height="18"/>
+				<box topPadding="2" rightPadding="8">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Op. Inafecta]]></text>
+			</staticText>
+			<textField pattern="##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-39" x="459" y="24" width="120" height="18"/>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{GRAVADA}]]></textFieldExpression>
+			</textField>
+			<image vAlign="Middle" onErrorType="Blank">
+				<reportElement key="image-2" x="0" y="178" width="190" height="15"/>
+				<imageExpression><![CDATA[$P{logo_quipu}]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-45" x="1" y="23" width="316" height="18"/>
+				<box topPadding="2" leftPadding="5" rightPadding="5"/>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SON: " + $F{TOTAL_LETRAS} +  " " + $F{MONEDDAT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-26" x="16" y="42" width="215" height="18"/>
+				<box topPadding="2" rightPadding="8"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[(*) Sin impuestos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-27" x="16" y="60" width="215" height="18"/>
+				<box topPadding="2" rightPadding="8"/>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[(**) Incluye impuestos, de ser Op. Gravada.]]></text>
+			</staticText>
+			<image>
+				<reportElement key="image-3" x="6" y="82" width="90" height="90"/>
+				<imageExpression><![CDATA[com.google.zxing.client.j2se.MatrixToImageWriter.toBufferedImage(
+    new com.google.zxing.qrcode.QRCodeWriter().encode(
+    $F{QR},
+    com.google.zxing.BarcodeFormat.QR_CODE,300,300))]]></imageExpression>
+			</image>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
