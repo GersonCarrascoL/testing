@@ -4,7 +4,7 @@
 	<artifactId>FacturacionElectronica</artifactId>
 	<packaging>war</packaging>
 	<properties>
-		<spring.version>3.2.17.RELEASE</spring.version>
+		<spring.version>5.3.18</spring.version>
 		<spring.securiry>3.2.9.RELEASE</spring.securiry>
 	</properties>
 
